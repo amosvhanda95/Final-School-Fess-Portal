@@ -167,17 +167,17 @@ $body = [
 
 
 
-$response = Http::withHeaders($headers)
-    ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
+// $response = Http::withHeaders($headers)
+//     ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
 
-    $responseData = json_decode($response->body(), true);
+//     $responseData = json_decode($response->body(), true);
 
    
 
-    if ($responseData && isset($responseData['responseCode'])) {
+//     if ($responseData && isset($responseData['responseCode'])) {
 
-        $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
-        $paymentSta = $responseData['uniqueReference'];
+//         $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
+//         $paymentSta = $responseData['uniqueReference'];
         
         Payment::create([
             'paid_at' => Carbon::today()->toDateString(),
@@ -188,9 +188,9 @@ $response = Http::withHeaders($headers)
             'student_name'=> $request->input('student_name'),
             'amount_in_words'=> $request->input('amount_in_words'),
             'currency_value'=> SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-            'currency'=>$paymentStatus,
+            'currency'=>"paymentStatus",
             'rrn'=> $request->input('rrn'),
-            'payment_status' => $paymentSta,
+            'payment_status' => "paymentSta",
             'customer_phone_number'=> $request->input('customer_phone_number'),
             'reg_number'=> $request->input('reg_number'),
             'semester'=> $request->input('semester'),
@@ -208,12 +208,12 @@ $response = Http::withHeaders($headers)
         $payment = Payment::where('created_by',request()->user()->id)->orderBy('id', 'DESC')->first();
         return redirect('payment/confirm/'. $payment->id);
         
-    } else {
-        // Handle the case where the response does not contain a responseCode
+    // } else {
+    //     // Handle the case where the response does not contain a responseCode
        
-        return redirect()->back()
-        ->withErrors(['message', "Error Code" . $responseData['code'] ]);
-    } 
+    //     return redirect()->back()
+    //     ->withErrors(['message', "Error Code" . $responseData['code'] ]);
+    // } 
 
  
         
@@ -239,57 +239,57 @@ $response = Http::withHeaders($headers)
 
 //    PDF Generator Methods
     
-    // public function generatePDF($paymentId)
-    // {
-    //     $payment = Payment::findOrFail($paymentId); // Replace with your model and logic
+    public function generatePDF($paymentId)
+    {
+        $payment = Payment::findOrFail($paymentId); // Replace with your model and logic
     
-    //     $options = new Options();
-    //     $options->set('isHtml5ParserEnabled', true);
-    //     $options->set('isRemoteEnabled', true);
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
     
-    //     $payment = Payment::findOrFail($paymentId);
+        $payment = Payment::findOrFail($paymentId);
      
 
-    //     $dompdf = new Dompdf($options);
+        $dompdf = new Dompdf($options);
     
-    //     $view = view('payments.pdf', compact('payment'));
-    //     $htmlContent = $view->render();
+        $view = view('payments.pdf', compact('payment'));
+        $htmlContent = $view->render();
        
-    //     $dompdf->loadHtml($htmlContent);
+        $dompdf->loadHtml($htmlContent);
     
-    //     $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper('A4', 'portrait');
     
-    //     $dompdf->render();
+        $dompdf->render();
     
-    //     $pdfPath = storage_path('app/temp/payment_invoice.pdf');
-    //     Storage::put('temp/payment_invoice.pdf', $dompdf->output());
+        $pdfPath = storage_path('app/temp/payment_invoice.pdf');
+        Storage::put('temp/payment_invoice.pdf', $dompdf->output());
     
-    //     return response()->download($pdfPath, 'payment_invoice.pdf');
-    // }
+        return response()->download($pdfPath, 'payment_invoice.pdf');
+    }
     
-    // public function generateReport($paymentId)
-    // {
-    //     $payment = Payment::findOrFail($paymentId);
-    //     $options = new Options();
-    //     $options->set('isHtml5ParserEnabled', true);
-    //     $options->set('isRemoteEnabled', true);
+    public function generateReport($paymentId)
+    {
+        $payment = Payment::findOrFail($paymentId);
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
 
-    //     $dompdf = new Dompdf($options);
+        $dompdf = new Dompdf($options);
     
-    //     $view = view('reports.generate',compact('payment'));
-    //     $htmlContent = $view->render();
+        $view = view('reports.generate',compact('payment'));
+        $htmlContent = $view->render();
        
-    //     $dompdf->loadHtml($htmlContent);
+        $dompdf->loadHtml($htmlContent);
     
-    //     $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper('A4', 'portrait');
     
-    //     $dompdf->render();
+        $dompdf->render();
     
-    //     $pdfPath = storage_path('app/temp/payment_invoice.pdf');
-    //     Storage::put('temp/payment_invoice.pdf', $dompdf->output());
+        $pdfPath = storage_path('app/temp/payment_invoice.pdf');
+        Storage::put('temp/payment_invoice.pdf', $dompdf->output());
     
-    //     return response()->download($pdfPath, $paymentId. $payment->student_name.'_INV.pdf');
-    // }
+        return response()->download($pdfPath, $paymentId. $payment->student_name.'_INV.pdf');
+    }
        
     
     public function displayReport(Request $request)
