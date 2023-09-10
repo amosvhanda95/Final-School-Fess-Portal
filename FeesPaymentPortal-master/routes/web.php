@@ -91,5 +91,3 @@ Route::group(['middleware'=>'auth'], function () {
 });
 
 
-Route::get('/fetch-and-display', [PaymentsController::class, 'fetchAndDisplay']);
-

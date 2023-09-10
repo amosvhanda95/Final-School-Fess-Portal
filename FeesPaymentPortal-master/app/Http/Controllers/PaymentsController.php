@@ -233,37 +233,7 @@ $response = Http::withHeaders($headers)
         return view('payments.confirmed_payment', compact('payment','paymentReference'));
     }
 
-    public function fetchAndDisplay()
-    {
-        // Make a GET request to the URL
-        $url = 'http://127.0.0.1:8000/api/payments/1';
-        $response = file_get_contents($url);
-
-        // Check if the request was successful
-        if ($response === false) {
-            return "Failed to retrieve data from the URL.";
-        } else {
-            // Decode the JSON response into a PHP associative array
-            $studentsData = json_decode($response, true);
-
-            // Check if decoding was successful
-            if ($studentsData !== null) {
-                // Loop through the array and display student details
-                foreach ($studentsData as $studentId => $student) {
-                    echo "Student ID: $studentId<br>";
-                    echo "Registration Number: {$student['reg_number']}<br>";
-                    echo "Student Name: {$student['student_name']}<br>";
-                    echo "Amount Paid: {$student['amountpaid']} {$student['currency']}<br>";
-                    // Add more fields as needed
-
-                    // Add a line break between students
-                    echo "<br>";
-                }
-            } else {
-                return "Failed to decode JSON data.";
-            }
-        }
-    }
+    
 
 
 
