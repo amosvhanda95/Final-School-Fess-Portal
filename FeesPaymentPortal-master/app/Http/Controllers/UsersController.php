@@ -37,16 +37,19 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validateWith([
             'first_name' => 'required:string',
             'last_name' => 'required:string',
             'email' => 'required|email|unique:users,email',
             'branch'=> 'required',
+            'ethics_user' =>'required',
         ]);
         $password  = $request->input('first_name').'@'.$request->input('last_name');
 
 
         $user= User::create([
+            'ethics_user'=>$request->input('ethics_user'),
             'first_name'=>$request->input('first_name'),
             'last_name'=>$request->input('last_name'),
             'email'=>$request->input('email'),
@@ -60,7 +63,7 @@ class UsersController extends Controller
 
         if ($user) {
             // User was successfully created
-            // Mail::to($request->input('email'))->send(new WelcomeMail($request->input('email'), $password));
+             Mail::to($request->input('email'))->send(new WelcomeMail($request->input('email'), $password));
 
             return redirect('user')->with('message', 'New User has been created. An email was sent with a default password to the provided email');
         } else {
@@ -79,7 +82,8 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        //
+        
+        return view('users.show', ['user' => $user]);
     }
 
     /**
@@ -104,7 +108,9 @@ class UsersController extends Controller
      */
     public function update($id , Request $request)
     {
+        
         $user = User::findOrFail($id);
+        $user->ethics_user = $request->input('ethics_user');
         $user->first_name = $request->input('first_name');
         $user->email = $request->input('email');
         $user->last_name = $request->input('last_name');

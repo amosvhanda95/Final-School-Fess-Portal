@@ -107,7 +107,10 @@
                             </table>
                             {{-- {!! $data->links('pagination::bootstrap-4') !!} --}}
                             <div class="form-group">
-                                <label>Total Paid :{{$totalPayment}}</label>
+                                <label>Total Paid :{{$totalPaymentUSD}} USD</label>
+                            </div>
+                            <div class="form-group">
+                                <label>Total Paid  :{{$totalPaymentZWL}} ZWL</label>
                             </div>
                            
                         </div>

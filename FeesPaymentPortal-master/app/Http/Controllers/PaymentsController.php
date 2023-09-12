@@ -147,7 +147,7 @@ $headers = [
 ];
 $schoolAccountNumber= SchoolBankAccount::find($request->input('bank_account_id'))->account_number ;
 $currency=SchoolBankAccount::find($request->input('bank_account_id'))->currency ;
-$user = request()->user()->first_name ;
+$user = request()->user()->ethics_user ;
 
 $body = [
 
@@ -158,7 +158,6 @@ $body = [
     "amount" => $request->input('amount'),
     "currency" => strval($currency) ,
 
-  
 
 ];
 
@@ -167,17 +166,17 @@ $body = [
 
 
 
-// $response = Http::withHeaders($headers)
-//     ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
+$response = Http::withHeaders($headers)
+    ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
 
-//     $responseData = json_decode($response->body(), true);
+    $responseData = json_decode($response->body(), true);
 
    
 
-//     if ($responseData && isset($responseData['responseCode'])) {
+    if ($responseData && isset($responseData['responseCode'])) {
 
-//         $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
-//         $paymentSta = $responseData['uniqueReference'];
+        $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
+        $paymentSta = $responseData['uniqueReference'];
         
         Payment::create([
             'paid_at' => Carbon::today()->toDateString(),
@@ -188,9 +187,9 @@ $body = [
             'student_name'=> $request->input('student_name'),
             'amount_in_words'=> $request->input('amount_in_words'),
             'currency_value'=> SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-            'currency'=>"paymentStatus",
+            'currency'=>$paymentStatus,
             'rrn'=> $request->input('rrn'),
-            'payment_status' => "paymentSta",
+            'payment_status' => $paymentSta,
             'customer_phone_number'=> $request->input('customer_phone_number'),
             'reg_number'=> $request->input('reg_number'),
             'semester'=> $request->input('semester'),
@@ -208,12 +207,11 @@ $body = [
         $payment = Payment::where('created_by',request()->user()->id)->orderBy('id', 'DESC')->first();
         return redirect('payment/confirm/'. $payment->id);
         
-    // } else {
-    //     // Handle the case where the response does not contain a responseCode
+    } else {
+        // Handle the case where the response does not contain a responseCode
        
-    //     return redirect()->back()
-    //     ->withErrors(['message', "Error Code" . $responseData['code'] ]);
-    // } 
+        return $responseData ;
+    } 
 
  
         
@@ -323,9 +321,14 @@ $body = [
         $payments = $query->get();
     
         // Calculate the total payment amount
-        $totalPayment = $payments->sum('amount');
+        $totalPaymentUSD = $payments->filter(function ($payment) {
+            return $payment->currency_value === 'USD';
+        })->sum('amount');
+        $totalPaymentZWL = $payments->filter(function ($payment) {
+            return $payment->currency_value === 'ZWL';
+        })->sum('amount');
     
-        return view('reports.index', compact('payments', 'schools', 'start_date', 'end_date', 'school_id', 'totalPayment'));
+        return view('reports.index', compact('payments', 'schools', 'start_date', 'end_date', 'school_id', 'totalPaymentZWL','totalPaymentUSD'));
     }
     
         

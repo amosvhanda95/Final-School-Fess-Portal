@@ -38,12 +38,17 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="control-label required">{{ __('Ethics User Name') }}</label>
+                                    <input type="text"  name="ethics_user" class="form-control" id="exampleInputEmail1"
+                                    value="{{ old('ethics_user') }}" placeholder="Enter ethic username">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label required">{{ __('First Name') }}</label>
                                     <input type="text"  name="first_name" class="form-control" id="exampleInputEmail1"
                                     value="{{ old('first_name') }}" placeholder="Enter ethic username">
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label required">{{ __('Full Name') }}</label>
+                                    <label class="control-label required">{{ __('Last Name') }}</label>
                                     <input type="text"  name="last_name" class="form-control" id="exampleInputEmail1"
                                     value="{{ old('last_name') }}" placeholder="Enter full name">
                                 </div>

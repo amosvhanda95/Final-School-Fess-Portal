@@ -25,6 +25,7 @@ class User extends Authenticatable
         'type',
         'branch_id',
         'password',
+        'ethics_user',
     ];
 
     /**

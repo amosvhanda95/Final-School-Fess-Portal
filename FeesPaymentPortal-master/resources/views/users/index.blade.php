@@ -40,12 +40,13 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>Ethics User Name</th>
                                     <th>Firstname</th>
                                     <th>Lastname</th>
                                     <th>Email</th>
                                     <th>Branch</th>
                                     <th>User Type</th>
-                                    {{-- <th>Action</th> --}}
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -54,6 +55,7 @@
                                         <tr style="background-color: {{ $loop->index % 2 == 0 ? 'lightgray' : 'orange' }}">
                                             <td>  {{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}
                                             </td>
+                                            <td>{{ $value->ethics_user }}</td>
                                             <td>{{ $value->first_name }}</td>
                                             <td>{{ $value->last_name }}</td>
                                             <td>{{ $value->email }}</td>
@@ -71,8 +73,8 @@
                                             @endif
 
                                             </td>
-                                            {{-- <td class="project-actions text-center">
-                                                <a class="btn btn-primary btn-sm" href="/edit_user/{{$value->id}}}">
+                                            <td class="project-actions text-center">
+                                                <a class="btn btn-primary btn-sm" href="/user/{{$value->id}}}">
                                                     <i class="fas fas-folder"></i>
                                                     View
                                                 </a>
@@ -84,7 +86,7 @@
                                                     <i class="fas fas-trash"></i>
                                                     Delete
                                                 </a>
-                                            </td> --}}
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @else
