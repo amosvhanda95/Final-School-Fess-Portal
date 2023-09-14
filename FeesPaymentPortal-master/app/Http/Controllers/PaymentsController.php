@@ -294,12 +294,15 @@ $response = Http::withHeaders($headers)
     {
         // Retrieve the list of schools for the dropdown
         $schools = DB::table('schools')->pluck('school_name', 'id');
-        
+        //dd($schools );
         // Get the input values from the request
         $start_date = $request->input('start_date');
         $end_date = $request->input('end_date');
         $school_id = $request->input('school');
     
+        $selectedSchoolName = $schools->get($school_id);
+
+        
         // Create Carbon instances for start and end dates
         $start_date1 = Carbon::parse($start_date)->startOfDay();
         $end_date1 = Carbon::parse($end_date)->endOfDay();
@@ -328,7 +331,7 @@ $response = Http::withHeaders($headers)
             return $payment->currency_value === 'ZWL';
         })->sum('amount');
     
-        return view('reports.index', compact('payments', 'schools', 'start_date', 'end_date', 'school_id', 'totalPaymentZWL','totalPaymentUSD'));
+        return view('reports.index', compact('payments', 'schools', 'start_date', 'end_date', 'school_id', 'totalPaymentZWL','totalPaymentUSD','selectedSchoolName'));
     }
     
         

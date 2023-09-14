@@ -2,6 +2,36 @@
 
 @extends('shared.main')
 @section('content')
+<style>
+   
+    .header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 10px 20px; /* Adjust padding as needed */
+     
+ }
+ .logo img {
+     max-width: 140px; /* Adjust logo width as needed */
+     height: auto;
+ }
+ 
+ .details {
+     text-align: right;
+ }
+ 
+ h1 {
+     font-size: 24px;
+     margin: 0;
+ }
+ 
+ p {
+     margin: 5px 0;
+ }
+ .horizontal-line {
+     border-bottom: 1px solid #000; /* You can adjust the thickness and color */
+ }
+ </style>
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
@@ -27,18 +57,34 @@
             @endif
             <div class="row">
                 <div class="col-12">
+                    <div class="callout callout-warning bg-secondary  header">
+                        <div class="logo">
+                        <img src="{{ asset('assets/img/logo.png') }}" clas alt="Posb Logo"   height: auto;">
+                        <h1 style="color: orange;">FEES PAYMENT </h1>
+                        </div>
+                        <div class="details">
+                            <h1>POSB HEAD OFFICE</h1>
+                            <p>6th Floor, Causeway Building Cnr 3rd Street and, Central Ave</p>
+                            <p>Harare Zimbabwe</p>
+                            <p>+263 242 252595/6</p> <br>
+                            <h1 style="color: orange;">FEES  PAYMENT REPORT</h1>
+
+                            
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
                                 
-                                <div class="col-md-4">
-                                    <h3 class="card-title">Reports Schools of </h3> <br>
+                                <div class="col-md-12 " style="text-align: center" >
+                                    <h3  style="text-align: center">Payment Reports  of  {{ $selectedSchoolName }}</h3> <br>
+                                    <p style="text-align: center">{{  $start_date }} - {{$end_date  }}</p>
                                 </div>
 
+                               
                                 
                                 
-                                
-                                    <div class="col-md-12">
+                                    <div id="reportForm" class="col-md-12">
                                         <form method="post" action="/reports/get">
                                             @csrf
                                             <label for="start_date">Start Date:</label>
@@ -67,6 +113,7 @@
 
                         </div>
                         <div class="card-body">
+                           
                             <table id="example2" class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
@@ -128,8 +175,16 @@
 
 <script>
     function printInvoice() {
+        // Hide the form
+        var reportForm = document.getElementById('reportForm');
+        reportForm.style.display = 'none';
+
+        // Trigger the print dialog
         window.print();
+
+        // Show the form again after printing (optional)
+        reportForm.style.display = 'block';
     }
-    
 </script>
+
 
