@@ -93,7 +93,7 @@ p {
                                 <div class="col-sm-4 invoice-col">
                                     Teller/ Agent <hr>
                                     <address>
-                                        <strong>Full Name :</strong> {{ request()->user()->last_name }}<br>
+                                        <strong>Full Name :</strong> {{ request()->user()->first_name ." ".request()->user()->last_name }}<br>
                                         <strong>Email :</strong> {{request()->user()->email}}<br>
                                     </address>
                                 </div>

@@ -63,7 +63,7 @@ class UsersController extends Controller
 
         if ($user) {
             // User was successfully created
-             Mail::to($request->input('email'))->send(new WelcomeMail($request->input('email'), $password));
+            //  Mail::to($request->input('email'))->send(new WelcomeMail($request->input('email'), $password));
 
             return redirect('user')->with('message', 'New User has been created. An email was sent with a default password to the provided email');
         } else {

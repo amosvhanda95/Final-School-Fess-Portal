@@ -29,7 +29,9 @@ class Payment extends Model
         'depositor_name',
         'paid_at',
         'payment_status',
-        'rrn'
+        'rrn',
+        'class',
+        'term'
     ];
     public function branch()
     {
