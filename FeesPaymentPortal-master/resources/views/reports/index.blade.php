@@ -78,7 +78,7 @@
                                 
                                 <div class="col-md-12 " style="text-align: center" >
                                     <h3  style="text-align: center">Payment Reports  of  {{ $selectedSchoolName }}</h3> <br>
-                                    <p style="text-align: center">{{  $start_date }} - {{$end_date  }}</p>
+                                    <p style="text-align: center">{{  $start_date }}  -  {{$end_date  }}</p>
                                 </div>
 
                                
