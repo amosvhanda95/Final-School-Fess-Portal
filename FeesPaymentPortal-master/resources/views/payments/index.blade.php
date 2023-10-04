@@ -47,8 +47,8 @@
                                     <th>Amount</th>
                                     <th>Class </th>
                                     <th>Reg Number</th>
+                                    <th> Reference Number </th>
                                     <th> Status </th>
-                                    <th> Refference Number </th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -66,7 +66,7 @@
                                             
                                             <td>{{ $value->class }}</td>
                                             <td>{{ $value->reg_number }}</td>
-                                            <td>{{ $value->currency }}</td>
+                                            <td>{{ $value->reference_number }}</td>
                                             <td>{{ $value->payment_status }}</td>
                                             {{-- <td>{{ $value->id }}</td> --}}
                                             <td class="project-actions text-center">

@@ -44,10 +44,11 @@
                                             <option value="{{$school->id}}">{{$school->school_name}}</option>
                                         @endforeach
                                     </select>
+                                    
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label required">{{ __('Account Number') }}</label>
-                                    <input type="number" value="{{$account->account_number}}"  name="account_number" class="form-control" id="exampleInputEmail1" placeholder="50000...">
+                                    <label class="control-label ">{{ __('Account Number') }}</label>
+                                    <input type="number" required value="{{$account->account_number}}"  name="account_number" class="form-control" id="exampleInputEmail1" placeholder="50000...">
                                 </div>
 
                                 <div class="form-group">

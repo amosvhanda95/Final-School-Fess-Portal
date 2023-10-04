@@ -5,10 +5,13 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\APIController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BursarController;
 use App\Http\Controllers\SchoolsController;
 use App\Http\Controllers\BranchesController;
+use App\Http\Controllers\CrossborderPaymentController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\PassportClientController;
@@ -75,6 +78,7 @@ Route::group(['middleware'=>'auth'], function () {
         Route::get('payment/edit_capture_details/{id}', ['\App\Http\Controllers\PaymentsController', 'ediDetails']);
 
         Route::post('payment/make_payment', ['\App\Http\Controllers\PaymentsController', 'makePayment']);
+        Route::post('payment/zoumake_payment', ['\App\Http\Controllers\PaymentsController', 'zoumakePayment']);
         Route::get('payment/confirm/{id}', ['\App\Http\Controllers\PaymentsController', 'confirmPayment'] );
         Route::get('payment/confirmed/{id}', ['\App\Http\Controllers\PaymentsController', 'confirmedPayment'] );
         Route::post('payment/submit_payment', ['\App\Http\Controllers\PaymentsController', 'submitPayment'])->name('payment.submit_payment');
@@ -87,7 +91,22 @@ Route::group(['middleware'=>'auth'], function () {
         Route::get('/payment/{payment}', [PaymentsController::class,'generatePDF']);
         Route::get('/reports/{payment}', [PaymentsController::class,'generateReport']);
 
+        Route::get('/get-students', [PaymentsController::class, 'getStudents']);
+        Route::get('/get-updatestudents', [PaymentsController::class, 'refreshStudents']);
+        Route::resource('customer', CustomerController::class);
+        Route::resource('crossboader-payment', CrossborderPaymentController::class);
+        Route::post('edit_customer/{id}/edit', ['\App\Http\Controllers\CustomerController', 'update']);
+        Route::resource('crossboarder', APIController::class);
+        Route::post('/crossboarder/capture', [APIController::class, 'searchByIdNumber']);
+        Route::get('/crossboarder/capture_details/{id}', [APIController::class, 'captureDetails']);
+        Route::post('/crossboarder/proceed/', [APIController::class, 'qoutationRequest']);
+        Route::post('/crossboarder/payment', [APIController::class, 'paymentRequest']);
 
+       
 });
 
 
+Route::get('/cross/rates', [APIController::class, 'ratesRequest']);
+        
+        
+       

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreign('bank_account_id')->references('id')->on('school_bank_accounts');
             $table->double('amount');
             $table->string('amount_in_words');
-            $table->string('currency');
+    
             $table->string('customer_phone_number');
             $table->string('reg_number')->nullable();
             $table->string('semester')->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('class')->nullable();
             $table->integer('year');
             $table->string('purpose');
-            $table->date('reference_number')->nullable();
+            $table->string('reference_number');
             $table->date('paid_at')->nullable();
             $table->string('depositor_name')->nullable();
             $table->string('student_name');

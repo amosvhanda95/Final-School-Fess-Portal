@@ -54,7 +54,7 @@
                                 <div class="form-group">
                                     <label for="branch">User Type</label>
                                     <select  class="form-control " name="type" value="{{$user->type}}" required>
-                                        <option>Select User type</option>
+                                        <option selected disabled>Select User type</option>
                                         @foreach(\App\Enum\UserType::cases() as $userType)
                                             <option value="{{$userType->value}}" >{{$userType->name}}</option>
                                         @endforeach

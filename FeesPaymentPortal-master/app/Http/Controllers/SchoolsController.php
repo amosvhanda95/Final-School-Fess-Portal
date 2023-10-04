@@ -32,7 +32,7 @@ class SchoolsController extends Controller
     {
         $this->validateWith([
             'school_id' => 'required',
-            'account_number'=> 'required:numeric',
+            'account_number'=> 'required:numeric | unique:school_bank_accounts',
             'currency'=>'required'
         ]);
 
@@ -74,7 +74,7 @@ class SchoolsController extends Controller
             'school_type' => 'required|in:university,high_school',
             'status' =>'required',
             'email' => 'required|email|unique:schools,email',
-            'mobile_number'=> 'required|unique:schools|regex:/^[0-9]{10}$/',
+            'mobile_number'=> 'required|unique:schools|',
         ]);
 
         $status  = $request->input('status') == 'true' ? true : false;

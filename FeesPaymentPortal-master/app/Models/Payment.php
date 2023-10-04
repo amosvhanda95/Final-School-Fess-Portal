@@ -17,7 +17,7 @@ class Payment extends Model
         'branch_id',
         'amount',
         'amount_in_words',
-        'currency',
+        'reference_number',
         'currency_value',
         'purpose',
         'year',

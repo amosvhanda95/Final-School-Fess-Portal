@@ -59,7 +59,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <form method="post" action="/payment/make_payment" id="quickForm">
+                        <form method="post" action="/payment/zoumake_payment" id="quickForm">
                             @csrf
                             <div class="card-body">
                                 <div class="row">
@@ -80,24 +80,33 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="student_name">Student Full Name</label>
-                                                        <input type="text" placeholder="Enter Student Name"
+                                                        <input type="text" readonly placeholder="Enter Student Name"
                                                             name="student_name" class="form-control"
-                                                            value="{{ $Student->student_name}}" required>
+                                                            value="{{ $Student->firstname}}  {{ $Student->surname}}" required>
                                                         @error('student_name')
                                                             <div class="alert alert-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="reg_number">Student Registration Number</label>
-                                                        <input type="text" placeholder="Enter Student Reg number"
-                                                            name="reg_number" class="form-control" value="{{ $Student->reg_number }}" required>
+                                                        <input type="text" readonly placeholder="Enter Student Reg number"
+                                                            name="reg_number" class="form-control" value="{{ $Student->studentcode }}" required>
                                                             @error('reg_number')
+                                                            <div class="alert alert-danger">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label for="stmobilenumber">Student Phone Number</label>
+                                                        <input type="text" readonly placeholder="Enter Student Reg number"
+                                                            name="stmobilenumber" class="form-control" value="{{ $Student->mobilenumber }}" required>
+                                                            @error('stmobilenumber')
                                                             <div class="alert alert-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="amount">Amount in Figures</label>
-                                                        <input type="number" placeholder="Amount in Figures" name="amount"
+                                                        <input type="number" placeholder="200" name="amount"
                                                             class="form-control" value="{{ old('amount') }}" required>
                                                             @error('amount')
                                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -113,12 +122,12 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="depositor_name">Depositor Name</label>
-                                                        <input type="text" placeholder="Depositor Name"
+                                                        <input type="text" placeholder="Mr Chaka"
                                                             name="depositor_name" class="form-control" value="{{ old('depositor_name') }}" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="amount">Customer Phone Number</label>
-                                                        <input type="text" placeholder="Amount in words"
+                                                        <input type="text" placeholder="26377......"
                                                             name="customer_phone_number" class="form-control" value="{{ old('customer_phone_number') }}" required  >
                                                             @error('customer_phone_number')
                                                             <div class="alert alert-danger">{{ $message }}</div>

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\SchoolBankAccount;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Student;
 use Error;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -77,7 +78,7 @@ class PaymentsController extends Controller
         $RegNumber = $request->input('reg_number');
         $bankAccount = SchoolBankAccount::where('account_number', $accountNumber)->first();
         //change here to find the student in the data base 
-        $RegAccount = Payment::where('reg_number', $RegNumber)->first();
+        $RegAccount = Student::where('studentcode', $RegNumber)->first();
         if(!is_null($bankAccount)& !is_null($RegAccount) ) {
             return redirect('payment/capture_details/' . $bankAccount->id.'/'. $RegAccount ->id)->with('message', 'Bank Account found, now you can proceed');
         }
@@ -92,6 +93,7 @@ class PaymentsController extends Controller
         {
             redirect('payment/create')->withErrors(['You had skipped this stage']);
         }
+        
         else
         {
             $bankAccount = SchoolBankAccount::findOrFail($bankDetailsId);
@@ -108,7 +110,8 @@ class PaymentsController extends Controller
         {
             $bankAccount = SchoolBankAccount::findOrFail($bankDetailsId);
             //Change to match the students table
-            $Student = Payment::findOrFail($Stdid);
+            $Student = Student::findOrFail($Stdid);
+           
            return view('payments.zoucapture_details', compact('bankAccount','Student'));
         }
     }
@@ -131,11 +134,12 @@ class PaymentsController extends Controller
     {
         
         $this->validateWith([
-
-            'amount'=>'numeric:required',
+           
+            'amount'=>'numeric:required |regex:/^\d+(\.\d{1,2})?$/',
             'amount_in_words'=>'required',
             'year'=>'required',
             'customer_phone_number'=>'required',
+            
         ]);
         
 
@@ -187,9 +191,9 @@ $response = Http::withHeaders($headers)
             'student_name'=> $request->input('student_name'),
             'amount_in_words'=> $request->input('amount_in_words'),
             'currency_value'=> SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-            'currency'=>$paymentStatus,
+            'reference_number'=>$paymentSta,
             'rrn'=> $request->input('rrn'),
-            'payment_status' => $paymentSta,
+            'payment_status' => $paymentStatus,
             'customer_phone_number'=> $request->input('customer_phone_number'),
             'reg_number'=> $request->input('reg_number'),
             'semester'=> $request->input('semester'),
@@ -203,15 +207,122 @@ $response = Http::withHeaders($headers)
             'modified_by'=> request()->user()->id,
 
         ]);
+
         
+       
         $payment = Payment::where('created_by',request()->user()->id)->orderBy('id', 'DESC')->first();
         return redirect('payment/confirm/'. $payment->id);
         
-    } else {
-        // Handle the case where the response does not contain a responseCode
+        } else {
+            // Handle the case where the response does not contain a responseCode
+        
+            return $responseData ;
+        } 
+        
+    }
+
+    public function zoumakePayment(Request $request)
+
+
+    {
+        
+        $this->validateWith([
+           
+            'amount'=>'numeric:required |regex:/^\d+(\.\d{1,2})?$/',
+            'amount_in_words'=>'required',
+            'year'=>'required',
+            'customer_phone_number'=>'required',
+            
+        ]);
+        
+
+$headers = [
+    'Content-Type' => 'application/json',
+    'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
+    'x-trace-id' => 'POSB-' . uniqid()
+    ,
+];
+$schoolAccountNumber= SchoolBankAccount::find($request->input('bank_account_id'))->account_number ;
+$currency=SchoolBankAccount::find($request->input('bank_account_id'))->currency ;
+$user = request()->user()->ethics_user ;
+
+$body = [
+
+    "TellerEthixUsername" => strval($user ) ,
+    "schoolAccountNumber" =>strval($schoolAccountNumber)   ,
+    "posTransactionReference" => $request->input('rrn'),
+    "description" => $request->input('purpose'),
+    "amount" => $request->input('amount'),
+    "currency" => strval($currency) ,
+
+
+];
+
+
+
+$response = Http::withHeaders($headers)
+    ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
+
+    $responseData = json_decode($response->body(), true);
+
+   
+
+    if ($responseData && isset($responseData['responseCode'])) {
+
+        $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
+        $paymentSta = $responseData['uniqueReference'];
+        
+        Payment::create([
+            'paid_at' => Carbon::today()->toDateString(),
+            'school_id'=>$request->input('school_id'),
+            'bank_account_id'=>$request->input('bank_account_id'),
+            'branch_id'=>$request->user()->branch->id,
+            'amount'=> $request->input('amount'),
+            'student_name'=> $request->input('student_name'),
+            'amount_in_words'=> $request->input('amount_in_words'),
+            'currency_value'=> SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
+            'reference_number'=>$paymentSta,
+            'rrn'=> $request->input('rrn'),
+            'payment_status' => $paymentStatus,
+            'customer_phone_number'=> $request->input('customer_phone_number'),
+            'reg_number'=> $request->input('reg_number'),
+            'semester'=> $request->input('semester'),
+            'term'=> $request->input('term'),
+            'depositor_name'=>$request->input('depositor_name'),
+            'class'=> $request->input('class'),
+            'year'=> $request->input('year'),
+            'purpose'=> $request->input('purpose'),
+            'status'=> PaymentStatus::Captured,
+            'created_by'=>request()->user()->id,
+            'modified_by'=> request()->user()->id,
+
+        ]);
+
+        $currentDate = date('Y-m-d H:i:s');
+        $response = Http::withHeaders([
+            'AccessKey' => 'TESTING',
+            'Content-Type' => 'application/json',
+        ])->post('http://api.zou.ac.zw/bank-service/post-transaction', [
+            "amount" => $request->input('amount'),
+            "bank_account_number" =>$schoolAccountNumber,
+            "student_code" => $request->input('reg_number'),
+            "transaction_number" => $request->input('rrn'),
+            "branchdeposited" => $request->user()->branch->branch_address,
+            "txntypecode" => "ZOU001",
+            "txndate" => $currentDate,
+            "bankreference" => $paymentSta,
+            "currency" => SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
+        ]);
+        
        
-        return $responseData ;
-    } 
+        $payment = Payment::where('created_by',request()->user()->id)->orderBy('id', 'DESC')->first();
+        return redirect('payment/confirm/'. $payment->id);
+        
+            } else {
+                // Handle the case where the response does not contain a responseCode
+            
+                return $responseData ;
+            } 
 
  
         
@@ -334,8 +445,87 @@ $response = Http::withHeaders($headers)
         return view('reports.index', compact('payments', 'schools', 'start_date', 'end_date', 'school_id', 'totalPaymentZWL','totalPaymentUSD','selectedSchoolName'));
     }
     
+public function getStudents()
+    {
+        $response = Http::withHeaders([
+            'AccessKey' => 'TESTING',
+        ])->get('http://api.zou.ac.zw/bank-service/get-students');
+
+        $student_records = json_decode($response, true);
+
+if ($student_records) {
+    foreach ($student_records as $student) {
+        // Access student properties
+
         
+        $firstname = $student['firstname'];
+        $surname = $student['surname'];
+        $studentcode = $student['studentcode'];
+        $region = $student['region'];
+        $zou_id =$student['id'];
+        $mobilenumber = $student['mobilenumber'];
+
+        // Do something with each student record here
+        echo "ZOU ID: $zou_id<br>";
+        echo "First Name: $firstname<br>";
+        echo "Surname: $surname<br>";
+        echo "Student Code: $studentcode<br>";
+        echo "Region: $region<br>";
+        echo "Mobile Number: $mobilenumber<br>";
+        echo "<hr>";
+        $studentexist = Student::where('studentcode', $studentcode)->first();
+        if(!$studentexist ){
+            $student = new Student();
+            $student->firstname = $firstname;
+            $student->surname = $surname;
+            $student->studentcode = $studentcode;
+            $student->region =  $region;
+            $student->mobilenumber =  $mobilenumber;
+            $student->zou_id =  $zou_id;
+            $student->save();
+        }
         
+    }
+
+    } else {
+        echo "No student records found in the response.";
+    }
+}
+
+public function refreshStudents(){
+    
+
+// Define the request headers
+$headers = [
+    'AccessKey' => 'TESTING',
+    'Content-Type' => 'application/json',
+];
+
+// Fetch all student records from the database
+$students = Student::all();
+
+foreach ($students as $student) {
+    // Define the request body for the current student
+    $requestData = [
+        'studentCode' => $student->studentcode,
+    ];
+
+    // Make the POST request using Laravel's HTTP client
+    $response = Http::withHeaders($headers)
+        ->post('http://api.zou.ac.zw/bank-service/update-sycnzed-student-status', $requestData);
+
+    // Check the response and handle it accordingly
+    if ($response->successful()) {
+        // Success
+        echo "Success for student code: {$student->studentcode}\n";
+        echo $response->body() . "\n";
+    } else {
+        // Handle the error or retry if necessary
+        echo "Request failed for student code: {$student->studentcode}, Status: " . $response->status() . "\n";
+    }
+}
+
+}
 
 
     public function submitPayment(Request $request)

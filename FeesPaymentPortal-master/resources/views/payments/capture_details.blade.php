@@ -97,7 +97,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="reg_number">Student Registration Number</label>
-                                                        <input type="text" placeholder="Enter Student Reg number"
+                                                        <input type="text" placeholder="R158678T"
                                                             name="reg_number" class="form-control" value="{{ old('reg_number') }}" required>
                                                             @error('reg_number')
                                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -105,14 +105,14 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="amount">Amount in Figures</label>
-                                                        <input type="number" placeholder="10.00" name="amount"
+                                                        <input type="number" placeholder="200" name="amount"
                                                             class="form-control" value="{{ old('amount') }}" required>
                                                             @error('amount')
                                                             <div class="alert alert-danger">{{ $message }}</div>
                                                         @enderror  
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="amount">Amount in Words</label>
+                                                        <label for="amount_in_words">Amount in Words</label>
                                                         <input type="text" placeholder="Amount in words"
                                                             name="amount_in_words" class="form-control" value="{{ old('amount_in_words') }}" required >
                                                             @error('amount_in_words')
@@ -121,11 +121,11 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="depositor_name">Depositor Name</label>
-                                                        <input type="text" placeholder="Mr Name"
+                                                        <input type="text" placeholder="Mr Chirwa"
                                                             name="depositor_name" class="form-control" value="{{ old('depositor_name') }}"  required>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="amount">Customer Phone Number</label>
+                                                        <label for="customer_phone_number">Customer Phone Number</label>
                                                         <input type="text" placeholder="263775021912"
                                                             name="customer_phone_number" class="form-control" value="{{ old('customer_phone_number') }}" required  >
                                                             @error('customer_phone_number')
@@ -139,16 +139,16 @@
                                                             class="form-control">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="amount">Semester</label>
-                                                        <select name="semester" class="form-control" value="{{ old('semester') }}">
-                                                            <option>Select Semester</option>
+                                                        <label for="semester">Semester</label>
+                                                        <select name="semester" class="form-control" value="{{ old('semester') }}" required >
+                                                            <option disabled selected>Select Semester</option>
                                                             <option value="1st Semester">1st Semester</option>
                                                             <option value="2nd Semester">2nd Semester</option>
                 
                                                             @error('semester')
 
-                                                            <div class="alert alert-danger">{{ $message }}</div>
-                                                        @enderror
+                                                                <div class="alert alert-danger">{{ $message }}</div>
+                                                            @enderror
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
@@ -197,7 +197,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="amount">Amount in Figures</label>
-                                                        <input type="number" placeholder="Two Dollars Only"
+                                                        <input type="number" placeholder="200"
                                                             name="amount" class="form-control"
                                                             value="{{ old('amount') }}" required>
                                                     </div>
@@ -210,7 +210,7 @@
                                                     
                                                     <div class="form-group">
                                                         <label for="depositor_name">Depositor Name</label>
-                                                        <input type="text" placeholder="Depositor Name<...."
+                                                        <input type="text" placeholder="MR Chirwa"
                                                             name="depositor_name" class="form-control"
                                                             value="{{ old('depositor_name') }}" required>
                                                     </div>
@@ -234,7 +234,7 @@
                                                     <div class="form-group">
                                                         <label for="amount">Term</label>
                                                         <select name="term" class="form-control" value="{{ old('term') }}" required>
-                                                            <option>Select Term</option>
+                                                            <option selected disabled>Select Term</option>
                                                             <option value="1">1st Term</option>
                                                             <option value="2">2nd Term</option>
                                                             <option value="3">3rd Term</option>

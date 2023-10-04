@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9200b7d5361aebb427a4dee3df0fa1b8",
+    "content-hash": "28bfd41df50dbcc2b36635f2fb60cf01",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2523,6 +2523,56 @@
                 }
             ],
             "time": "2022-04-17T13:12:02+00:00"
+        },
+        {
+            "name": "mastercard/oauth1-signer",
+            "version": "v1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Mastercard/oauth1-signer-php.git",
+                "reference": "927431ad5075bb01f5ed2a3ed49f943beffc1047"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Mastercard/oauth1-signer-php/zipball/927431ad5075bb01f5ed2a3ed49f943beffc1047",
+                "reference": "927431ad5075bb01f5ed2a3ed49f943beffc1047",
+                "shasum": ""
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.2",
+                "yoast/phpunit-polyfills": "^1.0"
+            },
+            "suggest": {
+                "psr/http-message": "Allow usage of the PsrHttpMessageSigner class"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mastercard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mastercard"
+                }
+            ],
+            "description": "Zero dependency library for generating a Mastercard API compliant OAuth signature.",
+            "keywords": [
+                "mastercard",
+                "oauth1",
+                "oauth1a",
+                "openapi",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/Mastercard/oauth1-signer-php/issues",
+                "source": "https://github.com/Mastercard/oauth1-signer-php/tree/v1.1.4"
+            },
+            "time": "2022-05-05T10:27:36+00:00"
         },
         {
             "name": "masterminds/html5",

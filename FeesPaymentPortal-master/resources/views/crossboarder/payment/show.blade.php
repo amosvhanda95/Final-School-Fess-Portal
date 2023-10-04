@@ -4,14 +4,14 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Show User</h1>
+                    <h1 class="m-0">Show CrossBoader Payment</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item">
-                            <a href="#">User Section</a>
+                            <a href="#">CrossBoader Section</a>
                         </li>
-                        <li class="breadcrumb-item active">Show User</li>
+                        <li class="breadcrumb-item active">Show CrossBoader</li>
                     </ol>
                 </div>
             </div>
@@ -26,38 +26,35 @@
                         <div class="card-header">
                             <h3 class="card-title">View Fields in the Form Below</h3>
                         </div>
+                        
                        
                             <div class="card-body">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Ethics User Name</label>
-                                    <input readonly type="text" value="{{$user->ethics_user}}" name="ethics_user" required class="form-control" >
+                                    <label for="exampleInputEmail1">Transaction_Reference</label>
+                                    <input readonly type="text" value="{{$sendmoney->transaction_reference}}" name="transaction_reference" required class="form-control" >
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">First Name</label>
-                                    <input readonly type="text" value="{{$user->first_name}}" name="first_name"required class="form-control" >
+                                    <label for="exampleInputEmail1">Status</label>
+                                    <input readonly type="text" value="{{$sendmoney->status}}" name="status"required class="form-control" >
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Last Email</label>
-                                    <input readonly type="text" value="{{$user->last_name}}" name="last_name"required class="form-control"  >
+                                    <label for="exampleInputEmail1">id_from_API</label>
+                                    <input readonly type="text" value="{{$sendmoney->id_from_API}}" name="id_from_API"required class="form-control"  >
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Contact Email </label>
-                                    <input readonly type="email" value="{{$user->email}}" name="email" class="form-control"required id="exampleInputEmail1" >
+                                    <label for="exampleInputEmail1">rec_first_name</label>
+                                    <input readonly type="email" value="{{$sendmoney->rec_first_name}}"class="form-control"required id="exampleInputEmail1" >
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Address</label>
-                                    <textarea readonly name="branch_address" class="form-control" required>
-                                       {{ $user->branch->branch_address}}
+                                    <textarea readonly name="rec_surname" class="form-control" required>
+                                       {{ $sendmoney->rec_surname}}
                                     </textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">User Type </label>
-                                    <input readonly type="text" value="{{$user->type}}" name="email" class="form-control"required id="exampleInputEmail1" >
                                 </div>
                                 
                             </div>
                             <div class="card-footer">
-                                <a href="/user" type="buttton" class="btn btn-primary">Back</a>
+                                <a href="/crossboader-payment" type="buttton" class="btn btn-primary">Back</a>
                             </div>
                        
                     </div>

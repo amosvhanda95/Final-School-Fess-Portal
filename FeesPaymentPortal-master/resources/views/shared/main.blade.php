@@ -313,6 +313,43 @@
                                     </li>
                                 </ul>
                             </li>
+
+{{-- 
+                        cross boader section --}}
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon far fa-user"></i>
+                                    <p> Cross-Boarder  <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="/customer/create" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Register Customer </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/customer" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Available Customers </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/crossboarder" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Make Payment </p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="/crossboader-payment" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Payments History </p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon far fa-question-circle"></i>

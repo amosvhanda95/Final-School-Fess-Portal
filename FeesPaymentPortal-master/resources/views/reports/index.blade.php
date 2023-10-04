@@ -9,7 +9,6 @@
      justify-content: space-between;
      align-items: center;
      padding: 10px 20px; /* Adjust padding as needed */
-     
  }
  .logo img {
      max-width: 140px; /* Adjust logo width as needed */
@@ -126,7 +125,7 @@
                                         <th class="hidden-xs">Amount Paid</th>
                                         <th class="hidden-480">Date Paid</th>
                                         <th class="hidden-480">Paid By</th>
-                                        <th>School Name</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -147,7 +146,7 @@
 
                                                     <td>{{ $payment->paid_at}}</td>
                                                     <td>{{ $payment->depositor_name}}</td>
-                                                    <td>{{ $payment->school->school_name }}</td>
+                                                    
                                                 </tr>
                                             @endforeach
                                 </tbody>
@@ -170,6 +169,7 @@
         <div class="col-md-8">
             <a href="javascript:void(0);" onclick="printInvoice()" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
         </div>
+        
     </section>
 @endsection
 

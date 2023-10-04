@@ -102,8 +102,8 @@ p {
                                     Payment Details<hr>
                                     <address>
                                         
-                                        <strong>Reference : </strong>{{$payment->payment_status  }} <br>
-                                        <strong>Status : </strong>{{$payment->currency  }} <br>
+                                        <strong>Reference : </strong>{{$payment->reference_number }} <br>
+                                        <strong>Status : </strong>{{$payment->payment_status  }} <br>
                                         <strong>School Name : </strong>{{ $payment->school->school_name }}<br>
                                         <strong>Bank Account Number:</strong> {{ $payment->bankAccount->account_number }}<br>
                                         <strong>Amount  : </strong>{{ $payment->amount }} <br>
@@ -174,11 +174,6 @@ p {
                                         <i class="fas fa-edit"></i> Edit Payment
                                     </button> --}}
                                 </a>
-
-                                    
-
-                                    
-
 
                                 </div>
                             </div>
