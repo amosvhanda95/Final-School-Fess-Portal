@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Beneficiary;
 use App\Models\Payment;
 use App\Models\Customer;
 use App\Models\Sendmoney;
@@ -58,8 +59,11 @@ class APIController extends Controller
         else
         {
             $customer = Customer::findOrFail($customer);
+            $beneficiary = $customer->beneficiary()->paginate(5);
+
+           
             
-           return view('crossboarder.capture', compact('customer','id'));
+           return view('crossboarder.capture', compact('customer','id','beneficiary'));
         }
     }
     public function paymentRequest(Request $request )
@@ -82,18 +86,7 @@ class APIController extends Controller
 
         // Create an associative array with the JSON data
 
-        $validatedData = $request->validate([
-           
-
-            'rec_first_name' => 'required|string',
-            'rec_surname' => 'required|string',
-            
-            'rec_house_number'=> 'required|string',
-            'rec_area'=> 'required|string',
-           
-            'country' => 'required',
- 
-        ]);
+       
         $customerId =$request->input('user_id');
         $ReceiverPhone =$request->input('rec_phone_number');
         $customer = Customer::find($customerId);
@@ -269,6 +262,24 @@ class APIController extends Controller
        
     }
 
+    public function proceedRequest(Request $request  )
+    {
+        
+        $customer = $request->input('user_id');
+        $beneficiary = $request->input('customer_id');
+        $amount = $request->input('amount');
+        
+
+        $sender = Customer::find($customer);
+        $receiver = Beneficiary::find($beneficiary);
+
+        return view('crossboarder.confirm_payment', compact('sender','receiver','amount'));
+
+
+    }
+
+
+    //proceed was here
     public function qoutationRequest(Request $request  )
     {
         
@@ -446,7 +457,7 @@ class APIController extends Controller
         $method = 'GET';
 
        
-        $payload =  json_encode('', JSON_PRETTY_PRINT);
+        $payload =  json_encode('hello', JSON_PRETTY_PRINT);
 
         $headers = [
             'Content-Type: application/json',
@@ -476,7 +487,7 @@ class APIController extends Controller
         // Close the cURL handle
         curl_close($handle);
         $data= json_decode($result ,true);
-       
+      
 
       return  $data ;
     }

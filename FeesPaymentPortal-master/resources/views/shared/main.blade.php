@@ -316,40 +316,79 @@
 
 {{-- 
                         cross boader section --}}
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon far fa-user"></i>
-                                    <p> Cross-Boarder  <i class="fas fa-angle-left right"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="/customer/create" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Register Customer </p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="/customer" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Available Customers </p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="/crossboarder" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Make Payment </p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="/crossboader-payment" class="nav-link">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Payments History </p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon far fa-user"></i>
+                                <p> Cross-Boarder  <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <!-- Customers Dropdown -->
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Customers <i class="fas fa-angle-left right"></i></p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="/customer/create" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Register Customer</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/customer" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Available Customers</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Beneficiary <i class="fas fa-angle-left right"></i></p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="/beneficiaries/create" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Register Beneficiary</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/beneficiaries" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Available Beneficiaries</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                        
+                                <!-- Payments Dropdown -->
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Payments <i class="fas fa-angle-left right"></i></p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="/crossboarder" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Make Payment</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/crossboader-payment" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Payments History</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon far fa-question-circle"></i>

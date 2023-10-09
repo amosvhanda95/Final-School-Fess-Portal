@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Beneficiary;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends Model
 {
@@ -23,5 +24,8 @@ class Customer extends Model
     public function sendmoney()
     {
     return $this->hasMany(Sendmoney::class);
+    }
+    public function beneficiary() {
+        return $this->hasMany(Beneficiary::class);
     }
 }

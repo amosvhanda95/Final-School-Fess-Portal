@@ -19,6 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
+            $table->string('ethics_user');
             $table->string('email')->unique();
             $table->bigInteger('branch_id')->unsigned()->index();
             $table->foreign('branch_id')->references('id')->on('branches');
@@ -30,8 +31,9 @@ return new class extends Migration
         });
         User::create([
             'first_name'=>'Amos',
+            'ethics_user'=>'NDLWAL',
             'last_name'=>'Vhanda',
-            'email'=>'amosvhanda@gmail.com',
+            'email'=>'avhanda@posb.co.zw',
             'branch_id'=>'1',
             'type'=>'1',
             'password'=>Hash::make('admin'),

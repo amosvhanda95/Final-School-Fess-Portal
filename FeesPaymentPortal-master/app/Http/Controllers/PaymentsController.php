@@ -466,15 +466,10 @@ if ($student_records) {
         $mobilenumber = $student['mobilenumber'];
 
         // Do something with each student record here
-        echo "ZOU ID: $zou_id<br>";
-        echo "First Name: $firstname<br>";
-        echo "Surname: $surname<br>";
-        echo "Student Code: $studentcode<br>";
-        echo "Region: $region<br>";
-        echo "Mobile Number: $mobilenumber<br>";
-        echo "<hr>";
+        
         $studentexist = Student::where('studentcode', $studentcode)->first();
         if(!$studentexist ){
+            
             $student = new Student();
             $student->firstname = $firstname;
             $student->surname = $surname;
@@ -484,11 +479,35 @@ if ($student_records) {
             $student->zou_id =  $zou_id;
             $student->save();
         }
+        else {
+            
+            // $headers = [
+            //     'AccessKey' => 'TESTING',
+            //     'Content-Type' => 'application/json',
+            // ];
+            
+            // $data = [
+            //     'studentCode' => $studentcode,
+            // ];
+            
+            // $response = Http::withHeaders($headers)
+            //     ->post('http://api.zou.ac.zw/bank-service/update-sycnzed-student-status', $data);
+            
+            // echo $studentcode;
+            echo "ZOU ID: $zou_id<br>";
+        echo "First Name: $firstname<br>";
+        echo "Surname: $surname<br>";
+        echo "Student Code: $studentcode<br>";
+        echo "Region: $region<br>";
+        echo "Mobile Number: $mobilenumber<br>";
+        echo "<hr>";
+        }
         
     }
 
     } else {
-        echo "No student records found in the response.";
+        echo "No student records found in the response to update the database.";
+        
     }
 }
 

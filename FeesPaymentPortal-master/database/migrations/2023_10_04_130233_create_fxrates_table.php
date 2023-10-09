@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('ethics_user')->nullable();
+        Schema::create('fxrates', function (Blueprint $table) {
+            $table->id();
+            $table->string('country');
+            $table->string('currency');
+            $table->decimal('rate', 20, 6);
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('ethics_user');
-        });
+        Schema::dropIfExists('fxrates');
     }
 };
