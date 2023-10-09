@@ -157,18 +157,18 @@ p {
                             <div class="row no-print">
                                 <div class="col-12">
                                     <a href="javascript:void(0);" onclick="printInvoice()" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
-                                    <form method="post" action="{{ route('payment.submit_payment') }}">
+                                    <form method="post" action="/payment/submit_payment/{{$payment->id}}">
                                         @csrf
                                         <input type="hidden" name="payment_id" value="{{$payment->id}}">
                                         <button  type="submit" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
                                             Payment
                                         </button>
                                     </form>
-                                    <a href="/payment/{{$payment->id}}">
+                                    {{-- <a href="/payment/{{$payment->id}}">
                                     <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
                                         <i class="fas fa-download"></i> Generate PDF
                                     </button>
-                                    </a>
+                                    </a> --}}
                                     {{-- <a href="/payment/edit_capture_details/{{$payment->id}}"> 
                                     <button type="button" class="btn btn-secondary float-right" style="margin-right: 5px;">
                                         <i class="fas fa-edit"></i> Edit Payment

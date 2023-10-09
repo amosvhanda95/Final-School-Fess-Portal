@@ -82,7 +82,8 @@ Route::group(['middleware'=>'auth'], function () {
         Route::post('payment/zoumake_payment', ['\App\Http\Controllers\PaymentsController', 'zoumakePayment']);
         Route::get('payment/confirm/{id}', ['\App\Http\Controllers\PaymentsController', 'confirmPayment'] );
         Route::get('payment/confirmed/{id}', ['\App\Http\Controllers\PaymentsController', 'confirmedPayment'] );
-        Route::post('payment/submit_payment', ['\App\Http\Controllers\PaymentsController', 'submitPayment'])->name('payment.submit_payment');
+        Route::post('payment/submit_payment/{id}', ['\App\Http\Controllers\PaymentsController', 'submitPayment'])->name('payment.submit_payment');
+        
         Route::get('payments', ['\App\Http\Controllers\PaymentsController', 'index']);
         Route::get('clients', ['\App\Http\Controllers\ClientsController', 'index']);
         Route::delete('/oauth/clients/{id}',['\App\Http\Controllers\ClientsController','deleteClient'] )->middleware('auth:api');

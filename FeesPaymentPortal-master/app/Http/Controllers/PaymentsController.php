@@ -132,6 +132,7 @@ class PaymentsController extends Controller
 
 
     {
+       
         
         $this->validateWith([
            
@@ -226,6 +227,7 @@ $response = Http::withHeaders($headers)
 
     {
         
+      
         $this->validateWith([
            
             'amount'=>'numeric:required |regex:/^\d+(\.\d{1,2})?$/',
@@ -549,6 +551,7 @@ foreach ($students as $student) {
 
     public function submitPayment(Request $request)
     {
+       
 
         $payment = Payment::findOrFail($request->input('payment_id'));
        
