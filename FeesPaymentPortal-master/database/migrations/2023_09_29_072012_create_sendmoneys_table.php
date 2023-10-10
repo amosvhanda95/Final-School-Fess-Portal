@@ -31,6 +31,8 @@ return new class extends Migration
             $table->string('recipient_account_uri')->nullable();
             $table->unsignedBigInteger('customer_id');
             $table->foreign('customer_id')->references('id')->on('customers');
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->foreign('modified_by')->references('id')->on('users');
             $table->decimal('amount', 10, 2);
    
             $table->timestamps();

@@ -351,13 +351,13 @@
                                     </a>
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a href="/beneficiaries/create" class="nav-link">
+                                            <a href="/beneficiary/create" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
                                                 <p>Register Beneficiary</p>
                                             </a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="/beneficiaries" class="nav-link">
+                                            <a href="/beneficiary" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
                                                 <p>Available Beneficiaries</p>
                                             </a>

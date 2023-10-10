@@ -25,6 +25,8 @@ class Sendmoney extends Model
         'credited_amount' ,
         'principal_amount',
         'recipient_account_uri',
+        'created_by',
+        'modified_by',
         
      ];
 

@@ -35,7 +35,7 @@
                                 </ul>
                             </div>
                         @endif
-                        <form method="POST" action="{{ route('beneficiaries.store') }}">
+                        <form method="POST" action="{{ route('beneficiary.store') }}">
                             @csrf
                             <div class="card-body">
                                 <div class="form-group">

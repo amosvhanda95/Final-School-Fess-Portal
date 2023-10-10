@@ -25,6 +25,14 @@ class BeneficiaryController extends Controller
 
         return view('beneficiaries.create', compact('senders','fxRates'));
     }
+    public function create1()
+    {
+        // Retrieve a list of senders to populate the dropdown select
+        $senders = Customer::all();
+        $fxRates = Fxrate::all();
+
+        return view('beneficiaries.create', compact('senders','fxRates'));
+    }
 
     public function store(Request $request)
     {

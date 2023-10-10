@@ -92,7 +92,7 @@
             
         </div>
                             <div class="card-footer">
-                                <a href="/beneficiaries" type="buttton" class="btn btn-primary">Back</a>
+                                <a href="/beneficiary" type="buttton" class="btn btn-primary">Back</a>
                             </div>
                     </div>
                 </div>

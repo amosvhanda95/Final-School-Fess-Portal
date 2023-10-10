@@ -62,11 +62,11 @@
                                             
                     
                                             <td class="project-actions text-center">
-                                                <a class="btn btn-primary btn-sm" href="/beneficiaries/{{$value->id}}}">
+                                                <a class="btn btn-primary btn-sm" href="/beneficiary/{{$value->id}}}">
                                                     <i class="fas fas-folder"></i>
                                                     View
                                                 </a>
-                                                <a class="btn btn-info btn-sm" href="/beneficiaries/{{$value->id}}}/edit">
+                                                <a class="btn btn-info btn-sm" href="/beneficiary/{{$value->id}}}/edit">
                                                     <i class="fas fas-pencil-alt"></i>
                                                     Edit
                                                 </a>

@@ -2,23 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use Error;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Models\User;
 use App\Models\School;
 use App\Models\Payment;
+use App\Models\Student;
 use App\Enum\PaymentStatus;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\SchoolBankAccount;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\Student;
-use Error;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class PaymentsController extends Controller
 {
@@ -142,6 +143,18 @@ class PaymentsController extends Controller
             'customer_phone_number'=>'required',
             
         ]);
+
+        $validator = Validator::make($request->all(), [
+            'rrn' => 'required|unique:payments',
+            // Add other validation rules as needed
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
         
 
 $headers = [
@@ -236,6 +249,17 @@ $response = Http::withHeaders($headers)
             'customer_phone_number'=>'required',
             
         ]);
+        $validator = Validator::make($request->all(), [
+            'rrn' => 'required|unique:payments',
+            // Add other validation rules as needed
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
         
 
 $headers = [

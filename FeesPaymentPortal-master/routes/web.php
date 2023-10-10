@@ -96,7 +96,7 @@ Route::group(['middleware'=>'auth'], function () {
         Route::get('/get-students', [PaymentsController::class, 'getStudents']);
         Route::get('/get-updatestudents', [PaymentsController::class, 'refreshStudents']);
         Route::resource('customer', CustomerController::class);
-        Route::resource('/beneficiaries', BeneficiaryController::class);
+        Route::resource('/beneficiary', BeneficiaryController::class);
         Route::post('edit_beneficiary/{id}/edit', ['\App\Http\Controllers\BeneficiaryController', 'update']);
         Route::resource('crossboader-payment', CrossborderPaymentController::class);
         Route::post('edit_customer/{id}/edit', ['\App\Http\Controllers\CustomerController', 'update']);
