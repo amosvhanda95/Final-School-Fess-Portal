@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('house_number');
             $table->string('area');
             $table->string('city');
+            $table->string('occupation');
             $table->timestamps();
         });
     }

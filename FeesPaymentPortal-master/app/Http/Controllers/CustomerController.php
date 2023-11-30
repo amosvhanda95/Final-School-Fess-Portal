@@ -34,19 +34,24 @@ class CustomerController extends Controller
     {
         // Validate the form data
         $validatedData = $request->validate([
-            
             'first_name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'date_of_birth' => 'required|string|max:255',
+            'date_of_birth' => 'required|date', // You may want to use 'date' validation rule for dates
             'house_number' => 'required|string|max:255',
             'area' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'id_number' => 'required|string|max:255',
+            'id_number' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:customers',
+                'regex:/^\d{2}-\d{7}[A-Z]\d{2}$/'
+            ],
             'phone_number' => 'required|string|max:255',
-            
+            'occupation' => 'required|string',
             // Add validation rules for other fields
         ]);
-
+        
         // Create a new customer record
         $customer = new Customer($validatedData);
         $customer->save();
@@ -77,6 +82,7 @@ class CustomerController extends Controller
         $customer->date_of_birth = $request->input('date_of_birth');
         $customer->phone_number = $request->input('phone_number');
         $customer->house_number = $request->input('house_number');
+        $customer->occupation = $request->input('occupation');
         $customer->area = $request->input('area');
         $customer->city = $request->input('city');
         $customer->save();

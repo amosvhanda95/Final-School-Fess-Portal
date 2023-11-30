@@ -20,8 +20,8 @@ return new class extends Migration
             $table->boolean('status')->default(false);
             $table->bigInteger('created_by')->unsigned()->index();
             $table->bigInteger('modified_by')->unsigned()->index();
-            $table->string('email');
-            $table->string('mobile_number');
+            $table->string('email')->nullable();
+            $table->string('mobile_number')->nullable();
             $table->timestamps();
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('modified_by')->references('id')->on('users');

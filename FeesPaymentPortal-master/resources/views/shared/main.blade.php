@@ -23,6 +23,9 @@
     <link rel="stylesheet" href="{{ asset('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css') }}">
+   
+  
+
     
     <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/logo.png') }}">
@@ -92,13 +95,7 @@
             }(w, d, "zarazData", "script");
         })(window, document);
     </script>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('#myuserDataTable').DataTable();
-    });
-</script>
 
 </head>
 
@@ -599,6 +596,8 @@
     <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script>
     <script src="{{ asset('assets/dist/js/demo.js') }}"></script>
     <script src="{{ asset('assets/dist/js/pages/dashboard3.js') }}"></script>
+
+
 
 
     <script>

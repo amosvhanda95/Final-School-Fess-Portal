@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('fxrates', function (Blueprint $table) {
             $table->id();
-            $table->string('country');
-            $table->string('currency');
-            $table->decimal('rate', 20, 6);
+            $table->string('country')->nullable();
+            $table->string('country_code')->nullable();
+            $table->string('currency')->nullable();
+            $table->decimal('rate', 20, 6)->nullable();
+            $table->string('card_rate_id')->nullable();
             $table->timestamps();
         });
     }

@@ -24,7 +24,7 @@
                 <div class="col-md-6">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Update Fields in the Form Below</h3>
+                            <h3 class="card-title">Update Fields In The Form Below</h3>
                         </div>
                         <form method="post" action="/edit_beneficiary/{{ $beneficiary->id }}/edit">
                             @csrf
@@ -33,7 +33,7 @@
                                     <div class="form-group">
                                         <label class="control-label required">{{ __('Phone Number') }}</label>
                                         <input  type="text" name="recipient_account_uri" class="form-control"
-                                            placeholder="Enter City" value="{{ $beneficiary ->recipient_account_uri }}" required>
+                                            placeholder="264666 City" value="{{ $beneficiary ->recipient_account_uri }}" >
                                         @error('recipient_account_uri')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -51,6 +51,33 @@
                                     <input  type="text" name="surname" class="form-control"
                                         placeholder="Enter Surname" value="{{ $beneficiary ->rec_surname}}" required>
                                     @error('surname')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required">{{ __('BAN') }}</label>
+                                    <input  type="text" name="surname" class="form-control"
+                                        placeholder="Enter ban" value="{{ $beneficiary ->rec_ban}}" required>
+                                    @error('rec_ban')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required">{{ __('IBAN') }}</label>
+                                    <input  type="text" name="surname" class="form-control"
+                                        placeholder="Enter ban" value="{{ $beneficiary ->rec_iban}}" required>
+                                    @error('rec_iban')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required">{{ __('BIC') }}</label>
+                                    <input  type="text" name="surname" class="form-control"
+                                        placeholder="Enter bic" value="{{ $beneficiary ->rec_bic}}" required>
+                                    @error('rec_ban')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>

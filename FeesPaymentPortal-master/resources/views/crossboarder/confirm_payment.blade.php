@@ -127,7 +127,7 @@ p {
                                         <strong>House Number  : </strong>{{ $receiver->rec_house_number }} <br>
                                         <strong>Area :</strong> {{ $receiver->rec_area }} <br>
                                         <strong>City :</strong> {{ $receiver->rec_city }} <br>
-                                        <strong>Amount :</strong> {{ $amount  * $receiver->fxrate->rate}} {{ $receiver->fxrate->currency}}<br>
+                                        <strong>Amount :</strong> {{ number_format($amount * $receiver->fxrate->rate, 2) }} {{ $receiver->fxrate->currency }}<br>
                                         
                                     </address>
                                 </div>
@@ -136,7 +136,8 @@ p {
         
                                     Charges Details<hr>
                                     <address>
-                                        
+                                        <strong>Source Of Income : </strong>{{ $source_of_income  }} <br>
+                                        <strong>Purpose Of Payment : </strong>{{ $purpose_of_payment  }} <br>
                                         <strong>Principal Amount : </strong>{{ $amount  }} <br>
                                         <strong>Fees Charge : </strong>{{$amount *0.06  }} <br>
                                         
@@ -157,9 +158,12 @@ p {
                                 <div class="col-12">
                                 <form method="post" action="/payment/submit_payment">
                                     @csrf
+                                    <input type="hidden" name="source_of_income" value="{{$source_of_income}}">
+                                    <input type="hidden" name="purpose_of_payment" value="{{$purpose_of_payment}}">
                                     <input type="hidden" name="recever_id" value="{{$receiver->id}}">
                                     <input type="hidden" name="sender_id" value="{{$sender->id}}">
-                                    
+                                    <input type="hidden" name="amount" value="{{ number_format($amount * $receiver->fxrate->rate, 2, '.', '') }}">
+                                    <input type="hidden" name="currecny" value="{{ $receiver->fxrate->currency}}">
                                     <button  type="submit" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
                                         Payment
                                     </button>

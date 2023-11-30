@@ -19,6 +19,7 @@ class Customer extends Model
         'house_number',
         'area',
         'city' ,
+        'occupation',
     ];
 
     public function sendmoney()

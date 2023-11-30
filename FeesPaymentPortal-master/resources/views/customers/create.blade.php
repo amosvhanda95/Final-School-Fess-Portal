@@ -105,6 +105,29 @@
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="form-group">
+                                    <label for="occupation">{{ __('Select Occupation') }}</label>
+                                    <select id="occupation" class="form-control @error('occupation') is-invalid @enderror" name="occupation" required>
+                                        <option disabled selected value="">Please select an occupation</option> <!-- This is the unselectable option -->
+                                        <option value="General Worker">General Worker</option>
+                                        <option value="Businessman">Businessman</option>
+                                        <option value="Professional">Professional</option>
+                                        <option value="Supervisor">Supervisor</option>
+                                        <option value="Tourist">Tourist</option>
+                                        <option value="Security Guard">Security Guard</option>
+                                        <option value="House Maid">House Maid</option>
+                                        <option value="Domestic Helper">Domestic Helper</option>
+                                        <option value="House Wife">House Wife</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                
+                                    @error('occupation')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                
                                 
                             </div>
                             <div class="card-footer">

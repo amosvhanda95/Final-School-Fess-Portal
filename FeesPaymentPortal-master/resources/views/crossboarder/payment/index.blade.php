@@ -4,12 +4,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Users</h1>
+                    <h1>Crossboader-payment</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Users</li>
+                        <li class="breadcrumb-item active"><a href="/crossboarder">Crossboader-payment </a></li>
                     </ol>
                 </div>
             </div>
@@ -27,12 +27,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="row">
-                                <div class="col-md-4"><h3 class="card-title">Available Users</h3></div>
-                                <div class="col-md-8">
-                                    <a href="/user/create" class="btn btn-primary" style="float: right">Add User</a>
-                                </div>
-                            </div>
+                           
 
                         </div>
                         <div class="card-body">
@@ -40,12 +35,13 @@
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Transaction_Reference</th>
-                                    <th>Status</th>
-                                    <th>id_from_API</th>
-                                    <th>rec_first_name</th>
-                                    <th>rec_surname</th>
-                                    <th>sender_surname</th>
+                                    <th>transaction_reference</th>
+                                    <th>status</th>
+                                    <th>principal_amount</th>
+                                    <th> currency</th>
+                                    <th>sender_account_uri</th>
+                                    <th>recipient_account_uri</th>
+                                    <th>fx_rate</th>
                                   
                                     {{-- '',
          '',
@@ -64,26 +60,24 @@
                                 <tbody>
                                 @if(!empty($data) && $data->count())
                                     @foreach($data as $key => $value)
-                                        <tr style="background-color: {{ $loop->index % 2 == 0 ? 'lightgray' : 'orange' }}">
+                                        <tr style="background-color: {{ $loop->index % 2 == 0 ? 'lightgray' : 'white' }}">
                                             <td>  {{ ($data->currentpage()-1) * $data->perpage() + $key + 1 }}
                                             </td>
                                             <td>{{ $value->transaction_reference }}</td>
                                             <td>{{ $value->status }}</td>
-                                            <td>{{ $value->id_from_API }}</td>
-                                            <td>{{ $value->rec_first_name }}</td>
-                                            <td>{{ $value->rec_surname}}</td>
-                                            <td>{{ $value->customer->surname}}</td>
+                                            <td>{{ $value->principal_amount }}</td>#
+                                            <td>{{ $value->currency}} </td>
+                                            <td>{{ $value->sender_account_uri }}</td>
+                                            <td>{{ $value->recipient_account_uri}}</td>
+                                            <td>{{ $value->fx_rate}}</td>
                                            
                                             <td class="project-actions text-center">
-                                                <a class="btn btn-primary btn-sm" href="/crossboader-payment/{{$value->id}}}">
+                                         
+                                                <a class="btn btn-primary btn-sm"  href="{{ route('crossboader-payment.show', $value->id) }}">
                                                     <i class="fas fas-folder"></i>
                                                     View
                                                 </a>
-                                                
-                                                <a class="btn btn-danger btn-sm" href="#">
-                                                    <i class="fas fas-trash"></i>
-                                                    Delete
-                                                </a>
+                                             
                                             </td>
                                         </tr>
                                     @endforeach

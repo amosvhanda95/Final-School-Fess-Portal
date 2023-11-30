@@ -10,26 +10,25 @@ class Sendmoney extends Model
     use HasFactory;
     protected $fillable = [
         'transaction_reference',
-         'status',
-        'id_from_API',
-        'rec_first_name',
-        'rec_surname',
-        'rec_house_number',
-        'rec_area',
-        'rec_city',
-        'country',
-        'customer_id',
-        'amount',
-        'fees_amount',
+        'status',
         'charged_amount',
-        'credited_amount' ,
+        'credited_amount',
         'principal_amount',
         'recipient_account_uri',
+        'sender_account_uri',
+        'payment_amount',
+        'payment_origination_country',
+        'fx_rate',
+        'bank_code',
+        'payment_type',
+        'source_of_income',
+        'settlement_details',
+        'cashout_code',
         'created_by',
         'modified_by',
-        
-     ];
-
+        'currency',
+    ];
+    
 
      public function customer()
         {

@@ -105,12 +105,13 @@ Route::group(['middleware'=>'auth'], function () {
         Route::get('/crossboarder/capture_details/{id}', [APIController::class, 'captureDetails']);
         Route::post('/crossboarder/proceed/', [APIController::class, 'proceedRequest']);
         Route::post('/payment/submit_payment', [APIController::class, 'paymentRequest']);
-        
+        Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
+
        
 });
 
 
-Route::get('/cross/rates', [APIController::class, 'ratesRequest']);
+Route::get('/cross/rates', [CrossborderPaymentController::class, 'ratesRequest']);
         
         
        

@@ -34,57 +34,58 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <table id="example2" class="table table-bordered table-hover">
-                                <thead>
-                                <tr>
-                                   
-                                    <th>#</th>
-                                    <th>first_name</th>
-                                    <th>id_number</th>
-                                    <th>date_of_birth</th>
-                                    <th>phone_number</th>
-                                    <th>house_number</th>
-                                    <th>area</th>
-                                    <th>city</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @if(!empty($customer) && $customer->count())
-                                    @foreach($customer as $key => $value)
+                            <div class="table-responsive">
+                                <table id="example2" class="table table-bordered table-hover">
+                                    <thead>
                                         <tr>
-                                            <td>  {{ ($customer->currentpage()-1) * $customer->perpage() + $key + 1 }}
-                                            </td>
-                                            <td>{{ $value->first_name }}</td>
-                                            <td>{{ $value->id_number }}</td>
-                                            <td>{{ $value->date_of_birth }}</td>
-                                            <td>{{ $value->phone_number }}</td>
-                                            <td>{{ $value->house_number }}</td>
-                                            <td>{{ $value->area }}</td>
-                                            <td>{{ $value->city }}</td>
-                                            <td class="project-actions text-center">
-                                                <a class="btn btn-primary btn-sm" href="/customer/{{$value->id}}}">
-                                                    <i class="fas fas-folder"></i>
-                                                    View
-                                                </a>
-                                                <a class="btn btn-info btn-sm" href="/customer/{{$value->id}}}/edit">
-                                                    <i class="fas fas-pencil-alt"></i>
-                                                    Edit
-                                                </a>
-                                                <a class="btn btn-danger btn-sm" href="#">
-                                                    <i class="fas fas-trash"></i>
-                                                    Delete
-                                                </a>
-                                            </td>
+                                            <th>#</th>
+                                            <th>first_name</th>
+                                            <th>id_number</th>
+                                            <th>date_of_birth</th>
+                                            <th>phone_number</th>
+                                            <th>house_number</th>
+                                            <th>area</th>
+                                            <th>city</th>
+                                            <th>Action</th>
                                         </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="10">There are no data.</td>
-                                    </tr>
-                                @endif
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @if(!empty($customer) && $customer->count())
+                                            @foreach($customer as $key => $value)
+                                                <tr>
+                                                    <td>{{ ($customer->currentpage()-1) * $customer->perpage() + $key + 1 }}</td>
+                                                    <td>{{ $value->first_name }}</td>
+                                                    <td>{{ $value->id_number }}</td>
+                                                    <td>{{ $value->date_of_birth }}</td>
+                                                    <td>{{ $value->phone_number }}</td>
+                                                    <td>{{ $value->house_number }}</td>
+                                                    <td>{{ $value->area }}</td>
+                                                    <td>{{ $value->city }}</td>
+                                                    <td class="project-actions text-center">
+                                                        <div class="btn-group">
+                                                            <a class="btn btn-primary btn-sm" href="/customer/{{$value->id}}">
+                                                                <i class="fas fas-folder"></i>
+                                                                View
+                                                            </a>
+                                                            <a class="btn btn-info btn-sm" href="/customer/{{$value->id}}/edit">
+                                                                <i class="fas fas-pencil-alt"></i>
+                                                                Edit
+                                                            </a>
+                                                           
+                                                        </div>
+                                                    </td>
+                                                    
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="10">There are no data.</td>
+                                            </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                            
                             {!! $customer->links('pagination::bootstrap-4') !!}
                         </div>
                     </div>

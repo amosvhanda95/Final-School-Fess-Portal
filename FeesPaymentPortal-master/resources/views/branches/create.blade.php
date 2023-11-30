@@ -31,24 +31,37 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="control-label required">{{ __('Branch Name') }}</label>
-                                    <input type="text"  name="branch_name" class="form-control" id="exampleInputEmail1" placeholder="Enter branch name">
+                                    <input type="text" name="branch_name" class="form-control" id="branch_name" placeholder="Enter branch name" value="{{ old('branch_name') }}">
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required">{{ __('Contact Email') }}</label>
-                                    <input type="email"  name="email" class="form-control" id="exampleInputEmail1" placeholder="Enter first name">
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label required">{{ __('Contact Phone Number') }}</label>
-                                    <input type="text"  name="mobile_number" class="form-control" id="exampleInputEmail1" placeholder="Enter first name">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="exampleInputPassword1">Address</label>
-                                    <textarea name="branch_address" class="form-control">
-                                    </textarea>
-                                </div>
+                                @error('branch_name')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
                             </div>
+                            
+                            <div class="form-group">
+                                <label class="control-label required">{{ __('Contact Email') }}</label>
+                                <input type="email" name="email" class="form-control" id="email" placeholder="Enter contact email" value="{{ old('email') }}">
+                                @error('email')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="control-label required">{{ __('Contact Phone Number') }}</label>
+                                <input type="text" name="mobile_number" class="form-control" id="mobile_number" placeholder="Enter contact phone number" value="{{ old('mobile_number') }}">
+                                @error('mobile_number')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="branch_address">Address</label>
+                                <textarea name="branch_address" class="form-control" id="branch_address">{{ old('branch_address') }}</textarea>
+                                @error('branch_address')
+                                <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-primary">Submit</button>
                             </div>

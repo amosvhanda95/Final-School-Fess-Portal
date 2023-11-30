@@ -6,47 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('sendmoneys', function (Blueprint $table) {
             $table->id();
             $table->string('transaction_reference');
             $table->string('status');
-            $table->string('id_from_API')->nullable();
-            $table->string('rec_first_name')->nullable();
-            $table->string('rec_surname')->nullable();
-            $table->string('rec_house_number')->nullable();
-            $table->string('rec_area')->nullable();
-            $table->string('rec_city')->nullable();
-            $table->string('country')->nullable();
-            $table->string('fees_amount')->nullable();
             $table->string('charged_amount')->nullable();
+            $table->string('fees_amount')->nullable();
             $table->string('credited_amount')->nullable();
             $table->string('principal_amount')->nullable();
             $table->string('recipient_account_uri')->nullable();
-            $table->unsignedBigInteger('customer_id');
-            $table->foreign('customer_id')->references('id')->on('customers');
+            $table->string('sender_account_uri')->nullable(); // Add this field
+            $table->decimal('payment_amount', 10, 2)->nullable(); // Add this field
+            $table->string('payment_origination_country')->nullable(); // Add this field
+            $table->string('fx_rate')->nullable(); // Add this field
+            $table->string('bank_code')->nullable(); // Add this field
+            $table->string('currency')->nullable();
+            $table->string('payment_type')->nullable(); // Add this field
+            $table->string('source_of_income')->nullable(); // Add this field
+            $table->string('settlement_details')->nullable(); // Add this field
+            $table->string('cashout_code')->nullable(); // Add this field
+            $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users');
+            $table->unsignedBigInteger('modified_by');
             $table->foreign('modified_by')->references('id')->on('users');
-            $table->decimal('amount', 10, 2);
-   
-            $table->timestamps();
-
            
-            
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('sendmoneys');

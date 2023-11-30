@@ -37,6 +37,8 @@
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
             </div>
+           
+           
             
             <div class="form-group">
                 <label class="control-label required">{{ __('Surname') }}</label>
@@ -46,7 +48,47 @@
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
             </div>
-           
+            
+            <div class="form-group">
+                <label class="control-label required">{{ __('IBAN  (International Bank Account Number)') }}</label>
+                <input readonly type="text" name="rec_ban" class="form-control"
+                    placeholder="Enter First Name" value="{{ $beneficiary ->rec_iban }}" required>
+                @error('rec_ban')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label class="control-label required">{{ __('BIC (Bank Identifier Code)') }}</label>
+                <input readonly type="text" name="rec_bic" class="form-control"
+                    placeholder="Enter First Name" value="{{ $beneficiary ->rec_bic }}" required>
+                @error('rec_ban')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label class="control-label required">{{ __('BAN (BAN)') }}</label>
+                <input readonly type="text" name="rec_bic" class="form-control"
+                    placeholder="Enter First Name" value="{{ $beneficiary ->rec_ban }}" required>
+                @error('rec_ban')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label class="control-label required">{{ __('Payer-Payee Relationship') }}</label>
+                <input readonly type="text" name="payer_payee_relationship" class="form-control"
+                    placeholder="Enter First Name" value="{{ $beneficiary ->payer_payee_relationship }}" required>
+                @error('school_name')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label class="control-label required">{{ __('Phone Number') }}</label>
+                <input readonly type="text" name="recipient_account_uri" class="form-control"
+                    placeholder="Enter First Name" value="{{ $beneficiary ->recipient_account_uri }}" required>
+                @error('school_name')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
           
             <div class="form-group">
                 <label class="control-label required">{{ __('House Number') }}</label>

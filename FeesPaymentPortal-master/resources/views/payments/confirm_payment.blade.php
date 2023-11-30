@@ -169,10 +169,10 @@ p {
                                         <i class="fas fa-download"></i> Generate PDF
                                     </button>
                                     </a> --}}
-                                    {{-- <a href="/payment/edit_capture_details/{{$payment->id}}"> 
+                                    <a href="/payment/edit_capture_details/{{$payment->id}}"> 
                                     <button type="button" class="btn btn-secondary float-right" style="margin-right: 5px;">
                                         <i class="fas fa-edit"></i> Edit Payment
-                                    </button> --}}
+                                    </button>
                                 </a>
 
                                 </div>

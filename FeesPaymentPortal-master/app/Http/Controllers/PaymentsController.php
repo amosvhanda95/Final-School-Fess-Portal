@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Error;
+use Exception;
 use Carbon\Carbon;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -235,7 +236,7 @@ $response = Http::withHeaders($headers)
         
     }
 
-    public function zoumakePayment(Request $request)
+ public function zoumakePayment(Request $request)
 
 
     {
@@ -325,25 +326,29 @@ $response = Http::withHeaders($headers)
         ]);
 
         $currentDate = date('Y-m-d H:i:s');
-        $response = Http::withHeaders([
+        
+        
+         Http::withHeaders([
             'AccessKey' => 'TESTING',
             'Content-Type' => 'application/json',
         ])->post('http://api.zou.ac.zw/bank-service/post-transaction', [
             "amount" => $request->input('amount'),
-            "bank_account_number" =>$schoolAccountNumber,
+            "bank_account_number" =>strval($schoolAccountNumber),
             "student_code" => $request->input('reg_number'),
             "transaction_number" => $request->input('rrn'),
-            "branchdeposited" => $request->user()->branch->branch_address,
-            "txntypecode" => "ZOU001",
-            "txndate" => $currentDate,
-            "bankreference" => $paymentSta,
-            "currency" => SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
+            "branchdeposited" => "POSB",
+            "txntypecode" => "POS",
+            "txndate" => strval($currentDate),
+            "bankreference" =>strval($paymentSta) ,
+            "currency" =>strval(SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency) ,
+            "mti"=> "",
         ]);
+        
         
        
         $payment = Payment::where('created_by',request()->user()->id)->orderBy('id', 'DESC')->first();
         return redirect('payment/confirm/'. $payment->id);
-        
+        // return $responseData = $response1->body();
             } else {
                 // Handle the case where the response does not contain a responseCode
             
@@ -537,40 +542,54 @@ if ($student_records) {
     }
 }
 
-public function refreshStudents(){
-    
-
-// Define the request headers
-$headers = [
-    'AccessKey' => 'TESTING',
-    'Content-Type' => 'application/json',
-];
-
-// Fetch all student records from the database
-$students = Student::all();
-
-foreach ($students as $student) {
-    // Define the request body for the current student
-    $requestData = [
-        'studentCode' => $student->studentcode,
+public function refreshStudents() {
+    // Define the request headers
+    $headers = [
+        'AccessKey' => 'TESTING',
+        'Content-Type' => 'application/json',
     ];
 
-    // Make the POST request using Laravel's HTTP client
-    $response = Http::withHeaders($headers)
-        ->post('http://api.zou.ac.zw/bank-service/update-sycnzed-student-status', $requestData);
+    // Define the batch size
+    $batchSize = 5;
+    $offset = 0;
 
-    // Check the response and handle it accordingly
-    if ($response->successful()) {
-        // Success
-        echo "Success for student code: {$student->studentcode}\n";
-        echo $response->body() . "\n";
-    } else {
-        // Handle the error or retry if necessary
-        echo "Request failed for student code: {$student->studentcode}, Status: " . $response->status() . "\n";
-    }
+    do {
+        // Fetch the next batch of student records from the database
+        $students = Student::skip($offset)->take($batchSize)->get();
+
+        if (!$students->isEmpty()) {
+            foreach ($students as $student) {
+                // Define the request body for the current student
+                $requestData = [
+                    'studentCode' => $student->studentcode,
+                ];
+
+                // Make the POST request using Laravel's HTTP client
+                $response = Http::withHeaders($headers)
+                    ->post('http://api.zou.ac.zw/bank-service/update-sycnzed-student-status', $requestData);
+
+                // Check the response and handle it accordingly
+                if ($response->successful()) {
+                    // Success
+                    echo "Success for student code: {$student->studentcode}\n";
+                    echo $response->body() . "\n";
+                } else {
+                    // Handle the error or retry if necessary
+                    echo "Request failed for student code: {$student->studentcode}, Status: " . $response->status() . "\n";
+                }
+            }
+        } else {
+            // Handle the case where there are no students in the database
+            echo "No students found in the database.\n";
+        }
+
+        // Increment the offset to fetch the next batch of students in the next iteration
+        $offset += $batchSize;
+    } while (!$students->isEmpty());
 }
 
-}
+
+
 
 
     public function submitPayment(Request $request)
@@ -611,5 +630,78 @@ foreach ($students as $student) {
             return redirect()->back()->withErrors(['This payment cannot be processed at the moment, contact Support']);
         }
     }
+  
+    public function findSchoolIdByAccountNumber($bankAccount)
+    {
+        if ($bankAccount) {
+            // Retrieve the school_id from the SchoolBankAccount
+            return $bankAccount->school_id;
+        }
+    
+        // Handle the case where the bank account is not found
+        return null;
+    }
 
+    public function zssmakePayment(Request $request)
+{
+    try {
+
+       
+        $accountNumber = $request->input('account_number');
+        $bankAccount = SchoolBankAccount::where('account_number', $accountNumber)->first();
+       
+       
+  
+        $payment = new Payment;
+     
+        $payment->paid_at = Carbon::today()->toDateString();
+        $payment->school_id = 1;
+        $payment->bank_account_id = 1;
+        $payment->branch_id = 1;
+        $payment->amount = $request->input('amount');
+        $payment->student_name = $request->input('student_name');
+        $payment->amount_in_words = $request->input('amount_in_words');
+        $payment->currency_value = 'ZWL';
+        $payment->reference_number = $request->input('reference');
+        $payment->rrn = $request->input('rrn');
+        $payment->payment_status = $request->input('status');
+        $payment->customer_phone_number = $request->input('customer_phone_number');
+        $payment->reg_number = $request->input('reg_number');
+        $payment->semester = $request->input('semester');
+        $payment->term = $request->input('term');
+        $payment->depositor_name = $request->input('depositor_name');
+        $payment->class = $request->input('class');
+        $payment->year = $request->input('year');
+        $payment->purpose = $request->input('purpose');
+        $payment->status = PaymentStatus::Captured;
+        $payment->created_by =1;
+        $payment->modified_by = 1;
+    
+        $payment->save();
+        return response()->json(['message' => 'Payment successful', 'payment' => $payment], 200);
+        
+    } 
+
+     catch (Exception $e) {
+        return response()->json(['message' => 'Payment failed successful', 'payment' =>$e], 201);
+    }
+    
+
+    
 }
+public function fetchAndEchoData()
+    {
+        $data = DB::connection('sqlsrv')->select('SELECT * FROM mta_portal_test');
+
+        if (!empty($data)) {
+            foreach ($data as $row) {
+                // Assuming your_table has 'column_name' as one of the columns
+                echo $row->column_name . "<br>";
+            }
+        } else {
+            echo "No data found.";
+        }
+    }
+    
+}
+

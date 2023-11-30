@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Fxrate extends Model
 {
     use HasFactory;
-    protected $fillable = ['country', 'rate', 'currency'];
+    protected $fillable = ['country', 'rate', 'currency','country_code','card_rate_id'];
 }
