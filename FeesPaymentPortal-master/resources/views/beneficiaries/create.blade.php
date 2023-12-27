@@ -40,6 +40,7 @@
                                             <label for="countrySelect">Select Country:</label>
                                             <select id="countrySelect" class="form-control"
                                                 onchange="updatePaymentMethods()" name="country_id" required>
+                                                <option  value="">Please select a country</option>
                                                 <option value="ZAF" {{ old('country_id') == 'ZAF' ? 'selected' : '' }}>
                                                     South Africa
                                                 </option>
@@ -186,13 +187,13 @@
                                             <select id="customer_id"
                                                     class="form-control @error('customer_id') is-invalid @enderror"
                                                     name="customer_id" required>
-                                                <option disabled value="">Please select a sender</option>
+                                                <option  value="">Please select a sender</option>
                                                 <!-- This is the unselectable option -->
                                                 @foreach ($senders as $sender)
                                                     <option value="{{ $sender->id }}"
                                                             {{ $sender->id == old('customer_id') ? 'selected' : '' }}>
                                                         {{ $sender->first_name }} {{ $sender->surname }}
-                                                        {{ $sender->id_number }}
+                                                        {{ "(". $sender->id_number .")" }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -623,7 +624,7 @@ var paymentOptions = {
                                     // Input field for Mobile Number
                                     var mobileNumberInput = document.createElement("input");
                                     mobileNumberInput.type = "number";
-                                    mobileNumberInput.placeholder = "Mobile Number";
+                                    mobileNumberInput.placeholder = "260 1 0000 0000 ";
                                     mobileNumberInput.id = "mobileNumberInput";
                                     mobileNumberInput.name = "recipient_account_uri"; // Add name attribute
                                     mobileNumberInput.classList.add("form-control");
@@ -641,8 +642,8 @@ var paymentOptions = {
 
                                     // Function to validate Mobile Number input
                                     function validateMobileNumberInput() {
-                                        var mobileNumberValue = mobileNumberInput.value;
-                                        var regex = /^260[1-9][0-9]{8}$/;
+                                        var mobileNumberValue = mobileNumberInput.value.replace(/\s/g, '');
+                                        var regex = /^260[1-9]{1}[0-9]{8}$/;
                                         var isValid = regex.test(mobileNumberValue);
 
                                         if (mobileNumberValue.trim() === '') {
@@ -658,7 +659,7 @@ var paymentOptions = {
                                             mobileNumberInput.classList.add("is-invalid");
 
                                             // Display error message
-                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for ZMB.");
+                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for ZAmbai, expected format 260 1 0000 0000 ");
                                         } else {
                                             // Add green border to indicate correctness
                                             mobileNumberInput.classList.remove("is-invalid");
@@ -711,7 +712,7 @@ var paymentOptions = {
                                     // Input field for Mobile Number
                                     var mobileNumberInput = document.createElement("input");
                                     mobileNumberInput.type = "number";
-                                    mobileNumberInput.placeholder = "Mobile Number";
+                                    mobileNumberInput.placeholder = "258 0 0000 0000";
                                     mobileNumberInput.id = "mobileNumberInput";
                                     mobileNumberInput.name = "recipient_account_uri"; // Add name attribute
                                     mobileNumberInput.classList.add("form-control");
@@ -729,7 +730,7 @@ var paymentOptions = {
 
                                     // Function to validate Mobile Number input
                                     function validateMobileNumberInput() {
-                                        var mobileNumberValue = mobileNumberInput.value;
+                                        var mobileNumberValue = mobileNumberInput.value.replace(/\s/g, '');
                                         var regex = /^258[0-9]{9}/;
                                         var isValid = regex.test(mobileNumberValue);
 
@@ -746,7 +747,7 @@ var paymentOptions = {
                                             mobileNumberInput.classList.add("is-invalid");
 
                                             // Display error message
-                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for Mozambique.");
+                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for Mozambique, expected format 258 0 0000 0000 ");
                                         } else {
                                             // Add green border to indicate correctness
                                             mobileNumberInput.classList.remove("is-invalid");
@@ -800,7 +801,7 @@ var paymentOptions = {
                                     // Input field for Mobile Number
                                     var mobileNumberInput = document.createElement("input");
                                     mobileNumberInput.type = "number";
-                                    mobileNumberInput.placeholder = "Mobile Number";
+                                    mobileNumberInput.placeholder = "265 000 000 000";
                                     mobileNumberInput.id = "mobileNumberInput";
                                     mobileNumberInput.name = "recipient_account_uri"; // Add name attribute
                                     mobileNumberInput.classList.add("form-control");
@@ -818,7 +819,7 @@ var paymentOptions = {
 
                                     // Function to validate Mobile Number input
                                     function validateMobileNumberInput() {
-                                        var mobileNumberValue = mobileNumberInput.value;
+                                        var mobileNumberValue = mobileNumberInput.value.replace(/\s/g, '');
                                         var regex = /^265[0-9]{9}/;
                                         var isValid = regex.test(mobileNumberValue);
 
@@ -835,7 +836,7 @@ var paymentOptions = {
                                             mobileNumberInput.classList.add("is-invalid");
 
                                             // Display error message
-                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for Malawi.");
+                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for Malawi, expected format 265 000 000 000 ");
                                         } else {
                                             // Add green border to indicate correctness
                                             mobileNumberInput.classList.remove("is-invalid");
@@ -889,7 +890,7 @@ var paymentOptions = {
                                         // Input field for Mobile Number
                                         var mobileNumberInput = document.createElement("input");
                                         mobileNumberInput.type = "number";
-                                        mobileNumberInput.placeholder = "Mobile Number";
+                                        mobileNumberInput.placeholder = "92 0000 0000 00";
                                         mobileNumberInput.id = "mobileNumberInput";
                                         mobileNumberInput.name = "recipient_account_uri"; // Add name attribute
                                         mobileNumberInput.classList.add("form-control");
@@ -907,7 +908,7 @@ var paymentOptions = {
 
                                         // Function to validate Mobile Number input
                                         function validateMobileNumberInput() {
-                                            var mobileNumberValue = mobileNumberInput.value;
+                                            var mobileNumberValue = mobileNumberInput.value.replace(/\s/g, '');
                                             var regex = /^92[0-9]{10}$/;
                                             var isValid = regex.test(mobileNumberValue);
 
@@ -924,7 +925,7 @@ var paymentOptions = {
                                                 mobileNumberInput.classList.add("is-invalid");
 
                                                 // Display error message
-                                                showErrorMessage(mobileNumberContainer, "Invalid Mobile Number of Pakistan ");
+                                                showErrorMessage(mobileNumberContainer, "Invalid Mobile Number of Pakistan, expected format  92 0000 0000 00");
                                             } else {
                                                 // Add green border to indicate correctness
                                                 mobileNumberInput.classList.remove("is-invalid");
@@ -977,46 +978,143 @@ var paymentOptions = {
                 function addCardFields() {
                     var paymentFormFields = document.getElementById("paymentFormFields");
 
-                    // Add Card fields
-                    var cardNumberLabel = document.createElement("label");
-                    cardNumberLabel.textContent = "Card Number";
-                    cardNumberLabel.htmlFor = "cardNumberInput";
-                    cardNumberLabel.classList.add("col-form-label");
+// Add Card fields
+var cardNumberLabel = document.createElement("label");
+cardNumberLabel.textContent = "Card Number";
+cardNumberLabel.htmlFor = "cardNumberInput";
+cardNumberLabel.classList.add("col-form-label");
 
-                    var cardNumberInput = document.createElement("input");
-                    cardNumberInput.type = "text";
-                    cardNumberInput.placeholder = "Card Number";
-                    cardNumberInput.id = "cardNumberInput";
-                    cardNumberInput.name = "rec_pan"; // Add name attribute
-                    cardNumberInput.classList.add("form-control");
+var cardNumberInput = document.createElement("input");
+cardNumberInput.type = "text";
+cardNumberInput.placeholder = "62X 0000 0000 0000 0000";
+cardNumberInput.id = "cardNumberInput";
+cardNumberInput.name = "rec_pan"; // Add name attribute
+cardNumberInput.classList.add("form-control");
 
-                    var oldcardNumber = "{{ old('rec_pan') }}";
-                    cardNumberInput.value = oldcardNumber;
-                    paymentFormFields.appendChild(cardNumberLabel);
-                    paymentFormFields.appendChild(cardNumberInput);
+// Add event listener for input validation
+cardNumberInput.addEventListener("input", function () {
+    validateCardNumberInput();
+});
 
-                  
-                    // Append the hidden input to the parent element
-                    paymentFormFields.appendChild(hiddenInput);
+paymentFormFields.appendChild(cardNumberLabel);
+paymentFormFields.appendChild(cardNumberInput);
 
-                    // Government ID Field
-                    var GovernmentIDLabel = document.createElement("label");
-                    GovernmentIDLabel.textContent = "Government ID";
-                    GovernmentIDLabel.htmlFor = "GovernmentIDInput";
-                    GovernmentIDLabel.classList.add("col-form-label");
 
-                    var GovernmentIDInput = document.createElement("input");
-                    GovernmentIDInput.type = "text";
-                    GovernmentIDInput.placeholder = "Government ID";
-                    GovernmentIDInput.id = "GovernmentIDInput";
-                    GovernmentIDInput.name = "rec_idc"; // Add name attribute
-                    GovernmentIDInput.classList.add("form-control");
+// Add rec_idc fields
+var recIdcLabel = document.createElement("label");
+recIdcLabel.textContent = "Rec IDC";
+recIdcLabel.htmlFor = "recIdcInput";
+recIdcLabel.classList.add("col-form-label");
 
-                    var oldgvtID = "{{ old('rec_idc') }}";
-                    GovernmentIDInput.value = oldgvtID;
+var recIdcInput = document.createElement("input");
+recIdcInput.type = "text";
+recIdcInput.placeholder = "Rec IDC";
+recIdcInput.id = "recIdcInput";
+recIdcInput.name = "rec_idc"; // Add name attribute
+recIdcInput.classList.add("form-control");
 
-                    paymentFormFields.appendChild(GovernmentIDLabel);
-                    paymentFormFields.appendChild(GovernmentIDInput);
+// Add event listener for input validation
+recIdcInput.addEventListener("input", function () {
+    validateRecIdcInput();
+});
+
+paymentFormFields.appendChild(recIdcLabel);
+paymentFormFields.appendChild(recIdcInput);
+var paymentFormFields = document.getElementById("paymentFormFields");
+var form = document.getElementById("yourFormId"); // replace "yourFormId" with your actual form ID
+
+// Function to show error message beneath the input field
+function showErrorMessage(container, inputField, message) {
+    // Check if an error message element already exists
+    var existingErrorMessage = container.querySelector(".error-message");
+    if (existingErrorMessage) {
+        existingErrorMessage.textContent = message; // Update existing message
+    } else {
+        // Create a new error message element
+        var errorMessage = document.createElement("div");
+        errorMessage.textContent = message;
+        errorMessage.classList.add("error-message", "invalid-feedback");
+
+        // Insert the error message after the input field
+        container.insertBefore(errorMessage, inputField.nextSibling);
+    }
+}
+
+// Function to hide error message
+function hideErrorMessage(container) {
+    var existingErrorMessage = container.querySelector(".error-message");
+    if (existingErrorMessage) {
+        container.removeChild(existingErrorMessage);
+    }
+}
+
+// Function to validate Card Number input
+function validateCardNumberInput() {
+    var cardNumberInput = document.getElementById("cardNumberInput");
+    var cardNumberValue = cardNumberInput.value.replace(/\s/g, '');
+    //  var ibanValue = ibanInput.value.replace(/\s/g, '');
+    // Validation regex for card numbers (16 digits)
+    var regex = /^62.*[0-9]{16}(?:[0-9]{3})?$/;
+
+    var isValid = regex.test(cardNumberValue);
+
+    if (cardNumberValue.trim() === '' || !isValid) {
+        // Add red border to indicate error
+        cardNumberInput.classList.remove("is-valid");
+        cardNumberInput.classList.add("is-invalid");
+
+        // Display error message beneath the input field
+        showErrorMessage(paymentFormFields, cardNumberInput, "Invalid Card Number for China, expeceted format 62X 0000 0000 0000 0000");
+    } else {
+        // Add green border to indicate correctness
+        cardNumberInput.classList.remove("is-invalid");
+        cardNumberInput.classList.add("is-valid");
+
+        // Remove any existing error message
+        hideErrorMessage(paymentFormFields);
+    }
+}
+
+// Function to validate Rec IDC input
+function validateRecIdcInput() {
+    var recIdcInput = document.getElementById("recIdcInput");
+    var recIdcValue = recIdcInput.value;
+    // You can add any specific validation logic for rec_idc as needed
+
+    // For a string, you might want to ensure it's not empty or has a minimum length, etc.
+    var regex = /^[A-Za-z0-9]+$/;
+    var isValid = regex.test(recIdcValue);
+    
+
+    if (!isValid) {
+        // Add red border to indicate error
+        recIdcInput.classList.remove("is-valid");
+        recIdcInput.classList.add("is-invalid");
+
+        // Display error message beneath the input field
+        showErrorMessage(paymentFormFields, recIdcInput, "Rec IDC cannot be empty. Please enter a value.");
+    } else {
+        // Add green border to indicate correctness
+        recIdcInput.classList.remove("is-invalid");
+        recIdcInput.classList.add("is-valid");
+
+        // Remove any existing error message
+        hideErrorMessage(paymentFormFields);
+    }
+}
+
+// Include rec_idc validation in form submission check
+form.addEventListener("submit", function (event) {
+    validateCardNumberInput();
+    validateRecIdcInput(); // Validate rec_idc before submission
+
+    // Check if both card number and rec_idc inputs are valid
+    if (!document.getElementById("cardNumberInput").classList.contains("is-valid") || !document.getElementById("recIdcInput").classList.contains("is-valid")) {
+        event.preventDefault(); // Prevent form submission
+    }
+});
+
+ 
                 }
 
 
@@ -1123,7 +1221,7 @@ var paymentOptions = {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "XXXX ZAXX";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -1143,7 +1241,7 @@ var paymentOptions = {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex = /^[A-Z]{4}ZA.{2}.*/;
                             var isValid = regex.test(bicValue);
 
@@ -1153,14 +1251,14 @@ var paymentOptions = {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of South Africa is required and must match the pattern: /^[A-Z]{4}ZA.{2}.*/");
+                                showErrorMessage(bicContainer, "invalid BIC of South Africa, expected  XXXXZAXX");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of South Africa must match the pattern: /^[A-Z]{4}ZA.{2}.*/");
+                                showErrorMessage(bicContainer, "invalid BIC of South Africa, expected  XXXX ZAXX");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -1368,7 +1466,7 @@ var paymentOptions = {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "0000 0000 0";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -1388,7 +1486,7 @@ var paymentOptions = {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex =/^[0-9]{9}$/;
                             var isValid = regex.test(bicValue);
 
@@ -1398,14 +1496,14 @@ var paymentOptions = {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC oF USA must match the pattern:/^[0-9]{9}$/");
+                                showErrorMessage(bicContainer, "Invalid BIC format oF USA, expected formart 0000 0000 0");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC oF PAK must match the pattern:/^[0-9]{9}$/");
+                                showErrorMessage(bicContainer, "Invalid BIC format oF USA, expected formart 0000 0000 0");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -1470,7 +1568,7 @@ var paymentOptions = {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex =/^[A-Z]{2}\d{2}[0-9]{4}\d{16}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -1614,7 +1712,7 @@ var paymentOptions = {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "0000 0000 0";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -1634,7 +1732,7 @@ var paymentOptions = {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex =/^[0-9]{9}$/;
                             var isValid = regex.test(bicValue);
 
@@ -1644,14 +1742,14 @@ var paymentOptions = {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC oF USA must match the pattern:/^[0-9]{9}$/");
+                                showErrorMessage(bicContainer, "Invalid BIC oF USA, expected format 0000 0000 0 ");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC oF USA must match the pattern:/^[0-9]{9}$/");
+                                showErrorMessage(bicContainer, "Invalid BIC oF USA, expected format 0000 0000 0");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -2070,7 +2168,7 @@ var paymentOptions = {
 
                                 var bicInput = document.createElement("input");
                                 bicInput.type = "text";
-                                bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                                bicInput.placeholder = "XXX THXX";
                                 bicInput.id = "bic";
                                 bicInput.name = "rec_bic";
                                 bicInput.classList.add("form-control");
@@ -2090,7 +2188,7 @@ var paymentOptions = {
 
                                 // Function to validate BIC input
                                 function validateBicInput() {
-                                    var bicValue = bicInput.value;
+                                    var bicValue = bicInput.value.replace(/\s/g, '');
                                     var regex =/^[A-Z]{4}TH.{2}.*/;  
                                     var isValid = regex.test(bicValue);
 
@@ -2100,14 +2198,14 @@ var paymentOptions = {
                                         bicInput.classList.add("is-invalid");
 
                                         // Display error message
-                                        showErrorMessage(bicContainer, "BIC is required and must match the pattern:/^[A-Z]{4}TH.{2}.*/");
+                                        showErrorMessage(bicContainer, "Invalid Thailand BIC format, expected  XXXX THXX");
                                     } else if (!isValid) {
                                         // Add red border to indicate error
                                         bicInput.classList.remove("is-valid");
                                         bicInput.classList.add("is-invalid");
 
                                         // Display error message
-                                        showErrorMessage(bicContainer, "BIC must match the pattern:/^[A-Z]{4}TH.{2}.*/");
+                                        showErrorMessage(bicContainer, "Invalid Thailand BIC format, expected  XXX THXX");
                                     } else {
                                         // Add green border to indicate correctness
                                         bicInput.classList.remove("is-invalid");
@@ -2244,7 +2342,7 @@ var paymentOptions = {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "XXXX ZMXX";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -2264,7 +2362,7 @@ var paymentOptions = {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex =/^[A-Z]{4}ZM.{2}.*/;
                             var isValid = regex.test(bicValue);
 
@@ -2274,14 +2372,14 @@ var paymentOptions = {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC is required and must match the pattern:/^[A-Z]{4}ZM.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC  of Zambia, expected XXXX ZMXX");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC must match the pattern:/^[A-Z]{4}ZM.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC  of Zambia, expected XXXX ZMXX ");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -2420,7 +2518,7 @@ var bankNameContainer = document.createElement("div");
 
     var bicInput = document.createElement("input");
     bicInput.type = "text";
-    bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+    bicInput.placeholder = "XXXX[0]000 000";
     bicInput.id = "bic";
     bicInput.name = "rec_bic";
     bicInput.classList.add("form-control");
@@ -2440,7 +2538,7 @@ var bankNameContainer = document.createElement("div");
 
     // Function to validate BIC input
     function validateBicInput() {
-        var bicValue = bicInput.value;
+        var bicValue = bicInput.value.replace(/\s/g, '');
         var regex =/^[A-Z]{4}[0]{1}[A-Z0-9]{6}/;  
         var isValid = regex.test(bicValue);
 
@@ -2450,14 +2548,14 @@ var bankNameContainer = document.createElement("div");
             bicInput.classList.add("is-invalid");
 
             // Display error message
-            showErrorMessage(bicContainer, "BIC of India is  required and must match the pattern:/^[A-Z]{4}[0]{1}[A-Z0-9]{6}/");
+            showErrorMessage(bicContainer, "Invalid BIC of India,expected  format XXXX[0]000 000");
         } else if (!isValid) {
             // Add red border to indicate error
             bicInput.classList.remove("is-valid");
             bicInput.classList.add("is-invalid");
 
             // Display error message
-            showErrorMessage(bicContainer, "BIC of India must match the pattern:/^[A-Z]{4}[0]{1}[A-Z0-9]{6}/");
+            showErrorMessage(bicContainer, "Invalid BIC of India,expected  format XXXX[0]000 000");
         } else {
             // Add green border to indicate correctness
             bicInput.classList.remove("is-invalid");
@@ -2590,7 +2688,7 @@ bicContainer.classList.add("form-group"); // Bootstrap class for form group
 
 var bicInput = document.createElement("input");
 bicInput.type = "text";
-bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+bicInput.placeholder = "XXXX JPXX";
 bicInput.id = "bic";
 bicInput.name = "rec_bic";
 bicInput.classList.add("form-control");
@@ -2610,7 +2708,7 @@ paymentFormFields.appendChild(bicContainer);
 
 // Function to validate BIC input
 function validateBicInput() {
-    var bicValue = bicInput.value;
+    var bicValue = bicInput.value.replace(/\s/g, '');
     var regex = /^[A-Z]{4}JP.{2}.*/;
     var isValid = regex.test(bicValue);
 
@@ -2620,14 +2718,14 @@ function validateBicInput() {
         bicInput.classList.add("is-invalid");
 
         // Display error message
-        showErrorMessage(bicContainer, "BIC of Japan is required and must match the pattern: /^[A-Z]{4}JP.{2}.*/");
+        showErrorMessage(bicContainer, "BIC of Japan is required, exepected format XXXX JPXX");
     } else if (!isValid) {
         // Add red border to indicate error
         bicInput.classList.remove("is-valid");
         bicInput.classList.add("is-invalid");
 
         // Display error message
-        showErrorMessage(bicContainer, "BIC of Japan must match the pattern: /^[A-Z]{4}JP.{2}.*/");
+        showErrorMessage(bicContainer, "BIC of Japan is required, exepected format XXXX JPXX");
     } else {
         // Add green border to indicate correctness
         bicInput.classList.remove("is-invalid");
@@ -2932,7 +3030,7 @@ bicContainer.classList.add("form-group"); // Bootstrap class for form group
 
 var bicInput = document.createElement("input");
 bicInput.type = "text";
-bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+bicInput.placeholder = "XXXX AUXX";
 bicInput.id = "bic";
 bicInput.name = "rec_bic";
 bicInput.classList.add("form-control");
@@ -2952,8 +3050,8 @@ paymentFormFields.appendChild(bicContainer);
 
 // Function to validate BIC input
 function validateBicInput() {
-    var bicValue = bicInput.value;
-    var regex = /^[A-Z]{4}ZA.{2}.*/;
+    var bicValue = bicInput.value.replace(/\s/g, '');
+    var regex = /^[A-Z]{4}AU.{2}.*/;
     var isValid = regex.test(bicValue);
 
     if (bicValue.trim() === '') {
@@ -2962,14 +3060,14 @@ function validateBicInput() {
         bicInput.classList.add("is-invalid");
 
         // Display error message
-        showErrorMessage(bicContainer, "BIC of Australia is required and must match the pattern: /^[A-Z]{4}AU.{2}.*/");
+        showErrorMessage(bicContainer, "Invalid BIC of Australia, expected XXXX AUXX");
     } else if (!isValid) {
         // Add red border to indicate error
         bicInput.classList.remove("is-valid");
         bicInput.classList.add("is-invalid");
 
         // Display error message
-        showErrorMessage(bicContainer, "BIC of Australia must match the pattern: /^[A-Z]{4}AU.{2}.*/");
+        showErrorMessage(bicContainer, "Invalid BIC of Australia, expected XXXX AUXX");
     } else {
         // Add green border to indicate correctness
         bicInput.classList.remove("is-invalid");
@@ -3104,7 +3202,7 @@ function hideErrorMessage(container) {
                         // Create input element
                         var bankNameInput = document.createElement("input");
                         bankNameInput.type = "text";
-                        bankNameInput.placeholder = "Enter BAN (Bank Account Number)";
+                        bankNameInput.placeholder = "XXXX CAXX";
                         bankNameInput.id = "bankName";
                         bankNameInput.name = "rec_ban";
                         bankNameInput.classList.add("form-control");
@@ -3130,14 +3228,14 @@ function hideErrorMessage(container) {
                                 bankNameInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bankNameContainer, "Bank Account Number  of South Africa is required & Bank Account Number must be 5 to numbers long.");
+                                showErrorMessage(bankNameContainer, "Bank Account Number  of Canada is required & Bank Account Number must be 5 to numbers long.");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bankNameInput.classList.remove("is-valid");
                                 bankNameInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bankNameContainer, "Bank Account Number  of South Africa is required & Bank Account Number must be 5 to numbers long.");
+                                showErrorMessage(bankNameContainer, "Bank Account Number  of Canada Is required & Bank Account Number must be 5 to numbers long.");
                             } else {
                                 // Add green border to indicate correctness
                                 bankNameInput.classList.remove("is-invalid");
@@ -3186,7 +3284,7 @@ function hideErrorMessage(container) {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "XXXX CAXX"
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -3206,7 +3304,7 @@ function hideErrorMessage(container) {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex = /^[A-Z]{4}CA.{2}.*/;
                             var isValid = regex.test(bicValue);
 
@@ -3216,14 +3314,15 @@ function hideErrorMessage(container) {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Canada is required and must match the pattern: /^[A-Z]{4}CA.{2}.*/");
-                            } else if (!isValid) {
+                                showErrorMessage(bicContainer, "Invalid BIC of Canada, expected format XXXX CAXX ");
+                            } else if (!isValid && isValid.length !== 8) {
+                                
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Canada is required and must match the pattern: /^[A-Z]{4}CA.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Canada, expected format XXXX CAXX");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -3357,7 +3456,7 @@ function hideErrorMessage(container) {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "000";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -3377,7 +3476,7 @@ function hideErrorMessage(container) {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex = /^[0-9]{3}/;
                             var isValid = regex.test(bicValue);
 
@@ -3387,14 +3486,14 @@ function hideErrorMessage(container) {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Hong Kong is required and must match the pattern: /^[0-9]{3}/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Hong Kong, expected 000");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Hong Kong is required and must match the pattern: /^[0-9]{3}/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Hong Kong, expected 000");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -3528,7 +3627,7 @@ function hideErrorMessage(container) {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "XXXX SGXX";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -3548,7 +3647,7 @@ function hideErrorMessage(container) {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex = /^[A-Z]{4}SG.{2}.*/;
                             var isValid = regex.test(bicValue);
 
@@ -3558,14 +3657,14 @@ function hideErrorMessage(container) {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Singapore is required and must match the pattern: /^[A-Z]{4}SG.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Singapore, expected  is XXXX SGXX");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Singapore is required and must match the pattern: /^[A-Z]{4}SG.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Singapore, expected  is XXXX SGXX");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -3699,7 +3798,7 @@ function hideErrorMessage(container) {
 
                         var bicInput = document.createElement("input");
                         bicInput.type = "text";
-                        bicInput.placeholder = "Enter BIC (Bank Identifier Code)";
+                        bicInput.placeholder = "XXXX MYXX";
                         bicInput.id = "bic";
                         bicInput.name = "rec_bic";
                         bicInput.classList.add("form-control");
@@ -3719,7 +3818,7 @@ function hideErrorMessage(container) {
 
                         // Function to validate BIC input
                         function validateBicInput() {
-                            var bicValue = bicInput.value;
+                            var bicValue = bicInput.value.replace(/\s/g, '');
                             var regex = /^[A-Z]{4}MY.{2}.*/;
                             var isValid = regex.test(bicValue);
 
@@ -3729,14 +3828,14 @@ function hideErrorMessage(container) {
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Malaysia is required and must match the pattern: /^[A-Z]{4}MY.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Malaysia, expected format is XXXX MYXX");
                             } else if (!isValid) {
                                 // Add red border to indicate error
                                 bicInput.classList.remove("is-valid");
                                 bicInput.classList.add("is-invalid");
 
                                 // Display error message
-                                showErrorMessage(bicContainer, "BIC of Malaysia is required and must match the pattern: /^[A-Z]{4}MY.{2}.*/");
+                                showErrorMessage(bicContainer, "Invalid BIC of Malaysia, expected format is XXXX MYXX");
                             } else {
                                 // Add green border to indicate correctness
                                 bicInput.classList.remove("is-invalid");
@@ -3863,7 +3962,7 @@ function validateDynamicInput(input) {
 // Function to validate IBAN
 function validateIban(input, value) {
     var regex = /^AE[0-9]{21}$/; // Replace with your IBAN regex
-    validateField(input, value, regex, "Enter a valid United Arab Emirates IBAN .AE[0-9]{21}");
+    validateField(input, value, regex, "Enter a valid United Arab Emirates IBAN, expected AE 0000 0000 0000 0000 0000 0");
 }
 
 // Function to validate IDC
@@ -3993,7 +4092,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^AE[0-9]{21}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -4064,7 +4163,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = " GB00 XXXX 0000 0000 0000 00";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4080,7 +4179,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^GB[0-9]{2}[A-Z]{4}[0-9]{14}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -4096,7 +4195,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid GBR IBAN. and must match the pattern: /^GB[0-9]{2}[A-Z]{4}[0-9]{14}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid United Kingdom IBAN, expected GB00 XXXX 0000 0000 0000 00");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4151,7 +4250,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "PL 0000 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4167,7 +4266,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^PL\d{20}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -4183,7 +4282,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid POL IBAN. and must match the pattern: /^PL\d{20}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid POL IBAN, extected formt PL 0000 0000 0000 0000 0000 ");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4238,7 +4337,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "CH 0000 0000 0000 0000 000 XX";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4254,7 +4353,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^CH[0-9]{19}[A-Za-z0-9]{2}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -4270,7 +4369,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid CHE IBAN. and must match the pattern: /^CH[0-9]{19}[A-Za-z0-9]{2}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid CHE IBAN, expected CH 0000 0000 0000 0000 000 XX");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4326,7 +4425,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "AD00 0000 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4342,7 +4441,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^AD[0-9]{22}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -4358,7 +4457,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid ADO IBAN. and must match the pattern: /^AD[0-9]{22}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Andorra IBAN, expected format AD00 0000 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4414,7 +4513,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "AT00 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4430,8 +4529,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^AT[0-9]{20}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^AT[0-9]{18}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4446,7 +4545,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid AUT IBAN. and must match the pattern: /^AT[0-9]{20}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Austria IBAN, expected format AT00 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4502,7 +4601,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "BE00 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4518,8 +4617,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^BE[0-9]{16}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^BE[0-9]{14}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4534,7 +4633,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid BEL IBAN. and must match the pattern: /^BE[0-9]{16}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Belgium IBAN, expected format BE00 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4589,7 +4688,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "HR00 0000 0000 0000 0000 0";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4605,8 +4704,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^HR[0-9]{21}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^HR[0-9]{19}/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4621,7 +4720,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid HRV IBAN. and must match the pattern: /^HR[0-9]{21}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Croatia IBAN, expected format HR00 0000 0000 0000 0000 0");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4676,7 +4775,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "CY00 0000 0000 XXXX XXXX XXXX XXXX";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4692,8 +4791,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^CY[0-9]{10}[A-Z0-9]{28}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^CY[0-9]{10}[A-Z,0-9]{16}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4708,7 +4807,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid CYP IBAN. and must match the pattern: /^CY[0-9]{10}[A-Z0-9]{28}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Cyprus IBAN, expected format CY00 0000 0000 XXXX XXXX XXXX XXXX");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4763,7 +4862,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = " EE00 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4779,8 +4878,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^EE[0-9]{20}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^EE[0-9]{18}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4795,7 +4894,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid EST IBAN. and must match the pattern: /^EE[0-9]{20}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Estonia IBAN, expected format EE00 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4850,7 +4949,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "FI00 0000 0000 0000 00";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4866,8 +4965,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^FI[0-9]{18}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^FI[0-9]{16}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4882,7 +4981,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid FIN IBAN. and must match the pattern: /^FI[0-9]{18}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Finland IBAN, expected format FI00 0000 0000 0000 00");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -4937,7 +5036,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "FR00 000 0000 000X XXXX XXXX XX00";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -4953,8 +5052,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^FR[0-9]{12}[A-Z0-9]{11}[0-9]{2}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, ''); 
+                                                var regex = /^FR[0-9]{12}[A-Z,0-9]{11}[0-9]{2}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -4969,7 +5068,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid FRA IBAN. and must match the pattern: /^FR[0-9]{12}[A-Z0-9]{11}[0-9]{2}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid France IBAN, expected format FR00 000 0000 000X XXXX XXXX XX00");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5024,7 +5123,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "DE00 0000 0000 0000 0000 00";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5040,8 +5139,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^DE[0-9]{22}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^DE[0-9]{20}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5056,7 +5155,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid DEU IBAN. and must match the pattern: /^DE[0-9]{22}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Germany IBAN, expected format DE00 0000 0000 0000 0000 00");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5111,7 +5210,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "GR0 0000 0000 XXXX XXXX XXXX XXXX";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5127,8 +5226,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^GR[0-9]{9}[A-Z0-9]{27}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^GR[0-9]{9}[A-Z,0-9]{16}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5143,7 +5242,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid GRC IBAN. and must match the pattern: /^GR[0-9]{9}[A-Z0-9]{27}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Greece IBAN, expected format GR0 0000 0000 XXXX XXXX XXXX XXXX");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5198,7 +5297,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "IE 00XX XX00 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5214,7 +5313,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^IE[0-9]{2}[A-Z]{4}[0-9]{14}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -5230,7 +5329,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid IRL IBAN. and must match the pattern: /^IE[0-9]{2}[A-Z]{4}[0-9]{14}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Ireland IBAN, expected format IE 00XX XX00 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5285,7 +5384,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "IT0 0X00 0000 0000 XXXX XXXX XXXX";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5301,8 +5400,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^IT[0-9]{2}[A-Z][0-9]{10}[A-Z0-9]{12}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^IT[0-9]{2}[A-Z]{1}[0-9]{10}[A-Z,0-9]{12}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5317,7 +5416,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid ITA IBAN. and must match the pattern: /^IT[0-9]{2}[A-Z][0-9]{10}[A-Z0-9]{12}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Italy IBAN, expected format IT0 0X00 0000 0000 XXXX XXXX XXXX");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5372,7 +5471,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "LV00 XXXX 0000 0000 0000 0";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5388,7 +5487,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^LV[0-9]{2}[A-Z]{4}[0-9]{13}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -5404,7 +5503,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid LVA IBAN. and must match the pattern: /^LV[0-9]{2}[A-Z]{4}[0-9]{13}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Latvia IBAN, expected format LV00 XXXX 0000 0000 0000 0");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5459,7 +5558,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "LT00 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5475,8 +5574,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^LT[0-9]{20}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^LT[0-9]{18}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5491,7 +5590,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid LTU IBAN. and must match the pattern: /^LT[0-9]{20}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid LTU IBAN, expected format LT00 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5546,7 +5645,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "LU0 0000X XXXX XXXX XXXX";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5562,8 +5661,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^LU[0-9]{5}[A-Z0-9]{20}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^LU[0-9]{5}[A-Z,0-9]{13}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5578,7 +5677,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid LUX IBAN. and must match the pattern: /^LU[0-9]{5}[A-Z0-9]{20}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Luxembourg IBAN, expected format LU0 0000X XXXX XXXX XXXX");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5633,7 +5732,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "MT0 0XXX X000 00XX XXXX XXXX XXXX XXXX";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5649,8 +5748,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^MT[0-9]{2}[A-Z]{4}[0-9]{5}[A-Z0-9]{31}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^MT[0-9]{2}[A-Z]{4}[0-9]{5}[A-Z,0-9]{18}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5665,7 +5764,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid MLT IBAN. and must match the pattern: /^MT[0-9]{2}[A-Z]{4}[0-9]{5}[A-Z0-9]{31}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid MLT IBAN, expected format MT0 0XXX X000 00XX XXXX XXXX XXXX XXXX");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5720,7 +5819,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "MC0 0000 0000 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5736,8 +5835,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^MC[0-9]{27}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^MC[0-9]{25}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5752,7 +5851,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid MCO IBAN. and must match the pattern: /^MC[0-9]{27}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Monaco IBAN, expected format MC0 0000 0000 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5807,7 +5906,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "NL00 XXXX 0000 0000 00";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5823,7 +5922,7 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
                                                 var regex = /^NL[0-9]{2}[A-Z]{4}[0-9]{10}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
@@ -5839,7 +5938,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid NLD IBAN. and must match the pattern: /^NL[0-9]{2}[A-Z]{4}[0-9]{10}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Netherlands IBAN, expected format NL00 XXXX 0000 0000 00");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5894,7 +5993,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "PT00 0000 0000 0000 0000 0000 0";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5910,8 +6009,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^PT[0-9]{25}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^PT[0-9]{23}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -5926,7 +6025,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid PRT IBAN. and must match the pattern: /^PT[0-9]{25}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Portugal IBAN, expected format PT00 0000 0000 0000 0000 0000 0");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -5981,7 +6080,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "SM0 0X00 0000 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -5997,8 +6096,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^SM[0-9]{2}[A-Z][0-9]{22}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^SM[0-9]{2}[A-Z]{1}[0-9]{22}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -6013,7 +6112,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid SMR IBAN. and must match the pattern: /^SM[0-9]{2}[A-Z][0-9]{22}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid San Marino IBAN, expected format SM0 0X00 0000 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -6068,7 +6167,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "SK00 0000 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -6084,8 +6183,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex = /^SK[0-9]{24}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex = /^SK[0-9]{22}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -6100,7 +6199,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid SVK IBAN. and must match the pattern: /^SK[0-9]{24}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Slovak Republic IBAN, expected format SK00 0000 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -6151,7 +6250,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "SI0 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -6167,8 +6266,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex =/^SI[0-9]{19}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, ''); 
+                                                var regex =/^SI[0-9]{17}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -6183,7 +6282,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid SVN IBAN. and must match the pattern:/^SI[0-9]{19}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Slovenia IBAN, expected format SI0 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -6234,7 +6333,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "ES 0000 0000 0000 0000 0000 00";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -6248,10 +6347,11 @@ function hideErrorMessage(container) {
                                             ibanContainer.appendChild(ibanInput);
                                             paymentFormFields.appendChild(ibanContainer);
 
+                                            
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex =/^ES[0-9]{24}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, ''); // Remove spaces from the input value
+                                                var regex = /^ES[0-9]{22}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -6266,7 +6366,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid ESP IBAN. and must match the pattern:/^ES[0-9]{24}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid IBAN, expected format ES 0000 0000 0000 0000 0000 00");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -6276,6 +6376,7 @@ function hideErrorMessage(container) {
                                                     hideErrorMessage(ibanContainer);
                                                 }
                                             }
+
 
                                             // Function to show error message
                                             function showErrorMessage(container, message) {
@@ -6317,7 +6418,7 @@ function hideErrorMessage(container) {
                                             // Create input element
                                             var ibanInput = document.createElement("input");
                                             ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
+                                            ibanInput.placeholder = "VA 0000 0000 0000 0000 0000";
                                             ibanInput.id = "iban";
                                             ibanInput.name = "rec_iban";
                                             ibanInput.classList.add("form-control");
@@ -6333,8 +6434,8 @@ function hideErrorMessage(container) {
 
                                             // Function to validate ibanInput
                                             function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.trim();
-                                                var regex =/^VA[0-9]{22}$/; // Adjust the regex as needed for IBAN validation
+                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                                var regex =/^VA[0-9]{20}$/; // Adjust the regex as needed for IBAN validation
 
                                                 if (ibanValue === '') {
                                                     // Add red border to indicate error
@@ -6349,7 +6450,7 @@ function hideErrorMessage(container) {
                                                     ibanInput.classList.add("is-invalid");
 
                                                     // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid VAT IBAN. and must match the pattern:/^VA[0-9]{22}$/");
+                                                    showErrorMessage(ibanContainer, "Please enter a valid Vatican City IBAN, expected format VA 0000 0000 0000 0000 0000");
                                                 } else {
                                                     // Add green border to indicate correctness
                                                     ibanInput.classList.remove("is-invalid");
@@ -6410,6 +6511,7 @@ function hideErrorMessage(container) {
 
                     var paymentMethodSelect = document.getElementById("paymentMethodSelect");
                     var selectedPaymentMethod = paymentMethodSelect.value;
+                   
 
                     alert("Form submitted!\nSelected Country Code: " + selectedCountry + "\nSelected Payment Method: " +
                         mapPaymentOptionToText(selectedPaymentMethod));

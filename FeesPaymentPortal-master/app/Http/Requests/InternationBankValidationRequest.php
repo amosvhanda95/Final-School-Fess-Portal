@@ -27,6 +27,7 @@ class InternationBankValidationRequest extends FormRequest
     {
         $id = $this->input('country_id'); // Replace 'id' with the actual name of your form input
         $paymentmethod = $this->input('payment_method');
+        $iban = $this->input('rec_iban');
 
         
         
@@ -43,31 +44,35 @@ $validationRules = [];
 // IBAN Validation Rules
 $ibanValidationRules = array(
     'ADO' => '/^AD[0-9]{22}$/',
-    'AUT' => '/^AT[0-9]{20}$/',
-    'BEL' => '/^BE[0-9]{16}$/',
-    'HRV' => '/^HR[0-9]{21}$/',
-    'CYP' => '/^CY[0-9]{10}[A-Z0-9]{28}$/',
-    'EST' => '/^EE[0-9]{20}$/',
-    'FIN' => '/^FI[0-9]{18}$/',
+    'AUT' => '/^AT[0-9]{18}$/',
+    'BEL' => '/^BE[0-9]{14}$/',
+    'HRV' => '/^HR[0-9]{19}$/',
+    'CYP' => '/^CY[0-9]{10}[A-Z0-9]{16}$/',
+    'EST' => '/^EE[0-9]{18}$/',
+    'FIN' => '/^FI[0-9]{16}$/',
     'FRA' => '/^FR[0-9]{12}[A-Z0-9]{11}[0-9]{2}$/',
-    'DEU' => '/^DE[0-9]{22}$/',
-    'GRC' => '/^GR[0-9]{9}[A-Z0-9]{27}$/',
+    'DEU' => '/^DE[0-9]{20}$/',
+    'GRC' => '/^GR[0-9]{9}[A-Z0-9]{16}$/',
     'IRL' => '/^IE[0-9]{2}[A-Z]{4}[0-9]{14}$/',
-    'ITA' => '/^IT[0-9]{2}[A-Z][0-9]{10}[A-Z0-9]{12}$/',
+    'ITA' => '/^IT[0-9]{2}[A-Z]{1}[0-9]{10}[A-Z0-9]{12}$/',
     'LVA' => '/^LV[0-9]{2}[A-Z]{4}[0-9]{13}$/',
-    'LTU' => '/^LT[0-9]{20}$/',
-    'LUX' => '/^LU[0-9]{5}[A-Z0-9]{20}$/',
-    'MLT' => '/^MT[0-9]{2}[A-Z]{4}[0-9]{5}[A-Z0-9]{31}$/',
-    'MCO' => '/^MC[0-9]{27}$/',
+    'LTU' => '/^LT[0-9]{18}$/',
+    'LUX' => '/^LU[0-9]{5}[A-Z0-9]{13}$/',
+    'MLT' => '/^MT[0-9]{2}[A-Z]{4}[0-9]{5}[A-Z0-9]{18}$/',
+    'MCO' => '/^MC[0-9]{25}$/',
     'NLD' => '/^NL[0-9]{2}[A-Z]{4}[0-9]{10}$/',
-    'PRT' => '/^PT[0-9]{25}$/',
-    'SMR' => '/^SM[0-9]{2}[A-Z][0-9]{22}$/',
-    'SVK' => '/^SK[0-9]{24}$/',
-    'SVN' => '/^SI[0-9]{19}$/',
-    'ESP' => '/^ES[0-9]{24}$/',
-    'VAT' => '/^VA[0-9]{22}$/',
+    'PRT' => '/^PT[0-9]{23}$/',
+    'SMR' => '/^SM[0-9]{2}[A-Z]{1}[0-9]{22}$/',
+    'SVK' => '/^SK[0-9]{22}$/',
+    'SVN' => '/^SI[0-9]{17}$/',
+    'ESP' => '/^ES[0-9]{22}$/',
+    'VAT' => '/^VA[0-9]{20}$/',
 );
+
 if (isset($ibanValidationRules[$countryCode])) {
+    // Trim spaces from the IBAN input
+    $iban = str_replace(' ', '', $iban);
+
     // Apply IBAN validation rule for the specified country code
     $validationRules['rec_iban'] = ['required', 'regex:' . $ibanValidationRules[$countryCode]];
 }

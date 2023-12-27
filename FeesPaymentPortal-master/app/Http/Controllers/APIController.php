@@ -946,7 +946,9 @@ class APIController extends Controller
                             "card_rate_id" => $receiver->fxrate->card_rate_id,
                             "payment_amount" => [
                                 "amount" =>   $amount,
-                                "currency" => $receivecurrecny,
+                                "currency" => $receiver->fxrate,
+
+                               
                             ],
                             "fx_type" => [
                                 "reverse" => [
@@ -968,27 +970,42 @@ class APIController extends Controller
                             ],
                             "recipient" => [
                                 "first_name" => $recipientFirstName,
-                                "last_name" =>  $recipientLastName ,
-                                
+                                "last_name" => $recipientLastName,
+                            
                                 "address" => [
-                                    "line1" => $receiver_house_number ." ".$receiver_address_area,
+                                    "line1" => $receiver_house_number . " " . $receiver_address_area,
                                     "city" => $receiver_sender_city,
-                                    "country_subdivision" =>$receiver->rec_country_subdivision,
-                                    "country" =>$receiver->fxrate->country_code,
+                                    "country_subdivision" => $receiver->rec_country_subdivision,
+                                    "country" => $receiver->fxrate->country_code,
                                     "postal_code" => $receiver->rec_postal_code,
                                 ],
-                               
-                               
+                            
+                                "government_ids[]" => [
+                                    [
+                                        "government_id_uri" => $receiver->idc,
+                                    ],
+                                ],
+                            
                                 "nationality" => $receiver->fxrate->country_code,
-                               
                             ],
+                            
 
                             "payment_origination_country" => "ZWE",
                             "purpose_of_payment" =>  $purpose_of_payment,
                             "source_of_income" => $source_of_income,
                             "payment_type" => "P2P",
+                            "additional_data" => [
+                                'data_field' => [
+                                    [
+                                        "name" => '701',
+                                        "value" => $receiver->fxrate->country_code,
+                                    ], 
+                                ],
+
+                            ]
                             
                         ]
+                    
                     ];
                 }
                 elseif (in_array($receiver->fxrate->country_code, ['ARE'])) {
@@ -1110,36 +1127,36 @@ class APIController extends Controller
                 $user = request()->user();
         
                
-                $payment = new Sendmoney();
-                $payment->transaction_reference = $responseData['payment']['transaction_reference'];
-                $payment->status = $responseData['payment']['status'];
-                $payment->fees_amount = $responseData['payment']['fees_amount']['amount'];
-                $payment->charged_amount = $responseData['payment']['charged_amount']['amount'];
-                $payment->credited_amount = $responseData['payment']['credited_amount']['amount'];
-                $payment->principal_amount = $responseData['payment']['principal_amount']['amount'];
-                $payment->currency = $responseData['payment']['principal_amount']['currency'];
-                $payment->sender_account_uri = $responseData['payment']['sender_account_uri'];
-                $payment->recipient_account_uri = $responseData['payment']['recipient_account_uri'];
-                $payment->payment_amount = $responseData['payment']['payment_amount']['amount'];
-                $payment->payment_origination_country = $responseData['payment']['payment_origination_country'];
-                $payment->fx_rate = $responseData['payment']['fx_rate'];
+                // $payment = new Sendmoney();
+                // $payment->transaction_reference = $responseData['payment']['transaction_reference'];
+                // $payment->status = $responseData['payment']['status'];
+                // $payment->fees_amount = $responseData['payment']['fees_amount']['amount'];
+                // $payment->charged_amount = $responseData['payment']['charged_amount']['amount'];
+                // $payment->credited_amount = $responseData['payment']['credited_amount']['amount'];
+                // $payment->principal_amount = $responseData['payment']['principal_amount']['amount'];
+                // $payment->currency = $responseData['payment']['principal_amount']['currency'];
+                // $payment->sender_account_uri = $responseData['payment']['sender_account_uri'];
+                // $payment->recipient_account_uri = $responseData['payment']['recipient_account_uri'];
+                // $payment->payment_amount = $responseData['payment']['payment_amount']['amount'];
+                // $payment->payment_origination_country = $responseData['payment']['payment_origination_country'];
+                // $payment->fx_rate = $responseData['payment']['fx_rate'];
                 
-                // Check if bank_code exists in $responseData before setting it
-                if (isset($responseData['payment']['bank_code'])) {
-                    $payment->bank_code = $responseData['payment']['bank_code'];
-                } else {
-                    // Handle the case where bank_code is not available
-                    $payment->bank_code = null; // or set it to a default value, if necessary
-                }
+                // // Check if bank_code exists in $responseData before setting it
+                // if (isset($responseData['payment']['bank_code'])) {
+                //     $payment->bank_code = $responseData['payment']['bank_code'];
+                // } else {
+                //     // Handle the case where bank_code is not available
+                //     $payment->bank_code = null; // or set it to a default value, if necessary
+                // }
                 
-                $payment->payment_type = $responseData['payment']['payment_type'];
-                $payment->source_of_income = $responseData['payment']['source_of_income'];
-                $payment->settlement_details = $responseData['payment']['settlement_details']['amount'];
-                $payment->cashout_code = $responseData['payment']['cashout_code'];
-                $payment->created_by = $user->id;
-                $payment->modified_by = $user->id;
-                $payment->created_at = now();
-                $payment->save();
+                // $payment->payment_type = $responseData['payment']['payment_type'];
+                // $payment->source_of_income = $responseData['payment']['source_of_income'];
+                // $payment->settlement_details = $responseData['payment']['settlement_details']['amount'];
+                // $payment->cashout_code = $responseData['payment']['cashout_code'];
+                // $payment->created_by = $user->id;
+                // $payment->modified_by = $user->id;
+                // $payment->created_at = now();
+                // $payment->save();
                  
                 // return redirect('/crossboader-payment')->with('message','Payment has been Submited Successfully');
                  return $responseData;  

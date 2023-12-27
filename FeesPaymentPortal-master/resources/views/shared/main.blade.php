@@ -234,7 +234,7 @@
                                             <p>Add new Branch</p>
                                         </a>
                                     </li>
-
+                                    
                                     <li class="nav-item">
                                         <a href="/branch" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
@@ -379,6 +379,35 @@
                                             <a href="/crossboader-payment" class="nav-link">
                                                 <i class="far fa-circle nav-icon"></i>
                                                 <p>Payments History</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon far fa-money-bill-alt"></i>
+                                <p>Loan Application <i class="fas fa-angle-left right"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <!-- Loan Applications Dropdown -->
+                                <li class="nav-item has-treeview">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Loan Applications <i class="fas fa-angle-left right"></i></p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('loan-application.create') }}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Submit Application</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('loan-application.index') }}" class="nav-link">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Application History</p>
                                             </a>
                                         </li>
                                     </ul>

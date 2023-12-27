@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
-use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BursarController;
 use App\Http\Controllers\SchoolsController;
 use App\Http\Controllers\BranchesController;
-use App\Http\Controllers\CrossborderPaymentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PaymentsController;
+use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\PassportClientController;
+use App\Http\Controllers\LoanApplicationController;
+use App\Http\Controllers\CrossborderPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,6 +108,7 @@ Route::group(['middleware'=>'auth'], function () {
         Route::post('/payment/submit_payment', [APIController::class, 'paymentRequest']);
         Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
 
+        Route::resource('loan-application', LoanApplicationController::class);
        
 });
 
@@ -114,4 +116,4 @@ Route::group(['middleware'=>'auth'], function () {
 Route::get('/cross/rates', [CrossborderPaymentController::class, 'ratesRequest']);
         
         
-       
+
