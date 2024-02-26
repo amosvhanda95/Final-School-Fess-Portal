@@ -110,6 +110,8 @@ p {
                                         <strong>House Number  : </strong>{{ $sender->house_number }} <br>
                                         <strong>Area :</strong> {{ $sender->area }} <br>
                                         <strong>City :</strong> {{ $sender->city }} <br>
+                                        <strong>BAN (Bank Account Number) :</strong> {{ $sender->city }} <br>
+                                        <strong>BIC (Bank Identifier Code) :</strong> {{ $sender->city }} <br>
                                         
                                         
                                     </address>
@@ -128,7 +130,18 @@ p {
                                         <strong>Area :</strong> {{ $receiver->rec_area }} <br>
                                         <strong>City :</strong> {{ $receiver->rec_city }} <br>
                                         <strong>Amount :</strong> {{ number_format($amount * $receiver->fxrate->rate, 2) }} {{ $receiver->fxrate->currency }}<br>
-                                        
+                                        @if($receiver->rec_ban)
+                                        <strong>BAN (Bank Account Number):</strong> {{ $receiver->rec_ban }} <br>
+                                    @endif
+                                    
+                                    @if($receiver->rec_bic)
+                                        <strong>BIC (Bank Identifier Code):</strong> {{ $receiver->rec_bic }} <br>
+                                    @endif
+                                    
+                                    @if($receiver->rec_ibic)
+                                        <strong>IBAN:</strong> {{ $receiver->rec_ibic }} <br>
+                                    @endif
+                                    
                                     </address>
                                 </div>
                                 <div class="col-sm-3 invoice-col">

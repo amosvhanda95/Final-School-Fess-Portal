@@ -10,6 +10,7 @@ enum UserType: int
     case SupportAdmin    = 2;
     case  Teller   = 3;
     case ChiefTeller    = 4;
+    case Agent    = 5;
 
     public static function canCreate(User $user)
     {

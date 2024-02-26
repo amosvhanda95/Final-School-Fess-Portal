@@ -89,6 +89,7 @@ if ($countryCode === 'ZAF') {
     $validationRules['rec_bank_name'] = ['required'];
     $validationRules['rec_bank_type'] = ['required'];
     $validationRules['rec_country_subdivision'] = ['required'];
+    
 } elseif ($countryCode === 'THA') {
     // Thailand
     $validationRules['rec_ban'] = 'required';

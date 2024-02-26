@@ -175,6 +175,13 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="form-group">
+                                                        <label for="amount">Enter RRN </label>
+                                                        <input type="number" placeholder="7879677"
+                                                            name="rrn" class="form-control"
+                                                            value="{{ old('rrn') }}" required>
+                                                    </div>
+
+                                                    <div class="form-group">
                                                         <label for="student_name">Student Name</label>
                                                         <input type="text" placeholder="Enter Student Name"
                                                             name="student_name" class="form-control" id="student_name" required>

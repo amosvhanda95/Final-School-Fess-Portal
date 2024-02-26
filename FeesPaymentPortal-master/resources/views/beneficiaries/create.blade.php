@@ -462,7 +462,7 @@ var paymentOptions = {
     MLT: ["BD"],
     MYS: ["BD"],
     NLD: ["BD"],
-    PAK: ["BD", "CP", "MW"],
+    PAK: ["BD", "CP", "MW","IB"],
     POL: ["BD"],
     PRT: ["BD"],
     SMR: ["BD"],
@@ -525,6 +525,10 @@ var paymentOptions = {
                         case "BD":
                             addBankDepositFields(selectedCountry);
                             break;
+
+                            case "IB":
+                            addBankIBDepositFields(selectedCountry);
+                            break;
                         default:
                             // Handle other payment methods or set a default form
                             addCashPickUpFields();
@@ -573,35 +577,7 @@ var paymentOptions = {
                 }
 
                 function addCashPickUpFields() {
-                    // var paymentFormFields = document.getElementById("paymentFormFields");
-
-                    // var pickUpLocationLabel = document.createElement("label");
-                    // pickUpLocationLabel.textContent = "E-Wallet Account";
-                    // pickUpLocationLabel.htmlFor = "pickUpLocationInput";
-                    // pickUpLocationLabel.classList.add("col-form-label"); // Add class for styling
-
-                    // var pickUpLocationInput = document.createElement("input");
-                    // pickUpLocationInput.type = "text";
-                    // pickUpLocationInput.placeholder = "Enter E-Wallet Account";
-                    // pickUpLocationInput.id = "pickUpLocationInput";
-                    // pickUpLocationInput.name = "rec_ewallet"; // Add name attribute
-                    // pickUpLocationInput.classList.add("form-control");
-
-                    // // Set the value from old input if it exists
-                    // var oldEwalletLocation = "{{ old('rec_ewallet') }}";
-                    // pickUpLocationInput.value = oldEwalletLocation;
-
-                    // // Append the label and input field to the form or container
-                    // paymentFormFields.appendChild(pickUpLocationLabel);
-                    // paymentFormFields.appendChild(pickUpLocationInput);
-
-                    // // Append the hidden input to the parent element
-                    // var hiddenInput = document.createElement("input");
-                    // hiddenInput.type = "hidden";
-                    // hiddenInput.id = "hiddenEwalletInput";
-                    // hiddenInput.name = "hidden_ewallet"; // Add name attribute for the hidden input
-                    // hiddenInput.value = oldEwalletLocation; // Set the value from old input if it exists
-                    // paymentFormFields.appendChild(hiddenInput);
+                    
                     }
 
 
@@ -740,7 +716,7 @@ var paymentOptions = {
                                             mobileNumberInput.classList.add("is-invalid");
 
                                             // Display error message
-                                            showErrorMessage(mobileNumberContainer, "Mobile Number is required.");
+                                            showErrorMessage(mobileNumberContainer, "Invalid Mobile Number format for Mozambique, expected format 258 0 0000 0000");
                                         } else if (!isValid) {
                                             // Add red border to indicate error
                                             mobileNumberInput.classList.remove("is-valid");
@@ -974,148 +950,234 @@ var paymentOptions = {
                                         form.appendChild(mobileNumberContainer);
                                     }
                 }
+                
+                function addCardFields(selectedCountry) {
+    if (selectedCountry === "CHN") {
+        var paymentFormFields = document.getElementById("paymentFormFields");
 
-                function addCardFields() {
-                    var paymentFormFields = document.getElementById("paymentFormFields");
+        // Add Card fields
+        var cardNumberLabel = document.createElement("label");
+        cardNumberLabel.textContent = "Card Number";
+        cardNumberLabel.htmlFor = "cardNumberInput";
+        cardNumberLabel.classList.add("col-form-label");
 
-// Add Card fields
-var cardNumberLabel = document.createElement("label");
-cardNumberLabel.textContent = "Card Number";
-cardNumberLabel.htmlFor = "cardNumberInput";
-cardNumberLabel.classList.add("col-form-label");
+        var cardNumberInput = document.createElement("input");
+        cardNumberInput.type = "text";
+        cardNumberInput.placeholder = "62X 0000 0000 0000 0000";
+        cardNumberInput.id = "cardNumberInput";
+        cardNumberInput.name = "rec_pan"; // Add name attribute
+        cardNumberInput.classList.add("form-control");
 
-var cardNumberInput = document.createElement("input");
-cardNumberInput.type = "text";
-cardNumberInput.placeholder = "62X 0000 0000 0000 0000";
-cardNumberInput.id = "cardNumberInput";
-cardNumberInput.name = "rec_pan"; // Add name attribute
-cardNumberInput.classList.add("form-control");
+        // Add event listener for input validation
+        cardNumberInput.addEventListener("input", function () {
+            validateCardNumberInput();
+        });
 
-// Add event listener for input validation
-cardNumberInput.addEventListener("input", function () {
-    validateCardNumberInput();
-});
+        paymentFormFields.appendChild(cardNumberLabel);
+        paymentFormFields.appendChild(cardNumberInput);
 
-paymentFormFields.appendChild(cardNumberLabel);
-paymentFormFields.appendChild(cardNumberInput);
+        // Add rec_idc fields
+        var recIdcLabel = document.createElement("label");
+        recIdcLabel.textContent = "Rec IDC";
+        recIdcLabel.htmlFor = "recIdcInput";
+        recIdcLabel.classList.add("col-form-label");
 
+        var recIdcInput = document.createElement("input");
+        recIdcInput.type = "text";
+        recIdcInput.placeholder = "Rec IDC";
+        recIdcInput.id = "recIdcInput";
+        recIdcInput.name = "rec_idc"; // Add name attribute
+        recIdcInput.classList.add("form-control");
 
-// Add rec_idc fields
-var recIdcLabel = document.createElement("label");
-recIdcLabel.textContent = "Rec IDC";
-recIdcLabel.htmlFor = "recIdcInput";
-recIdcLabel.classList.add("col-form-label");
+        // Add event listener for input validation
+        recIdcInput.addEventListener("input", function () {
+            validateRecIdcInput();
+        });
 
-var recIdcInput = document.createElement("input");
-recIdcInput.type = "text";
-recIdcInput.placeholder = "Rec IDC";
-recIdcInput.id = "recIdcInput";
-recIdcInput.name = "rec_idc"; // Add name attribute
-recIdcInput.classList.add("form-control");
+        paymentFormFields.appendChild(recIdcLabel);
+        paymentFormFields.appendChild(recIdcInput);
 
-// Add event listener for input validation
-recIdcInput.addEventListener("input", function () {
-    validateRecIdcInput();
-});
+        var form = document.getElementById("myForm"); // replace "yourFormId" with your actual form ID
 
-paymentFormFields.appendChild(recIdcLabel);
-paymentFormFields.appendChild(recIdcInput);
-var paymentFormFields = document.getElementById("paymentFormFields");
-var form = document.getElementById("yourFormId"); // replace "yourFormId" with your actual form ID
+        // Function to show error message beneath the input field
+        function showErrorMessage(container, inputField, message) {
+            // Check if an error message element already exists
+            var existingErrorMessage = container.querySelector(".error-message");
+            if (existingErrorMessage) {
+                existingErrorMessage.textContent = message; // Update existing message
+            } else {
+                // Create a new error message element
+                var errorMessage = document.createElement("div");
+                errorMessage.textContent = message;
+                errorMessage.classList.add("error-message", "invalid-feedback");
 
-// Function to show error message beneath the input field
-function showErrorMessage(container, inputField, message) {
-    // Check if an error message element already exists
-    var existingErrorMessage = container.querySelector(".error-message");
-    if (existingErrorMessage) {
-        existingErrorMessage.textContent = message; // Update existing message
-    } else {
-        // Create a new error message element
-        var errorMessage = document.createElement("div");
-        errorMessage.textContent = message;
-        errorMessage.classList.add("error-message", "invalid-feedback");
+                // Insert the error message after the input field
+                container.insertBefore(errorMessage, inputField.nextSibling);
+            }
+        }
 
-        // Insert the error message after the input field
-        container.insertBefore(errorMessage, inputField.nextSibling);
+        // Function to hide error message
+        function hideErrorMessage(container) {
+            var existingErrorMessage = container.querySelector(".error-message");
+            if (existingErrorMessage) {
+                container.removeChild(existingErrorMessage);
+            }
+        }
+
+        // Function to validate Card Number input
+        function validateCardNumberInput() {
+            var cardNumberInput = document.getElementById("cardNumberInput");
+            var cardNumberValue = cardNumberInput.value.replace(/\s/g, '');
+            // Validation regex for card numbers (16 digits)
+            var regex = /^62.*[0-9]{16}(?:[0-9]{3})?$/;
+
+            var isValid = regex.test(cardNumberValue);
+
+            if (cardNumberValue.trim() === '' || !isValid) {
+                // Add red border to indicate error
+                cardNumberInput.classList.remove("is-valid");
+                cardNumberInput.classList.add("is-invalid");
+
+                // Display error message beneath the input field
+                showErrorMessage(paymentFormFields, cardNumberInput, "Invalid Card Number for China, expected format 62X 0000 0000 0000 0000");
+            } else {
+                // Add green border to indicate correctness
+                cardNumberInput.classList.remove("is-invalid");
+                cardNumberInput.classList.add("is-valid");
+
+                // Remove any existing error message
+                hideErrorMessage(paymentFormFields);
+            }
+        }
+
+        // Function to validate Rec IDC input
+        function validateRecIdcInput() {
+            var recIdcInput = document.getElementById("recIdcInput");
+            var recIdcValue = recIdcInput.value;
+            // You can add any specific validation logic for rec_idc as needed
+
+            // For a string, you might want to ensure it's not empty or has a minimum length, etc.
+            var regex = /^[A-Za-z0-9]+$/;
+            var isValid = regex.test(recIdcValue);
+
+            if (!isValid) {
+                // Add red border to indicate error
+                recIdcInput.classList.remove("is-valid");
+                recIdcInput.classList.add("is-invalid");
+
+                // Display error message beneath the input field
+                showErrorMessage(paymentFormFields, recIdcInput, "Rec IDC cannot be empty. Please enter a value.");
+            } else {
+                // Add green border to indicate correctness
+                recIdcInput.classList.remove("is-invalid");
+                recIdcInput.classList.add("is-valid");
+
+                // Remove any existing error message
+                hideErrorMessage(paymentFormFields);
+            }
+        }
+
+        // Include rec_idc validation in form submission check
+        form.addEventListener("submit", function (event) {
+            validateCardNumberInput();
+            validateRecIdcInput(); // Validate rec_idc before submission
+
+            // Check if both card number and rec_idc inputs are valid
+            if (!document.getElementById("cardNumberInput").classList.contains("is-valid") || !document.getElementById("recIdcInput").classList.contains("is-valid")) {
+                return false; // Prevent form submission
+            }
+        });
     }
 }
+function addBankIBDepositFields(selectedCountry) {
+    if (selectedCountry === "PAK") {
+    var paymentFormFields = document.getElementById("paymentFormFields");
 
-// Function to hide error message
-function hideErrorMessage(container) {
-    var existingErrorMessage = container.querySelector(".error-message");
-    if (existingErrorMessage) {
-        container.removeChild(existingErrorMessage);
+    // Create container for ibanInput
+    var ibanContainer = document.createElement("div");
+    ibanContainer.classList.add("form-group"); // Bootstrap class for form group
+
+    // Create label element
+    var ibanLabel = document.createElement("label");
+    ibanLabel.for = "iban";
+    ibanLabel.textContent = "IBAN";
+    ibanLabel.classList.add("col-form-label"); // Bootstrap class for label styling
+    ibanContainer.appendChild(ibanLabel);
+
+    // Create input element
+    var ibanInput = document.createElement("input");
+    ibanInput.type = "text";
+    ibanInput.placeholder = "Enter IBAN";
+    ibanInput.id = "iban";
+    ibanInput.name = "rec_iban";
+    ibanInput.classList.add("form-control");
+    ibanInput.required = true; // Make the field required
+
+    // Add event listener for input validation
+    ibanInput.addEventListener("input", function () {
+        validateIbanInput();
+    });
+
+    ibanContainer.appendChild(ibanInput);
+    paymentFormFields.appendChild(ibanContainer);
+
+    // Function to validate ibanInput
+    function validateIbanInput() {
+        var ibanValue = ibanInput.value.replace(/\s/g, '');
+        var regex = /^[A-Z]{2}\d{2}[0-9]{4}\d{16}$/; // Adjust the regex as needed for IBAN validation
+
+        if (ibanValue === '') {
+            // Add red border to indicate error
+            ibanInput.classList.remove("is-valid");
+            ibanInput.classList.add("is-invalid");
+
+            // Display error message
+            showErrorMessage(ibanContainer, "Please enter a valid PAK IBAN and must match the pattern: /^[A-Z]{2}\d{2}[0-9]{4}\d{16}$/");
+        } else if (!regex.test(ibanValue)) {
+            // Add red border to indicate error
+            ibanInput.classList.remove("is-valid");
+            ibanInput.classList.add("is-invalid");
+
+            // Display error message
+            showErrorMessage(ibanContainer, "Please enter a valid PAK IBAN and must match the pattern: /^[A-Z]{2}\d{2}[0-9]{4}\d{16}$/");
+        } else {
+            // Add green border to indicate correctness
+            ibanInput.classList.remove("is-invalid");
+            ibanInput.classList.add("is-valid");
+
+            // Remove any existing error message
+            hideErrorMessage(ibanContainer);
+        }
     }
-}
 
-// Function to validate Card Number input
-function validateCardNumberInput() {
-    var cardNumberInput = document.getElementById("cardNumberInput");
-    var cardNumberValue = cardNumberInput.value.replace(/\s/g, '');
-    //  var ibanValue = ibanInput.value.replace(/\s/g, '');
-    // Validation regex for card numbers (16 digits)
-    var regex = /^62.*[0-9]{16}(?:[0-9]{3})?$/;
+    // Function to show error message
+    function showErrorMessage(container, message) {
+        // Check if an error message already exists
+        var existingErrorMessage = container.querySelector(".invalid-feedback");
 
-    var isValid = regex.test(cardNumberValue);
+        if (!existingErrorMessage) {
+            // Create and append an error message element
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = message;
+            errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
+            container.appendChild(errorMessage);
+        }
+    }
 
-    if (cardNumberValue.trim() === '' || !isValid) {
-        // Add red border to indicate error
-        cardNumberInput.classList.remove("is-valid");
-        cardNumberInput.classList.add("is-invalid");
-
-        // Display error message beneath the input field
-        showErrorMessage(paymentFormFields, cardNumberInput, "Invalid Card Number for China, expeceted format 62X 0000 0000 0000 0000");
-    } else {
-        // Add green border to indicate correctness
-        cardNumberInput.classList.remove("is-invalid");
-        cardNumberInput.classList.add("is-valid");
-
+    // Function to hide error message
+    function hideErrorMessage(container) {
         // Remove any existing error message
-        hideErrorMessage(paymentFormFields);
+        var existingErrorMessage = container.querySelector(".invalid-feedback");
+        if (existingErrorMessage) {
+            existingErrorMessage.remove();
+        }
     }
 }
 
-// Function to validate Rec IDC input
-function validateRecIdcInput() {
-    var recIdcInput = document.getElementById("recIdcInput");
-    var recIdcValue = recIdcInput.value;
-    // You can add any specific validation logic for rec_idc as needed
 
-    // For a string, you might want to ensure it's not empty or has a minimum length, etc.
-    var regex = /^[A-Za-z0-9]+$/;
-    var isValid = regex.test(recIdcValue);
-    
-
-    if (!isValid) {
-        // Add red border to indicate error
-        recIdcInput.classList.remove("is-valid");
-        recIdcInput.classList.add("is-invalid");
-
-        // Display error message beneath the input field
-        showErrorMessage(paymentFormFields, recIdcInput, "Rec IDC cannot be empty. Please enter a value.");
-    } else {
-        // Add green border to indicate correctness
-        recIdcInput.classList.remove("is-invalid");
-        recIdcInput.classList.add("is-valid");
-
-        // Remove any existing error message
-        hideErrorMessage(paymentFormFields);
-    }
 }
 
-// Include rec_idc validation in form submission check
-form.addEventListener("submit", function (event) {
-    validateCardNumberInput();
-    validateRecIdcInput(); // Validate rec_idc before submission
 
-    // Check if both card number and rec_idc inputs are valid
-    if (!document.getElementById("cardNumberInput").classList.contains("is-valid") || !document.getElementById("recIdcInput").classList.contains("is-valid")) {
-        event.preventDefault(); // Prevent form submission
-    }
-});
-
- 
-                }
 
 
                 function addBankDepositFields(selectedCountry) {
@@ -1373,253 +1435,169 @@ form.addEventListener("submit", function (event) {
                             }
                   
 
-                }  if (selectedCountry === "PAK") {
+                                        }  if (selectedCountry === "PAK") {
+                            var paymentFormFields = document.getElementById("paymentFormFields");
 
-                    var paymentFormFields = document.getElementById("paymentFormFields");
+                            // Label for Bank Name field
+                            var bankNameLabel = document.createElement("label");
+                            bankNameLabel.for = "bankName";
+                            bankNameLabel.textContent = "BAN (Bank Account Number)";
+                            bankNameLabel.classList.add("col-form-label"); // Bootstrap class for label styling
+                            paymentFormFields.appendChild(bankNameLabel);
 
-                   // Label for Bank Name field
-                    var bankNameLabel = document.createElement("label");
-                    bankNameLabel.for = "bankName";
-                    bankNameLabel.textContent = "BAN (Bank Account Number)";
-                    bankNameLabel.classList.add("col-form-label"); // Bootstrap class for label styling
-                    paymentFormFields.appendChild(bankNameLabel);
+                            // Container for Bank Name input
+                            var bankNameContainer = document.createElement("div");
+                            bankNameContainer.classList.add("form-group"); // Bootstrap class for form group
 
-                    // Container for Bank Name input
-                    var bankNameContainer = document.createElement("div");
-                    bankNameContainer.classList.add("form-group"); // Bootstrap class for form group
+                            // Input field for Bank Name
+                            var bankNameInput = document.createElement("input");
+                            bankNameInput.type = "text";
+                            bankNameInput.placeholder = "Enter BAN (Bank Account Number)";
+                            bankNameInput.id = "bankName";
+                            bankNameInput.name = "rec_ban";
+                            bankNameInput.classList.add("form-control");
+                            bankNameInput.required = true;
 
-                    // Input field for Bank Name
-                    var bankNameInput = document.createElement("input");
-                    bankNameInput.type = "text";
-                    bankNameInput.placeholder = "Enter BAN (Bank Account Number)";
-                    bankNameInput.id = "bankName";
-                    bankNameInput.name = "rec_ban";
-                    bankNameInput.classList.add("form-control");
-                    bankNameInput.required = true; 
+                            // Add event listener for input validation
+                            bankNameInput.addEventListener("input", function () {
+                                validateBankNameInput();
+                            });
 
-                    // Add event listener for input validation
-                    bankNameInput.addEventListener("input", function () {
-                        validateBankNameInput();
-                    });
+                            // Set initial value
+                            var oldBankName = "{{ old('rec_ban') }}";
+                            bankNameInput.value = oldBankName;
 
-                    // Set initial value
-                    var oldBankName = "{{ old('rec_ban') }}";
-                    bankNameInput.value = oldBankName;
+                            bankNameContainer.appendChild(bankNameInput);
+                            paymentFormFields.appendChild(bankNameContainer);
 
-                    bankNameContainer.appendChild(bankNameInput);
-                    paymentFormFields.appendChild(bankNameContainer);
+                            // Function to validate Bank Name input
+                            function validateBankNameInput() {
+                                var bankNameValue = bankNameInput.value;
 
-                    // Function to validate Bank Name input
-                    function validateBankNameInput() {
-                        var bankNameValue = bankNameInput.value;
+                                if (bankNameValue.trim() === '') {
+                                    // Add red border to indicate error
+                                    bankNameInput.classList.remove("is-valid");
+                                    bankNameInput.classList.add("is-invalid");
 
-                        if (bankNameValue.trim() === '') {
-                            // Add red border to indicate error
-                            bankNameInput.classList.remove("is-valid");
-                            bankNameInput.classList.add("is-invalid");
+                                    // Display error message
+                                    showErrorMessage(bankNameContainer, "Bank Account Number is required.");
+                                } else {
+                                    // Add green border to indicate correctness
+                                    bankNameInput.classList.remove("is-invalid");
+                                    bankNameInput.classList.add("is-valid");
 
-                            // Display error message
-                            showErrorMessage(bankNameContainer, "Bank Account Number is required.");
-                        } else {
-                            // Add green border to indicate correctness
-                            bankNameInput.classList.remove("is-invalid");
-                            bankNameInput.classList.add("is-valid");
+                                    // Remove any existing error message
+                                    hideErrorMessage(bankNameContainer);
+                                }
+                            }
 
-                            // Remove any existing error message
-                            hideErrorMessage(bankNameContainer);
-                        }
-                    }
+                            // Function to show error message
+                            function showErrorMessage(container, message) {
+                                // Check if an error message already exists
+                                var existingErrorMessage = container.querySelector(".invalid-feedback");
 
-                    // Function to show error message
-                    function showErrorMessage(container, message) {
-                        // Check if an error message already exists
-                        var existingErrorMessage = container.querySelector(".invalid-feedback");
+                                if (!existingErrorMessage) {
+                                    // Create and append an error message element
+                                    var errorMessage = document.createElement("div");
+                                    errorMessage.textContent = message;
+                                    errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
+                                    container.appendChild(errorMessage);
+                                }
+                            }
 
-                        if (!existingErrorMessage) {
-                            // Create and append an error message element
-                            var errorMessage = document.createElement("div");
-                            errorMessage.textContent = message;
-                            errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
-                            container.appendChild(errorMessage);
-                        }
-                    }
-
-                    // Function to hide error message
-                    function hideErrorMessage(container) {
-                        // Remove any existing error message
-                        var existingErrorMessage = container.querySelector(".invalid-feedback");
-                        if (existingErrorMessage) {
-                            existingErrorMessage.remove();
-                        }
-                    }
-
-
-                    var bicLabel = document.createElement("label");
-                        bicLabel.for = "bic";
-                        bicLabel.textContent = "BIC (Bank Identifier Code)";
-                        bicLabel.classList.add("col-form-label"); // Bootstrap class for label styling
-                        paymentFormFields.appendChild(bicLabel);
-
-                        // Create container for BIC input
-                        var bicContainer = document.createElement("div");
-                        bicContainer.classList.add("form-group"); // Bootstrap class for form group
-
-                        var bicInput = document.createElement("input");
-                        bicInput.type = "text";
-                        bicInput.placeholder = "0000 0000 0";
-                        bicInput.id = "bic";
-                        bicInput.name = "rec_bic";
-                        bicInput.classList.add("form-control");
-                        bicInput.required = true; // Make the field required
-
-                        // Add event listener for input validation
-                        bicInput.addEventListener("input", function () {
-                            validateBicInput();
-                        });
-
-                        // Set initial value
-                        var oldBic = "{{ old('rec_bic') }}";
-                        bicInput.value = oldBic;
-
-                        bicContainer.appendChild(bicInput);
-                        paymentFormFields.appendChild(bicContainer);
-
-                        // Function to validate BIC input
-                        function validateBicInput() {
-                            var bicValue = bicInput.value.replace(/\s/g, '');
-                            var regex =/^[0-9]{9}$/;
-                            var isValid = regex.test(bicValue);
-
-                            if (bicValue.trim() === '') {
-                                // Add red border to indicate error
-                                bicInput.classList.remove("is-valid");
-                                bicInput.classList.add("is-invalid");
-
-                                // Display error message
-                                showErrorMessage(bicContainer, "Invalid BIC format oF USA, expected formart 0000 0000 0");
-                            } else if (!isValid) {
-                                // Add red border to indicate error
-                                bicInput.classList.remove("is-valid");
-                                bicInput.classList.add("is-invalid");
-
-                                // Display error message
-                                showErrorMessage(bicContainer, "Invalid BIC format oF USA, expected formart 0000 0000 0");
-                            } else {
-                                // Add green border to indicate correctness
-                                bicInput.classList.remove("is-invalid");
-                                bicInput.classList.add("is-valid");
-
+                            // Function to hide error message
+                            function hideErrorMessage(container) {
                                 // Remove any existing error message
-                                hideErrorMessage(bicContainer);
+                                var existingErrorMessage = container.querySelector(".invalid-feedback");
+                                if (existingErrorMessage) {
+                                    existingErrorMessage.remove();
+                                }
+                            }
+
+                            var bicLabel = document.createElement("label");
+                            bicLabel.for = "bic";
+                            bicLabel.textContent = "BIC (Bank Identifier Code)";
+                            bicLabel.classList.add("col-form-label"); // Bootstrap class for label styling
+                            paymentFormFields.appendChild(bicLabel);
+
+                            // Create container for BIC input
+                            var bicContainer = document.createElement("div");
+                            bicContainer.classList.add("form-group"); // Bootstrap class for form group
+
+                            var bicInput = document.createElement("input");
+                            bicInput.type = "text";
+                            bicInput.placeholder = "0000 0000 0";
+                            bicInput.id = "bic";
+                            bicInput.name = "rec_bic";
+                            bicInput.classList.add("form-control");
+                            bicInput.required = true; // Make the field required
+
+                            // Add event listener for input validation
+                            bicInput.addEventListener("input", function () {
+                                validateBicInput();
+                            });
+
+                            // Set initial value
+                            var oldBic = "{{ old('rec_bic') }}";
+                            bicInput.value = oldBic;
+
+                            bicContainer.appendChild(bicInput);
+                            paymentFormFields.appendChild(bicContainer);
+
+                            // Function to validate BIC input
+                            function validateBicInput() {
+                                var bicValue = bicInput.value.replace(/\s/g, '');
+                                var regex = /^[0-9]{9}$/;
+                                var isValid = regex.test(bicValue);
+
+                                if (bicValue.trim() === '') {
+                                    // Add red border to indicate error
+                                    bicInput.classList.remove("is-valid");
+                                    bicInput.classList.add("is-invalid");
+
+                                    // Display error message
+                                    showErrorMessage(bicContainer, "Invalid BIC format oF USA, expected formart 0000 0000 0");
+                                } else if (!isValid) {
+                                    // Add red border to indicate error
+                                    bicInput.classList.remove("is-valid");
+                                    bicInput.classList.add("is-invalid");
+
+                                    // Display error message
+                                    showErrorMessage(bicContainer, "Invalid BIC format oF USA, expected formart 0000 0000 0");
+                                } else {
+                                    // Add green border to indicate correctness
+                                    bicInput.classList.remove("is-invalid");
+                                    bicInput.classList.add("is-valid");
+
+                                    // Remove any existing error message
+                                    hideErrorMessage(bicContainer);
+                                }
+                            }
+
+                            // Function to show error message
+                            function showErrorMessage(container, message) {
+                                // Check if an error message already exists
+                                var existingErrorMessage = container.querySelector(".invalid-feedback");
+
+                                if (!existingErrorMessage) {
+                                    // Create and append an error message element
+                                    var errorMessage = document.createElement("div");
+                                    errorMessage.textContent = message;
+                                    errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
+                                    container.appendChild(errorMessage);
+                                }
+                            }
+
+                            // Function to hide error message
+                            function hideErrorMessage(container) {
+                                // Remove any existing error message
+                                var existingErrorMessage = container.querySelector(".invalid-feedback");
+                                if (existingErrorMessage) {
+                                    existingErrorMessage.remove();
+                                }
                             }
                         }
 
-                        // Function to show error message
-                        function showErrorMessage(container, message) {
-                            // Check if an error message already exists
-                            var existingErrorMessage = container.querySelector(".invalid-feedback");
-
-                            if (!existingErrorMessage) {
-                                // Create and append an error message element
-                                var errorMessage = document.createElement("div");
-                                errorMessage.textContent = message;
-                                errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
-                                container.appendChild(errorMessage);
-                            }
-                        }
-
-                        // Function to hide error message
-                        function hideErrorMessage(container) {
-                            // Remove any existing error message
-                            var existingErrorMessage = container.querySelector(".invalid-feedback");
-                            if (existingErrorMessage) {
-                                existingErrorMessage.remove();
-                            }
-                        }
-                        var paymentFormFields = document.getElementById("paymentFormFields");
-                                     
-                                            // Create container for ibanInput
-                                            var ibanContainer = document.createElement("div");
-                                            ibanContainer.classList.add("form-group"); // Bootstrap class for form group
-
-                                            // Create label element
-                                            var ibanLabel = document.createElement("label");
-                                            ibanLabel.for = "iban";
-                                            ibanLabel.textContent = "IBAN";
-                                            ibanLabel.classList.add("col-form-label"); // Bootstrap class for label styling
-                                            ibanContainer.appendChild(ibanLabel);
-
-                                            // Create input element
-                                            var ibanInput = document.createElement("input");
-                                            ibanInput.type = "text";
-                                            ibanInput.placeholder = "Enter IBAN";
-                                            ibanInput.id = "iban";
-                                            ibanInput.name = "rec_iban";
-                                            ibanInput.classList.add("form-control");
-                                            ibanInput.required = true; // Make the field required
-
-                                            // Add event listener for input validation
-                                            ibanInput.addEventListener("input", function () {
-                                                validateIbanInput();
-                                            });
-
-                                            ibanContainer.appendChild(ibanInput);
-                                            paymentFormFields.appendChild(ibanContainer);
-
-                                            // Function to validate ibanInput
-                                            function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
-                                                var regex =/^[A-Z]{2}\d{2}[0-9]{4}\d{16}$/; // Adjust the regex as needed for IBAN validation
-
-                                                if (ibanValue === '') {
-                                                    // Add red border to indicate error
-                                                    ibanInput.classList.remove("is-valid");
-                                                    ibanInput.classList.add("is-invalid");
-
-                                                    // Display error message
-                                                    showErrorMessage(ibanContainer,"Please enter a valid PAK IBAN. and must match the pattern:/^[A-Z]{2}\d{2}[0-9]{4}\d{16}$");
-                                                } else if (!regex.test(ibanValue)) {
-                                                    // Add red border to indicate error
-                                                    ibanInput.classList.remove("is-valid");
-                                                    ibanInput.classList.add("is-invalid");
-
-                                                    // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid PAK IBAN. and must match the pattern:/^[A-Z]{2}\d{2}[0-9]{4}\d{16}$");
-                                                } else {
-                                                    // Add green border to indicate correctness
-                                                    ibanInput.classList.remove("is-invalid");
-                                                    ibanInput.classList.add("is-valid");
-
-                                                    // Remove any existing error message
-                                                    hideErrorMessage(ibanContainer);
-                                                }
-                                            }
-
-                                            // Function to show error message
-                                            function showErrorMessage(container, message) {
-                                                // Check if an error message already exists
-                                                var existingErrorMessage = container.querySelector(".invalid-feedback");
-
-                                                if (!existingErrorMessage) {
-                                                    // Create and append an error message element
-                                                    var errorMessage = document.createElement("div");
-                                                    errorMessage.textContent = message;
-                                                    errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
-                                                    container.appendChild(errorMessage);
-                                                }
-                                            }
-
-                                            // Function to hide error message
-                                            function hideErrorMessage(container) {
-                                                // Remove any existing error message
-                                                var existingErrorMessage = container.querySelector(".invalid-feedback");
-                                                if (existingErrorMessage) {
-                                                    existingErrorMessage.remove();
-                                                }
-                                            }
-
-
-                }
                  else if (selectedCountry === "USA") {
                     var paymentFormFields = document.getElementById("paymentFormFields");
 
@@ -3877,7 +3855,7 @@ function hideErrorMessage(container) {
                     else if (selectedCountry === "ARE") { // Example list of field names
                        // Example list of field names
 var fieldNames = [
-    'rec_idc_field', 'rec_idc_field1',
+    'rec_idc_field', 'rec_idc_field1', 'rec_iban_field','rec_iban_field1',
     'rec_country_subdivision_field', 'rec_country_subdivision_field1',
     'recipient_account_uri_field', 'recipient_account_uri_field1',
     'id_expiration_date_field', 'id_expiration_date_field1',
@@ -6497,7 +6475,9 @@ function hideErrorMessage(container) {
                         case "C":
                             return "Card";
                         case "BD":
-                            return "Bank Deposit";
+                            return "Bank Account";
+                        case "IB":
+                            return "Bank IBAN";
                         default:
                             return option;
                     }

@@ -50,25 +50,32 @@
             </div>
             
             <div class="form-group">
-                <label class="control-label required">{{ __('IBAN  (International Bank Account Number)') }}</label>
-                <input readonly type="text" name="rec_ban" class="form-control"
-                    placeholder="Enter First Name" value="{{ $beneficiary ->rec_iban }}" required>
-                @error('rec_ban')
+                
+                @if($beneficiary->rec_iban)
+                <label class="control-label required">{{ __('IBAN (International Bank Account Number)') }}</label>
+                    <input readonly type="text" name="rec_iban" class="form-control"
+                        placeholder="Enter IBAN" value="{{ $beneficiary->rec_iban }}" required>
+                @endif
+                @error('rec_iban')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
+                @if($beneficiary->rec_bic)
                 <label class="control-label required">{{ __('BIC (Bank Identifier Code)') }}</label>
                 <input readonly type="text" name="rec_bic" class="form-control"
                     placeholder="Enter First Name" value="{{ $beneficiary ->rec_bic }}" required>
+                    @endif
                 @error('rec_ban')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
             </div>
             <div class="form-group">
+                @if($beneficiary->rec_ban)
                 <label class="control-label required">{{ __('BAN (BAN)') }}</label>
                 <input readonly type="text" name="rec_bic" class="form-control"
                     placeholder="Enter First Name" value="{{ $beneficiary ->rec_ban }}" required>
+                    @endif
                 @error('rec_ban')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
@@ -82,9 +89,11 @@
                 @enderror
             </div>
             <div class="form-group">
+                @if($beneficiary->recipient_account_uri)
                 <label class="control-label required">{{ __('Phone Number') }}</label>
                 <input readonly type="text" name="recipient_account_uri" class="form-control"
                     placeholder="Enter First Name" value="{{ $beneficiary ->recipient_account_uri }}" required>
+                    @endif
                 @error('school_name')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror

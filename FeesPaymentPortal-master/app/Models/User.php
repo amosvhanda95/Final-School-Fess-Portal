@@ -27,6 +27,8 @@ class User extends Authenticatable
         'branch_id',
         'password',
         'ethics_user',
+        'account_number',
+        'reset_password_token',
     ];
 
     /**

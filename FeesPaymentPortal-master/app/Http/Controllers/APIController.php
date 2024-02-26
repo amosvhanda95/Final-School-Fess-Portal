@@ -2,20 +2,292 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Beneficiary;
-use App\Models\Payment;
+
+
 use App\Models\Customer;
 use App\Models\Sendmoney;
+use App\Models\Beneficiary;
+
+
 use Illuminate\Support\Str;
-
-
 use Illuminate\Http\Request;
+
+
 use Mastercard\Developer\OAuth\OAuth;
 use Umpirsky\CountryList\CountryList;
+
+use Mastercard\Developer\Utils\EncryptionUtils;
+use Mastercard\Developer\Encryption\JweEncryption;
+use Mastercard\Developer\Encryption\JweConfigBuilder;
+
 use Mastercard\Developer\OAuth\Utils\AuthenticationUtils;
 
+use Mastercard\Developer\Signers\CurlRequestSigner;
+
+
 class APIController extends Controller
+
 {
+    public function encryp()
+
+    {
+
+
+// require_once realpath("vendor/autoload.php");
+
+
+
+$consumerKey = 'ZIyOOKEIuu0Qt8TZgRGFA53Hzep4e9ZH33ICsaB65d4389b8!fabc03b54a14477da2e5503c41e2b3b60000000000000000';
+$oauthKeyPath = 'POSB-ENCRYPTION-sandbox-signing.p12';
+$keyalias = 'keyalias';
+$keystorepassword = 'tkay@jehu2024';
+
+$encKeyPath = 'mastercard-cross-border-services-clientenc1707460268835-client-encryption-key.pem';
+$decKeyPath = 'mastercard-cross-border-services-keyalias-mastercard-encryption-key.p12';
+$decKeyAlias = 'keyalias';
+$decKeyStorePassword = 'tkay@jehu2024';
+
+
+// …
+$signingKey = AuthenticationUtils::loadSigningKey(
+                $oauthKeyPath,
+                $keyalias, 
+                $keystorepassword);
+				
+$decryptionKey = EncryptionUtils::loadDecryptionKey(
+                                    $decKeyPath, 
+                                    $decKeyAlias, 
+                                    $decKeyStorePassword);
+									
+// …
+$encryptionCertificate = EncryptionUtils::loadEncryptionCertificate($encKeyPath);
+
+// …
+$config = JweConfigBuilder::aJweEncryptionConfig()
+    ->withEncryptionCertificate($encryptionCertificate)
+	->withDecryptionKey($decryptionKey)
+    ->withEncryptionPath('$', '$.encrypted_payload')
+	->withDecryptionPath('$.encrypted_payload.data', '$')
+    ->withEncryptedValueFieldName('data')
+    ->build();
+    function getGUID(){
+        if (function_exists('com_create_guid')){
+            return com_create_guid();
+        }
+        else {
+            mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+            $charid = strtoupper(md5(uniqid(rand(), true)));
+            $hyphen = chr(45);// "-"
+            $uuid = chr(123)// "{"
+                .substr($charid, 0, 8).$hyphen
+                .substr($charid, 8, 4).$hyphen
+                .substr($charid,12, 4).$hyphen
+                .substr($charid,16, 4).$hyphen
+                .substr($charid,20,12)
+                .chr(125);// "}"
+            return $uuid;
+        }
+    }
+
+$requestPayload = "{\n" .
+				"  \"quoterequest\": {\n" .
+				"    \"transaction_reference\": \"". getGUID() ."\",\n" .
+				"    \"sender_account_uri\": \"ewallet:33489328;sp=afs\",\n" .
+				"    \"recipient_account_uri\": \"ban:436464364364343;bic=BNORPHMMXXX\",\n" .
+				"    \"payment_amount\": {\n" .
+				"      \"amount\": \"21.4570\",\n" .
+				"      \"currency\": \"USD\"\n" .
+				"    },\n" .
+				"    \"payment_origination_country\": \"BHR\",\n" .
+				"    \"payment_type\": \"P2P\",\n" .
+				"    \"quote_type\": {\n" .
+				"      \"forward\": {\n" .
+				"        \"fees_included\": false,\n" .
+				"        \"receiver_currency\": \"PHP\"\n" .
+				"      }\n" .
+				"    },\n" .
+				"    \"additional_data\": {\n" .
+				"      \"data_field\": [\n" .
+				"        {\n" .
+				"          \"name\": \"1200\",\n" .
+				"          \"value\": \"PHL-BK\"\n" .
+				"        },\n" .
+				"        {\n" .
+				"          \"name\": \"701\",\n" .
+				"          \"value\": \"PHL\"\n" .
+				"        }\n" .
+				"      ]\n" .
+				"    }\n" .
+				"  }\n" .
+				"}";
+				
+$encryptedPayload = JweEncryption::encryptPayload($requestPayload, $config);
+echo (json_encode(json_decode($encryptedPayload), JSON_PRETTY_PRINT));
+
+// …
+$method = 'POST';
+$uri = 'https://sandbox.api.mastercard.com/send/v1/partners/BEL_MASEND5ged2/crossborder/quotes';
+$payload = json_encode(json_decode($encryptedPayload), JSON_PRETTY_PRINT);
+$headers = array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($payload),
+	'x-encrypted: true'
+);
+
+function callAPI($method, $uri, $headers, $payload, $consumerKey, $signingKey){
+    $handle = curl_init($uri);
+	curl_setopt_array($handle, array(CURLOPT_RETURNTRANSFER => 1, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_POSTFIELDS => $payload));
+	$signer = new CurlRequestSigner($consumerKey, $signingKey);
+	$signer->sign($handle, $method, $headers, $payload);
+	$result = curl_exec($handle);
+	curl_close($handle);
+	return $result;
+}
+$result = callAPI($method, $uri, $headers, $payload, $consumerKey, $signingKey);
+print "\n\nResponse\n";
+print $result;
+
+print "\n\nDecrypted Data:\n";
+$decryptedData = JweEncryption::decryptPayload($result, $config);
+echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
+
+
+
+
+
+
+
+
+        
+        
+        // Load your encryption certificate
+// $encryptionCertificate = EncryptionUtils::loadEncryptionCertificate('mastercard-cross-border-services-clientenc1707460268835-client-encryption-key.pem');
+
+// // Load your decryption key
+// $decryptionKey = EncryptionUtils::loadDecryptionKey(
+//     'mastercard-cross-border-services-keyalias-mastercard-encryption-key.p12',
+//     'keyalias',
+//     'tkay@jehu2024'
+// );
+
+
+
+// // Define your Mastercard credentials and endpoint
+// $consumerKey = 'ZIyOOKEIuu0Qt8TZgRGFA53Hzep4e9ZH33ICsaB65d4389b8!fabc03b54a14477da2e5503c41e2b3b60000000000000000';
+// $uri = 'https://sandbox.api.mastercard.com/send/v1/partners/BEL_MASEND5ged2/crossborder/payment';
+// $method = 'POST';
+
+// // JSON payload
+// $payload = [
+//     'sensitiveField1' => 'sensitiveValue1',
+//     'sensitiveField2' => 'sensitiveValue2',
+// ];
+
+
+
+
+//     $config = FieldLevelEncryptionConfigBuilder::aFieldLevelEncryptionConfig()
+//     ->withEncryptionCertificate($encryptionCertificate)
+//     ->withDecryptionKey($decryptionKey)
+//     ->withEncryptionPath('$', '$')
+//     ->withDecryptionPath('$', '$')
+//     ->withOaepPaddingDigestAlgorithm('SHA-256')
+//     ->withEncryptedValueFieldName('data')
+//     ->withIvHeaderName('x-iv')
+//     ->withEncryptedKeyHeaderName('x-encrypted-key')
+//     ->withFieldValueEncoding(FieldValueEncoding::HEX)
+//     ->build();
+// // Encrypt payload
+
+
+// $params = FieldLevelEncryptionParams::generate($config);
+
+
+
+// // Assuming $payload is an array
+// $jsonPayload = json_encode($payload);
+
+// // Encrypt the JSON payload
+// $encryptedPayload= FieldLevelEncryption::encryptPayload($jsonPayload, $config);
+
+
+
+// $payload = FieldLevelEncryption::decryptPayload($encryptedPayload, $config);
+// echo (json_encode(json_decode($payload), JSON_PRETTY_PRINT));
+        
+
+    // $encryptionCertificate = EncryptionKey::load("Mastercard-Cross-Border-ServicesClientEnc1707288966887.pem");
+    // $decryptionKey = DecryptionKey::load("hgsh-sandbox.p12");
+    // $payload = '{
+    //     "path": {
+    //         "to": {
+    //             "foo": {
+    //                 "sensitiveField1": "sensitiveValue1",
+    //                 "sensitiveField2": "sensitiveValue2"
+    //             }
+    //         }
+    //     }
+    // }';
+    // $config = JweConfigBuilder::aJweEncryptionConfig()
+    //     ->withEncryptionCertificate($encryptionCertificate)
+    //     ->withDecryptionKey($decryptionKey)
+    //     ->withEncryptionPath("$", "$")
+    //     ->withDecryptionPath("$.encryptedData", "$")
+    //     ->build();
+    // $encryptedPayload = JweEncryption::encryptPayload($payload, $config);
+    
+    // // Mastercard API request parameters
+    // $consumerKey = 'VQ5Mzben5gWhVfuQd2HSaE4UiVCpsZT499tSOuUoaff35792!1740d9dae16645f096777415756ad8a00000000000000000';
+    // $uri = 'https://sandbox.api.mastercard.com/send/v1/partners/BEL_MASEND5ged2/crossborder/payment';
+    // $method = 'POST';
+    
+    // // OAuth headers
+    // $signingKey = AuthenticationUtils::loadSigningKey(
+    //     'POSB-REMITTANCE-sandbox.p12',
+    //     'keyalias',
+    //     'keystorepassword'
+    // );
+    
+    // // Calculate the oauth_body_hash
+    // $hashedPayload = base64_encode(hash('sha256', $payload, true));
+    // $oauthToken = OAuth::getAuthorizationHeader($uri, $method, $payload, $consumerKey, $signingKey, $hashedPayload);
+    
+    // // Additional headers
+    // $headers = [
+    //     'Content-Type: application/json',
+    //     'Accept: application/json',
+    //     'x-encrypted: TRUE',
+    //     'Authorization: ' . $oauthToken,
+    //     'Content-Length: ' . strlen($payload),
+    // ];
+    
+    // // cURL setup
+    // $ch = curl_init($uri);
+    // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+    // curl_setopt($ch, CURLOPT_POSTFIELDS, $encryptedPayload);
+    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+    // // Execute cURL request and return the result
+    // $response = curl_exec($ch);
+    
+    // // Check for errors
+    // if ($response === false) {
+    //     // Handle cURL error, if any
+    //     $result = 'cURL error: ' . curl_error($ch);
+    // } else {
+    //     // Close cURL session
+    //     curl_close($ch);
+    
+    //     // Set the result
+    //     $result = $response;
+    // }
+    
+    // // Return the result
+    // echo $result;
+        }
+    
+
     public function index()
     {
        
@@ -69,25 +341,68 @@ class APIController extends Controller
     public function paymentRequest(Request $request )
     {
         
-        // dd($request);
-    
-        // Load your signing key
-        $signingKey = AuthenticationUtils::loadSigningKey(
-            'API-TEST2-sandbox.p12',
-            'keyalias',
-            'keystorepassword'
-        );
+                    
+                
+                    
+
+            $consumerKey = 'ZIyOOKEIuu0Qt8TZgRGFA53Hzep4e9ZH33ICsaB65d4389b8!fabc03b54a14477da2e5503c41e2b3b60000000000000000';
+            $oauthKeyPath = 'POSB-ENCRYPTION-sandbox-signing.p12';
+            $keyalias = 'keyalias';
+            $keystorepassword = 'tkay@jehu2024';
+
+            $encKeyPath = 'mastercard-cross-border-services-clientenc1707460268835-client-encryption-key.pem';
+            $decKeyPath = 'mastercard-cross-border-services-keyalias-mastercard-encryption-key.p12';
+            $decKeyAlias = 'keyalias';
+            $decKeyStorePassword = 'tkay@jehu2024';
+            // …
+            $signingKey = AuthenticationUtils::loadSigningKey(
+                            $oauthKeyPath,
+                            $keyalias, 
+                            $keystorepassword);
+                            
+            $decryptionKey = EncryptionUtils::loadDecryptionKey(
+                                                $decKeyPath, 
+                                                $decKeyAlias, 
+                                                $decKeyStorePassword);
+                                                
+            // …
+            $encryptionCertificate = EncryptionUtils::loadEncryptionCertificate($encKeyPath);
+
+            // …
+            $config = JweConfigBuilder::aJweEncryptionConfig()
+                ->withEncryptionCertificate($encryptionCertificate)
+                ->withDecryptionKey($decryptionKey)
+                ->withEncryptionPath('$', '$.encrypted_payload')
+                ->withDecryptionPath('$.encrypted_payload.data', '$')
+                ->withEncryptedValueFieldName('data')
+                ->build();
         
+                function getGUID2(){
+                    if (function_exists('com_create_guid')){
+                        return com_create_guid();
+                    }
+                    else {
+                        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+                        $charid = strtoupper(md5(uniqid(rand(), true)));
+                        $hyphen = chr(45);// "-"
+                        $uuid = chr(123)// "{"
+                            .substr($charid, 0, 8).$hyphen
+                            .substr($charid, 8, 4).$hyphen
+                            .substr($charid,12, 4).$hyphen
+                            .substr($charid,16, 4).$hyphen
+                            .substr($charid,20,12)
+                            .chr(125);// "}"
+                        return $uuid;
+                    }
+                }
       
 
         // Define your Mastercard credentials and endpoint
-        $consumerKey = 'eEHw5mRX6ZsPQtjBaIx9_JeobetpR3MwrqxKBzTs29db017c!9b0af67b746443748ceb659ff77bc9ba0000000000000000';
-        $uri = 'https://sandbox.api.mastercard.com/send/v1/partners/BEL_MASEND5ged2/crossborder/payment';
-        $method = 'POST';
+        // $consumerKey = 'ZIyOOKEIuu0Qt8TZgRGFA53Hzep4e9ZH33ICsaB65d4389b8!fabc03b54a14477da2e5503c41e2b3b60000000000000000';
+        // $uri = 'https://sandbox.api.mastercard.com/send/v1/partners/BEL_MASEND5ged2/crossborder/payment';
+        // $method = 'POST';
 
         // Create an associative array with the JSON data
-
-       
       
        
         $customer = Customer::find($request->input('sender_id'));
@@ -1073,7 +1388,9 @@ class APIController extends Controller
                             
                         ]
                     ];
+                    
                 }
+
                  else {
                     // Handle cases where the country code is not in any of the specified sets
                     return response()->json(['error' => 'Invalid country code'], 400);
@@ -1089,80 +1406,92 @@ class APIController extends Controller
         
         
                 // Convert the PHP array to a JSON string
-                $payload =  json_encode($paymentRequestData, JSON_PRETTY_PRINT);
+                $requestPayload =  json_encode($paymentRequestData, JSON_PRETTY_PRINT);
         
                 // Now, you can use $payload in your API request
         
         
-                // Prepare the payload and headers
-                $headers = [
-                    'Content-Type: application/json',
-                    'Content-Length: ' . strlen($payload),
-                    'Authorization: ' . OAuth::getAuthorizationHeader($uri, $method, $payload, $consumerKey, $signingKey)
-                ];
-        
-                // Initialize a cURL handle
-                $handle = curl_init($uri);
-        
-                // Set cURL options
-                curl_setopt_array($handle, [
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_CUSTOMREQUEST => $method,
-                    CURLOPT_POSTFIELDS => $payload,
-                    CURLOPT_HTTPHEADER => $headers
-                ]);
-        
-                // Execute the cURL request
-                $result = curl_exec($handle);
-        
-                // Check for errors and handle the response
-                if (curl_errno($handle)) {
-                    return response()->json(['error' => 'cURL error: ' . curl_error($handle)], 500);
-                }
-        
-                // Close the cURL handle
-                curl_close($handle);
-                $responseData= json_decode($result ,true);
-        
+                				
+$encryptedPayload = JweEncryption::encryptPayload($requestPayload, $config);
+
+
+// …
+$method = 'POST';
+$uri = 'https://sandbox.api.mastercard.com/send/v1/partners/BEL_MASEND5ged2/crossborder/payment';
+$payload = json_encode(json_decode($encryptedPayload), JSON_PRETTY_PRINT);
+$headers = array(
+    'Content-Type: application/json',
+    'Content-Length: ' . strlen($payload),
+	'x-encrypted: true'
+);
+
+function callAPI($method, $uri, $headers, $payload, $consumerKey, $signingKey){
+    $handle = curl_init($uri);
+	curl_setopt_array($handle, array(CURLOPT_RETURNTRANSFER => 1, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_POSTFIELDS => $payload));
+	$signer = new CurlRequestSigner($consumerKey, $signingKey);
+	$signer->sign($handle, $method, $headers, $payload);
+	$result = curl_exec($handle);
+	curl_close($handle);
+	return $result;
+}
+$result = callAPI($method, $uri, $headers, $payload, $consumerKey, $signingKey);
+
+
+
+$result2 = JweEncryption::decryptPayload($result, $config);
+
+$responseData = json_decode($result2, true);
+
+// Check if decoding was successful
+if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
+    // Handle JSON decoding error
+    die('Error decoding JSON: ' . json_last_error_msg());
+}
                 $user = request()->user();
         
                
-                // $payment = new Sendmoney();
-                // $payment->transaction_reference = $responseData['payment']['transaction_reference'];
-                // $payment->status = $responseData['payment']['status'];
-                // $payment->fees_amount = $responseData['payment']['fees_amount']['amount'];
-                // $payment->charged_amount = $responseData['payment']['charged_amount']['amount'];
-                // $payment->credited_amount = $responseData['payment']['credited_amount']['amount'];
-                // $payment->principal_amount = $responseData['payment']['principal_amount']['amount'];
-                // $payment->currency = $responseData['payment']['principal_amount']['currency'];
-                // $payment->sender_account_uri = $responseData['payment']['sender_account_uri'];
-                // $payment->recipient_account_uri = $responseData['payment']['recipient_account_uri'];
-                // $payment->payment_amount = $responseData['payment']['payment_amount']['amount'];
-                // $payment->payment_origination_country = $responseData['payment']['payment_origination_country'];
-                // $payment->fx_rate = $responseData['payment']['fx_rate'];
+                $payment = new Sendmoney();
+                $payment->transaction_reference = $responseData['payment']['transaction_reference'];
+                $payment->status = $responseData['payment']['status'];
+                $payment->fees_amount = $responseData['payment']['fees_amount']['amount'];
+                $payment->charged_amount = $responseData['payment']['charged_amount']['amount'];
+                $payment->credited_amount = $responseData['payment']['credited_amount']['amount'];
+                $payment->principal_amount = $responseData['payment']['principal_amount']['amount'];
+                $payment->currency = $responseData['payment']['principal_amount']['currency'];
+                $payment->sender_account_uri = $responseData['payment']['sender_account_uri'];
+                $payment->recipient_account_uri = $responseData['payment']['recipient_account_uri'];
+                $payment->payment_amount = $responseData['payment']['payment_amount']['amount'];
+                $payment->payment_origination_country = $responseData['payment']['payment_origination_country'];
+                $payment->fx_rate = $responseData['payment']['fx_rate'];
                 
-                // // Check if bank_code exists in $responseData before setting it
-                // if (isset($responseData['payment']['bank_code'])) {
-                //     $payment->bank_code = $responseData['payment']['bank_code'];
-                // } else {
-                //     // Handle the case where bank_code is not available
-                //     $payment->bank_code = null; // or set it to a default value, if necessary
-                // }
+                // Check if bank_code exists in $responseData before setting it
+                if (isset($responseData['payment']['bank_code'])) {
+                    $payment->bank_code = $responseData['payment']['bank_code'];
+                } else {
+                    // Handle the case where bank_code is not available
+                    $payment->bank_code = null; // or set it to a default value, if necessary
+                }
                 
-                // $payment->payment_type = $responseData['payment']['payment_type'];
-                // $payment->source_of_income = $responseData['payment']['source_of_income'];
-                // $payment->settlement_details = $responseData['payment']['settlement_details']['amount'];
-                // $payment->cashout_code = $responseData['payment']['cashout_code'];
-                // $payment->created_by = $user->id;
-                // $payment->modified_by = $user->id;
-                // $payment->created_at = now();
-                // $payment->save();
+                $payment->payment_type = $responseData['payment']['payment_type'];
+                $payment->source_of_income = $responseData['payment']['source_of_income'];
+                $payment->settlement_details = $responseData['payment']['settlement_details']['amount'];
+                $payment->cashout_code = $responseData['payment']['cashout_code'];
+                $payment->created_by = $user->id;
+                $payment->modified_by = $user->id;
+                $payment->created_at = now();
+                $payment->save();
                  
-                // return redirect('/crossboader-payment')->with('message','Payment has been Submited Successfully');
-                 return $responseData;  
-            }
+                return redirect('/crossboader-payment')->with('message','Payment has been Submited Successfully');
+                //  return $responseData;  
+         }
        
     }
+
+    
+   
+        
+    
+
 
 
 

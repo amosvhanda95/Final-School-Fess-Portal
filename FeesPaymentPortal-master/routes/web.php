@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\BursarController;
+use App\Http\Controllers\EcoCashController;
 use App\Http\Controllers\SchoolsController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\CustomerController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\BeneficiaryController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\PassportClientController;
 use App\Http\Controllers\LoanApplicationController;
+use App\Http\Controllers\BankRegistrationController;
 use App\Http\Controllers\CrossborderPaymentController;
 
 /*
@@ -41,8 +43,12 @@ Route::post('/get-token', [PassportClientController::class,'getToken']);
 Route::get('/auth/forgot_password', [ForgotPasswordController::class, 'showForgotPasswordForm']);
 
 // Handle the submission of the forgot password form
-Route::post('/auth/forgot_password', [ForgotPasswordController::class, 'resetPassword']);
+Route::post('/auth/forgot_password', [ForgotPasswordController::class, 'forgetPassword']);
 
+// Route to handle the password reset form submission
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'resetPassword'])->name('password.reset');
+
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPasswordPost'])->name('password.resetpost');
 
 Route::get('auth/login',  ['\App\Http\Controllers\Auth\AuthController', 'show'])->name('auth.login');
 Route::post('auth/login',  ['\App\Http\Controllers\Auth\AuthController', 'login']);
@@ -109,11 +115,27 @@ Route::group(['middleware'=>'auth'], function () {
         Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
 
         Route::resource('loan-application', LoanApplicationController::class);
+        Route::post('/make-encrypted-api-request', [APIController::class, 'makeEncryptedApiRequest']);
        
+        // Route to display the forgot password form
+         Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+
+                Route::get('/link-to-eco-cash', [EcoCashController::class, 'index'])->name('ecocash.index');
+                Route::get('/link-to-eco-cashs', [EcoCashController::class, 'create'])->name('ecocash.create');
+                Route::post('/register-to-eco-cash', [BankRegistrationController::class, 'submitForm']);
+                
+
 });
+
 
 
 Route::get('/cross/rates', [CrossborderPaymentController::class, 'ratesRequest']);
         
+Route::get('/encrypt', [APIController::class, 'encryp']);
         
+// In your routes file (web.php or routes/web.php)
+// Route::get('/reset-password/{token}', 'ForgotPasswordController@resetPassword')->name('password.reset');
 
+// Route::get('/forgot-password', function () {
+//         return view('auth.forgot-password');
+//     })->middleware('guest')->name('password.request');

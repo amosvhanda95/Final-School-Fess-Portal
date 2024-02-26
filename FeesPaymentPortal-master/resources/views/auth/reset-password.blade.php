@@ -24,7 +24,7 @@
             </div>
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg">We will send  a link to your  email, use that link to reset the password  </p>
+                    <p class="login-box-msg"> Reset the password  </p>
                     @if ($errors->any()) <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -32,8 +32,9 @@
                             @endforeach </ul>
                     </div>
                     @endif
-                    <form action="/auth/forgot_password" method="post">
+                    <form action="/reset-password" method="post">
                         @csrf
+                        <input type ="text" hidden value="{{ $token }}" name="token">
                         <div class="input-group mb-3">
                             <input type="email" name="email" class="form-control" placeholder="Email">
                             <div class="input-group-append">
@@ -42,13 +43,31 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="row">
+                         <div class="input-group mb-3">
+                            <input type="password" class="form-control" name='password' placeholder="Password">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                        </div>
+                                <div class="input-group mb-3">
+                                    <input type="password" class="form-control" name="password_confirmation" placeholder="Confirm Password">
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span class="fas fa-lock"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
                             
                             <div class="col-4">
                                 <button type="submit" class="btn btn-primary btn-block">{{ __('Reset Password') }}</button>
                             </div>
                         </div>
+                        </div>
+                        
+                       
                     </form>
                     
                 </div>

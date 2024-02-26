@@ -156,9 +156,18 @@
             <div class="sidebar">
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="info">
-                        <a href="#" class="d-block">{{ request()->user()->first_name }}
-                            {{ request()->user()->last_name }}
-
+                        <a href="#" class="d-block">
+                            {{ request()->user()->first_name }} {{ request()->user()->last_name }}
+                            
+                        </a>
+                    </div>
+                    <br/>
+                    <div class="info">
+                        <a href="#" class="d-block">
+                            
+                            @if (request()->user()->type == 5)
+                            {{ request()->user()->account_number }}
+                            @endif
                         </a>
                     </div>
                 </div>
@@ -286,6 +295,22 @@
                                             <p>Generate Reports</p>
                                         </a>
                                     </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-mobile"></i>
+                                    <p> EcoCash Section <i class="fas fa-angle-left right"></i></p>
+                                </a>
+                            
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="/link-to-eco-cash" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Link To EcoCash</p>
+                                        </a>
+                                    </li>
+                                    <!-- Add more ECOCASH-related links as needed -->
                                 </ul>
                             </li>
                             <li class="nav-item">
