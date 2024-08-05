@@ -9,20 +9,27 @@ use App\Models\Sendmoney;
 use App\Models\Beneficiary;
 
 
+use App\Models\Transaction;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
+use App\Models\EthixTransaction;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\Http;
 
 use Mastercard\Developer\OAuth\OAuth;
 use Umpirsky\CountryList\CountryList;
-
+use Illuminate\Support\Facades\Redirect;
 use Mastercard\Developer\Utils\EncryptionUtils;
 use Mastercard\Developer\Encryption\JweEncryption;
-use Mastercard\Developer\Encryption\JweConfigBuilder;
-
-use Mastercard\Developer\OAuth\Utils\AuthenticationUtils;
-
 use Mastercard\Developer\Signers\CurlRequestSigner;
+use Mastercard\Developer\Encryption\JweConfigBuilder;
+use Mastercard\Developer\OAuth\Utils\AuthenticationUtils;
 
 
 class APIController extends Controller
@@ -150,12 +157,6 @@ print $result;
 print "\n\nDecrypted Data:\n";
 $decryptedData = JweEncryption::decryptPayload($result, $config);
 echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
-
-
-
-
-
-
 
 
         
@@ -321,6 +322,7 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
 
     public function captureDetails($customer)
     {
+
         $id = $customer;
        
         if (is_null($customer))
@@ -338,12 +340,15 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
            return view('crossboarder.capture', compact('customer','id','beneficiary'));
         }
     }
+
     public function paymentRequest(Request $request )
     {
+      
         
+    
                     
-                
-                    
+        
+        $transactionReference = $this->generateTransactionReference();     
 
             $consumerKey = 'ZIyOOKEIuu0Qt8TZgRGFA53Hzep4e9ZH33ICsaB65d4389b8!fabc03b54a14477da2e5503c41e2b3b60000000000000000';
             $oauthKeyPath = 'POSB-ENCRYPTION-sandbox-signing.p12';
@@ -406,12 +411,104 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
       
        
         $customer = Customer::find($request->input('sender_id'));
-        $receiver = Beneficiary::find($request->input('recever_id'));
+        $receiver = Beneficiary::find($request->input('receiver_id'));
         $purpose_of_payment = $request->input('purpose_of_payment');
         $source_of_income = $request->input('source_of_income');
+        $principalAmount = $request->input('principal_amount');
+
+if (!is_numeric($principalAmount) || $principalAmount <= 0) {
+    return redirect()->back()->with('error', 'Invalid transaction amount')->withInput();
+}
+
         
-        
+
+                $senderPhoneNumber = $customer->phone_number;
+
+                // Define limits
+                $weeklyLimit = 5000;
+                $monthlyLimit = 20000;
+                $yearlyLimit = 50000;
+
+
+                
+              // Function to get the date of the last transaction within the last 7 and 31 days
+function getLastTransactionDate($phoneNumber, $days) {
+   
+    $startDate = Carbon::now()->subDays($days);
+    return Sendmoney::where('sender_account_uri', 'LIKE', "%$phoneNumber%")
+                      ->where('created_at', '>=', $startDate)
+                      ->orderBy('created_at', 'desc')
+                      ->first();
+}
+
+function getTransactionTotal($phoneNumber, $startDate) {
+    // Assuming you have a Transaction model that has a 'created_at' column
+    return Sendmoney::where('sender_account_uri',  'LIKE', "%$phoneNumber%")
+                      ->where('created_at', '>=', $startDate)
+                      ->sum('amountsent');
+}
+// Retrieve the last transaction date
+$lastTransaction7Days = getLastTransactionDate($senderPhoneNumber, 7);
+$lastTransaction31Days = getLastTransactionDate($senderPhoneNumber, 31);
+
+// Calculate the next eligible transaction dates
+$nextEligibleDate7Days = $lastTransaction7Days ? Carbon::parse($lastTransaction7Days->created_at)->addDays(7) : Carbon::now();
+$nextEligibleDate31Days = $lastTransaction31Days ? Carbon::parse($lastTransaction31Days->created_at)->addDays(31) : Carbon::now();
+
+// Calculate the number of days left
+$daysLeftForNextWeek = $nextEligibleDate7Days->isFuture() ? Carbon::now()->diffInDays($nextEligibleDate7Days) : 0;
+$daysLeftForNextMonth = $nextEligibleDate31Days->isFuture() ? Carbon::now()->diffInDays($nextEligibleDate31Days) : 0;
+
+// Calculate total transaction amounts for the last 7 days, 31 days, and the current year
+$weeklyTotal = getTransactionTotal($senderPhoneNumber, Carbon::now()->subDays(7));
+
+$monthlyTotal = getTransactionTotal($senderPhoneNumber, Carbon::now()->subDays(31));
+$yearlyTotal = getTransactionTotal($senderPhoneNumber, Carbon::now()->startOfYear());
+
+// Check if any limit is exceeded
+$exceededAmount = 0;
+
+$limitExceeded = false;
+$errorMessage = '';
+if ($principalAmount > $weeklyLimit) {
+    $exceededAmount = $principalAmount - $weeklyLimit;
+    $limitExceeded = true;
+    if ($daysLeftForNextWeek == 0) {
+        $errorMessage = 'Transaction exceeds weekly sender limit by ' . $exceededAmount . '. You can perform any transactions tomorrow.';
+    } else {
+        $errorMessage = 'Transaction exceeds weekly sender limit by ' . $exceededAmount . '. You have ' . $daysLeftForNextWeek . ' days left until you can perform another transaction.';
+    }
+} elseif ($weeklyTotal + $principalAmount > $weeklyLimit) {
+    $exceededAmount = ($weeklyTotal + $principalAmount) - $weeklyLimit;
+    $limitExceeded = true;
+    if ($daysLeftForNextWeek == 0) {
+        $errorMessage = 'Transaction exceeds weekly sender limit by ' . $exceededAmount . '. You can perform any transactions tomorrow.';
+    } else {
+        $errorMessage = 'Transaction exceeds weekly sender limit by ' . $exceededAmount . '. You have ' . $daysLeftForNextWeek . ' days left until you can perform another transaction.';
+    }
+} elseif ($monthlyTotal + $principalAmount > $monthlyLimit) {
+    $exceededAmount = ($monthlyTotal + $principalAmount) - $monthlyLimit;
+    $limitExceeded = true;
+    if ($daysLeftForNextMonth == 0) {
+        $errorMessage = 'Transaction exceeds monthly sender limit by ' . $exceededAmount . '. You can perform any transactions tomorrow.';
+    } else {
+        $errorMessage = 'Transaction exceeds monthly sender limit by ' . $exceededAmount . '. You have ' . $daysLeftForNextMonth . ' days left until you can perform another transaction.';
+    }
+} elseif ($yearlyTotal + $principalAmount > $yearlyLimit) {
+    $exceededAmount = ($yearlyTotal + $principalAmount) - $yearlyLimit;
+    $limitExceeded = true;
+    $errorMessage = 'Transaction exceeds yearly sender limit by ' . $exceededAmount . '.';
+}
+
+
+if ($limitExceeded) {
+    return redirect('/crossboader-payment')->with('error', $errorMessage);
+}
+
+// Function to calculate the total transaction amount from a given start date
+       
             if ($customer && $receiver ) {
+               
             
                 $senderFirstName = $customer->first_name;
                 $senderLastName = $customer->surname;
@@ -421,7 +518,7 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
                 $sender_sender_city = $customer->city; 
                 $sender_phone_number= $customer->phone_number;  
                 $sender_id= $customer->id_number;
-                $transactionReference = $this->generateTransactionReference();
+               
               
 
                 $recipientFirstName = $receiver->rec_first_name;
@@ -434,6 +531,7 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
                 $amount = $request->input('amount');
                 $receiver_id =$receiver->rec_idc;
                 $receiver_email = $receiver->rec_email;
+                $gender = $receiver->gender;
               
                
                 
@@ -478,70 +576,83 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
                     'VAT', // Vatican City
                 ];
                 
+                
                   
                 
                 if (in_array($receiver->fxrate->country_code, [ 'IND'])) {
-                    $paymentRequestData = [
-                        "paymentrequest" => [
-                            "transaction_reference" => $transactionReference,
-                            "sender_account_uri" => "tel:+".$sender_phone_number,
-                            "recipient_account_uri" =>"ewallet".$receiver->rec_ewallet,
-                            "card_rate_id" => $receiver->fxrate->card_rate_id,
-                            "payment_amount" => [
-                                "amount" =>  $amount,
-                                "currency" => $receivecurrecny,
-                            ],
-                            "fx_type" => [
-                                "reverse" => [
-                                    "sender_currency" => "USD"
-                                ]
-                            ],
-                            "sender" => [
-                                "first_name" =>  $senderFirstName,
-                                "last_name" =>  $senderLastName ,
-                                "nationality" => "ZWE",
-                                "address" => [
-                                    "line1" => $sender_house_number ."". $sender_address_area,
-                                    
-                                    "city" => $sender_sender_city ,
-                                    "country" => "ZWE",
-                                ],
-                                "government_id_uri" => $sender_id,
-                                "date_of_birth" => $senderDateofBirth
-                            ],
-                            "recipient" => [
-                                "first_name" => $recipientFirstName,
-                                "last_name" =>  $recipientLastName ,
-                                "address" => [
-                                    "line1" => $receiver_house_number ." ". $receiver_address_area,
-                                    "city" => $receiver_sender_city,
-                                    
-                                    "country" => $receiver->fxrate->country_code,
-                                ],
-                               
-                                "email" =>$receiver_email,
-                                "nationality" =>  $receiver->fxrate->country_code,
-                            ],
 
-                            "payment_origination_country" => "ZWE",
-                            "purpose_of_payment" =>  $purpose_of_payment,
-                            "source_of_income" => $source_of_income,
-                            "payment_type" => "P2P",
-                              
-                            "additional_data" => [
-                                'data_field' => [
-                                   
-                                    [
-                                        "name" => '701',
-                                        "value" => $receiver->fxrate->country_code,
+                    
+                   
+                    if ($receiver->payment_method == "BD"){
+                        $paymentRequestData = [
+                            "paymentrequest" => [
+                                "transaction_reference" => $transactionReference,
+                                "sender_account_uri" => "tel:+".$sender_phone_number,
+                                "recipient_account_uri" =>"ban:".$receiver->rec_ban.";"."bic=".$receiver->rec_bic,
+                                "card_rate_id" => $receiver->fxrate->card_rate_id,
+                                "payment_amount" => [
+                                    "amount" =>  $amount,
+                                    "currency" => $receivecurrecny,
+                                ],
+                                "fx_type" => [
+                                    "reverse" => [
+                                        "sender_currency" => "USD"
+                                    ]
+                                ],
+                                "sender" => [
+                                    "first_name" =>  $senderFirstName,
+                                    "last_name" =>  $senderLastName ,
+                                    "nationality" => "ZWE",
+                                    "address" => [
+                                        "line1" => $sender_house_number ."". $sender_address_area,
+                                        
+                                        "city" => $sender_sender_city ,
+                                        "country" => "ZWE",
+                                    ],
+                                    "government_id_uri" => $sender_id,
+                                    "date_of_birth" => $senderDateofBirth
+                                ],
+                                "recipient" => [
+                                    "first_name" => $recipientFirstName,
+                                    "last_name" =>  $recipientLastName ,
+                                    "address" => [
+                                        "line1" => $receiver_house_number ." ". $receiver_address_area,
+                                        "city" => $receiver_sender_city,
+                                        
+                                        "country" => $receiver->fxrate->country_code,
                                     ],
                                    
+                                    "email" =>$receiver_email,
+                                    "nationality" =>  $receiver->fxrate->country_code,
                                 ],
-                            ]
-                        ],
+    
+                                "payment_origination_country" => "ZWE",
+                                "purpose_of_payment" =>  $purpose_of_payment,
+                                "source_of_income" => $source_of_income,
+                                "payment_type" => "P2P",
+                                  
+                                "additional_data" => [
+                                    'data_field' => [
+                                       
+                                        [
+                                            "name" => '701',
+                                            "value" => $receiver->fxrate->country_code,
+                                        ],
+                                       
+                                    ],
+                                ]
+                            ],
+                                
                             
-                        
-                    ];
+                        ];
+
+                    }elseif($receiver->payment_method == "CP"){
+                        $stringdata="Please add Body Request";
+
+                        dd($stringdata);
+
+
+                    }
                     
                 } elseif (in_array($receiver->fxrate->country_code, [ 'PAK'])) {
                     // You may need additional conditions for Pakistan
@@ -606,7 +717,62 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
                             "paymentrequest" => [
                                 "transaction_reference" => $transactionReference,
                                 "sender_account_uri" => "tel:+".$sender_phone_number,
-                                "recipient_account_uri" => "ban:".$receiver->rec_ban,
+                                "recipient_account_uri" => "ban:".$receiver->rec_ban.";"."bic=".$receiver->rec_bic,
+                                "card_rate_id" => $receiver->fxrate->card_rate_id,
+                                "payment_amount" => [
+                                    "amount" =>   $amount,
+                                    "currency" => $receivecurrecny,
+                                ],
+                                "fx_type" => [
+                                    "reverse" => [
+                                        "sender_currency" => "USD"
+                                    ]
+                                ],
+    
+                                "sender" => [
+                                    "first_name" => $senderFirstName,
+                                    "last_name" =>   $senderLastName ,
+                                    "nationality" => "ZWE",
+                                    "address" => [
+                                        "line1" => $sender_house_number ."". $receiver_address_area,
+                                        
+                                        "city" => $sender_sender_city ,
+                                        "country" => "ZWE",
+                                    ],
+                                    
+                                ],
+                                "recipient" => [
+                                    "first_name" => $recipientFirstName,
+                                    "last_name" =>  $recipientLastName ,
+                                    
+                                    "address" => [
+                                        "line1" => $receiver_house_number ." ".$receiver_address_area,
+                                        "city" => $receiver_sender_city,
+                                        "country_subdivision" =>$receiver->rec_country_subdivision,
+                                        "country" =>$receiver->fxrate->country_code,
+                                        "postal_code" => $receiver->rec_postal_code,
+                                    ],
+                                   
+                                   
+                                    "nationality" => $receiver->fxrate->country_code,
+                                   
+                                ],
+    
+                                "payment_origination_country" => "ZWE",
+                                "purpose_of_payment" =>  $purpose_of_payment,
+                                "source_of_income" => $source_of_income,
+                                "payment_type" => "P2P",
+                                
+                            ]
+                        ];
+                    }
+                    elseif ($receiver->payment_method == "IB") {
+                        // Execute Bank Deposit for Pakistan in PKR
+                        $paymentRequestData = [
+                            "paymentrequest" => [
+                                "transaction_reference" => $transactionReference,
+                                "sender_account_uri" => "tel:+".$sender_phone_number,
+                                "recipient_account_uri" => "iban:".$receiver->rec_iban,
                                 "card_rate_id" => $receiver->fxrate->card_rate_id,
                                 "payment_amount" => [
                                     "amount" =>   $amount,
@@ -658,6 +824,58 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
                 } elseif (in_array($receiver->fxrate->country_code, [ 'ZMB'])) {
                     
                     if ($receiver->payment_method == "BD") {
+                        $paymentRequestData = [
+                            "paymentrequest" => [
+                                "transaction_reference" => $transactionReference,
+                                "sender_account_uri" => "tel:+".$sender_phone_number,
+                                "recipient_account_uri" => "ban:".$receiver->rec_ban.";"."bic=".$receiver->rec_bic,
+                                "card_rate_id" => $receiver->fxrate->card_rate_id,
+                                "payment_amount" => [
+                                    "amount" =>   $amount,
+                                    "currency" => $receivecurrecny,
+                                ],
+                                "fx_type" => [
+                                    "reverse" => [
+                                        "sender_currency" => "USD"
+                                    ]
+                                ],
+    
+                                "sender" => [
+                                    "first_name" => $senderFirstName,
+                                    "last_name" =>   $senderLastName ,
+                                    "nationality" => "ZWE",
+                                    "address" => [
+                                        "line1" => $sender_house_number ."". $receiver_address_area,
+                                        
+                                        "city" => $sender_sender_city ,
+                                        "country" => "ZWE",
+                                    ],
+                                    
+                                ],
+                                "recipient" => [
+                                    "first_name" => $recipientFirstName,
+                                    "last_name" =>  $recipientLastName ,
+                                    
+                                    "address" => [
+                                        "line1" => $receiver_house_number ." ".$receiver_address_area,
+                                        "city" => $receiver_sender_city,
+                                        "country_subdivision" =>$receiver->rec_country_subdivision,
+                                        "country" =>$receiver->fxrate->country_code,
+                                        "postal_code" => $receiver->rec_postal_code,
+                                    ],
+                                   
+                                   
+                                    "nationality" => $receiver->fxrate->country_code,
+                                   
+                                ],
+    
+                                "payment_origination_country" => "ZWE",
+                                "purpose_of_payment" =>  $purpose_of_payment,
+                                "source_of_income" => $source_of_income,
+                                "payment_type" => "P2P",
+                                
+                            ]
+                        ];
 
 
                         
@@ -1252,6 +1470,7 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
                         ]
                     ];
                 }elseif (in_array($receiver->fxrate->country_code, ['CHN'])) {
+                  
                     
                     $paymentRequestData = [
                         "paymentrequest" => [
@@ -1407,7 +1626,9 @@ echo (json_encode(json_decode($decryptedData), JSON_PRETTY_PRINT));
         
                 // Convert the PHP array to a JSON string
                 $requestPayload =  json_encode($paymentRequestData, JSON_PRETTY_PRINT);
-        
+                Log::info('Request to Mastercard API', [
+                    'payload' => json_encode($paymentRequestData, JSON_PRETTY_PRINT)
+                ]);
                 // Now, you can use $payload in your API request
         
         
@@ -1441,6 +1662,11 @@ $result = callAPI($method, $uri, $headers, $payload, $consumerKey, $signingKey);
 $result2 = JweEncryption::decryptPayload($result, $config);
 
 $responseData = json_decode($result2, true);
+Log::info('Response from Mastercard API', [
+    'response' => json_encode($responseData, JSON_PRETTY_PRINT)
+]);
+
+
 
 // Check if decoding was successful
 if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
@@ -1451,6 +1677,33 @@ if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
         
                
                 $payment = new Sendmoney();
+                // Assuming $payment is an instance of a model or object where you want to store the data
+
+                // Assign sender details
+                $payment->sender_first_name = $customer->first_name;
+                $payment->sender_last_name = $customer->surname;
+                $payment->sender_date_of_birth = $customer->date_of_birth;
+                $payment->sender_house_number = $customer->house_number;
+                $payment->sender_address_area = $customer->area;
+                $payment->sender_city = $customer->city;
+                $payment->sender_phone_number = $customer->phone_number;
+                $payment->sender_id = $customer->id_number;
+
+                // Assign recipient details
+                $payment->recipient_first_name = $receiver->rec_first_name;
+                $payment->recipient_last_name = $receiver->rec_surname;
+                $payment->recipient_house_number = $receiver->rec_house_number;
+                $payment->recipient_address_area = $receiver->rec_area;
+                $payment->recipient_city = $receiver->rec_city;
+                $payment->recipient_phone = $receiver->recipient_account_uri;
+                $payment->receive_currency = $receiver->currency;
+                $payment->amount = $request->input('amount');
+                $payment->recipient_id = $receiver->rec_idc;
+                $payment->recipient_email = $receiver->rec_email;
+                $payment->recipient_gender = $receiver->gender;
+
+                
+
                 $payment->transaction_reference = $responseData['payment']['transaction_reference'];
                 $payment->status = $responseData['payment']['status'];
                 $payment->fees_amount = $responseData['payment']['fees_amount']['amount'];
@@ -1463,6 +1716,7 @@ if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
                 $payment->payment_amount = $responseData['payment']['payment_amount']['amount'];
                 $payment->payment_origination_country = $responseData['payment']['payment_origination_country'];
                 $payment->fx_rate = $responseData['payment']['fx_rate'];
+                $payment->amountsent = $principalAmount ;
                 
                 // Check if bank_code exists in $responseData before setting it
                 if (isset($responseData['payment']['bank_code'])) {
@@ -1480,17 +1734,403 @@ if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
                 $payment->modified_by = $user->id;
                 $payment->created_at = now();
                 $payment->save();
+
+
+
+                // Mapping array for source of funds descriptions to codes
+$sourceOfFundsMap = [
+    'Salary'  => 'SAL',
+    'Savings' => 'SV',
+    'Government funding'=> 'GF',
+    'Business' => 'PN',
+    'Loan' => 'PN',
+    'Investments' => 'GF',
+    'Personal Income' => 'SV'
+
+
+];
+
+// Example source of income description (this could come from user input, a database, etc.)
+$source_of_income_description = $source_of_income; // Replace this with dynamic input as needed
+
+// Get the corresponding code for the source of income description
+$sourceOfFundsCode = $sourceOfFundsMap[$source_of_income_description] ?? null;
+
+$purposeOfFandMap =[
+    'Family Maintenance' =>	'GFT',
+    'Household Maintenance'	 =>'RNT',
+    'Payment of Loan'	 =>'INS',
+    'Purchase of Property'  =>	'CNT',
+    'Funeral Expenses'  =>	'FES',
+    'Medical Expenses'  =>	'MED',
+    'Wedding Expenses'  =>	'HTR',
+    'Payment of bills' =>	'UTB',
+    'Education' 	 =>'EDU',
+    'Savings' 	 =>'GFT',
+    'Employee Colleague'  =>	'GFT',
+    
+];
+
+// Example source of income description (this could come from user input, a database, etc.)
+$purpose_of_income_description = $purpose_of_payment ; // Replace this with dynamic input as needed
+
+$purposeOfFundsCode = $purposeOfFandMap[$purpose_of_income_description] ?? null;
+
+$letterCountryCode=[
+
+'South Africa' => 'ZA',
+'United States' => 'US',
+'Thailand' => 'TH',
+'United Kingdom' => 'GB',
+'Canada' => 'CA',
+'United Arab Emirates' => 'AE',
+'Australia' => 'AU',
+'Poland' => 'PL',
+'Japan' => 'JP',
+'Switzerland' => 'CH',
+'Hong Kong' => 'HK',
+'Singapore' => 'SG',
+'Zambia' => 'ZM',
+'India' => 'IN',
+'Pakistan' => 'PK',
+'Malaysia' => 'MY',
+'China' => 'CN',
+'Mozambique' => 'MZ',
+'Malawi' => 'MW',
+'Andorra' => 'AD',
+'Austria' => 'AT',
+'Belgium' => 'BE',
+'Croatia' => 'HR',
+'Cyprus' => 'CY',
+'Estonia' => 'EE',
+'Finland' => 'FI',
+'France' => 'FR',
+'Germany' => 'DE',
+'Greece' => 'GR',
+'Ireland' => 'IE',
+'Italy' => 'IT',
+'Latvia' => 'LV',
+'Lithuania' => 'LT',
+'Luxembourg' => 'LU',
+'Malta' => 'MT',
+'Monaco' => 'MC',
+'Netherlands' => 'NL',
+'Portugal' => 'PT',
+'San Marino' => 'SM',
+
+];
+
+$country_of_income_description =$receiver->fxrate->country ; 
+
+
+
+$countryOfFundsCode = $letterCountryCode[$country_of_income_description] ?? null;
+
+$now = Carbon::now();
+$isoDate = $now->toIso8601String();
+
+
+
+// Parse the original date using Carbon
+$carbonDate = Carbon::parse($isoDate );
+
+// Format the Carbon date to the desired ISO 8601 format
+$formattedDate = $carbonDate->toIso8601String();
+
+$OriginalDate1 = substr($formattedDate, 0, -6) . '.025Z';
+                    $data = [
+                        'amount' => $principalAmount,
+                        'bdxBranch' => Auth::user()->branch->branch_name,
+                        'city' => $sender_sender_city,
+                        'countryCode' => $countryOfFundsCode,
+                        'countryName' => $receiver->fxrate->country,
+                        'currencyCode' => 'USD',
+                        'district' => $sender_sender_city,
+                        'gender' => $gender,
+                        'internationalPartnerCode' => 'PR',
+                        'internationalPartnerName' => 'POSB REMIT',
+                        'nationalId' => $sender_id,
+                        'operatorName' => Auth::user()->first_name . ' ' . Auth::user()->last_name,
+                        'originalReference' => $payment->transaction_reference,
+                        'recipientName' => $recipientFirstName . " " . $recipientLastName,
+                        'senderName' => $senderFirstName . " " . $senderLastName,
+                        'sourceOfFundsCode' => $sourceOfFundsCode,
+                        'street' => $sender_house_number . " " . $sender_address_area,
+                        'suburb' => $sender_sender_city,
+                        'transactionDate' => $OriginalDate1,
+                        'transactionPurposeCode' => $purposeOfFundsCode,
+                        'transactionType' => 'Send',
+                        'transferMode' => 'CASH',
+                    ];
+
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'X-API-Key' => 'd1dec13c-928b-422a-acaf-fc56d27dca34',
+                    'x-trace-id' =>(string) Str::uuid(),
+
+                ])->post('https://tarms.posb.co.zw:11002/api/v1/transaction/add', $data);
+
+
+                Log::info('Request to mta_transaction- RBZ:', [
+                    'url' => 'https://tarms.posb.co.zw:11002/api/v1/transaction/add',
+                    'payload' => $data,
+                ]);
+                
+
+               
+              
+                 // Determine the status based on the response
+                $status = $response->successful() ? 'success' : 'failed';
+
+                // Save the data with status to the database
+                $data['status'] = $status;
+
+                Transaction::create($data);
+                // Log the response
+                if ($response->status() < 200 || $response->status() >= 300) {
+                    Log::error('Failed response from mta_transaction- RBZ :', [
+                        'status' => $response->status(),
+                        'body' => $response->body()
+                    ]);
+                    
+                } else {
+                    Log::info('Successful response from mta_transaction- RBZ :', [
+                        'status' => $response->status(),
+                        'body' => $response->body()
+                    ]);
+                }
+
+
+                    $user = $request->user()->ethics_user;
+                    
+
+                    // Define the headers for the API request
+                    $headers = [
+                        'Content-Type' => 'application/json',
+                        'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
+                        'x-trace-id' => 'POSB-REMIT' . uniqid(),
+                    ];
+
+                    // Retrieve the user
+        $user = $request->user()->ethics_user;
+
+        // Define the headers for the API request
+        $headers = [
+            'Content-Type' => 'application/json',
+            'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
+            'x-trace-id' => 'POSB-REMIT' . uniqid(),
+        ];
+
+        // Define other required variables
+        $schoolAccountNumber = "01-04-400-20806001";
+        $currency = "USD";
+
+        // Prepare the body of the request
+        $body = [
+            "TellerEthixUsername" => strval($user),
+            "schoolAccountNumber" => strval($schoolAccountNumber),
+            "posTransactionReference" => 'CASH-REMITANCE' . Str::random(9),
+            // "description" => $request->senderFirstName . " " . $request->senderLastName . " Send " . $request->principal_amount . " To " . $request->recipientFirstName . " " . $request->recipientLastName . " Country: " . $request->receiver['fxrate']['country'],
+            "description" => $senderFirstName . " " . $senderLastName . " " . " Send "  ." USD ". $principalAmount . " To " . $recipientFirstName . " " . $recipientLastName . " Country: " . $receiver->fxrate->country . ". Reference number: { $payment->transaction_reference}. Paid on: " . Carbon::today()->toDateString(),
+            "amount" => $request->principal_amount,
+            "currency" => strval($currency),
+        ];
+
+        // Log the request
+        Log::info('Request to Principal Ethix API', [
+            'url' => 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction',
+            'headers' => $headers,
+            'body' => $body
+        ]);
+
+        // Create the transaction with initial status
+        $transaction = EthixTransaction::create(array_merge($body, ['status' => 'pending']));
+
+      
+      
+
+        // Define the API endpoint
+        $apiEndpoint = 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction';
+
+        try {
+            // Make the HTTP POST request
+            $response = Http::withHeaders($headers)->post($apiEndpoint, $body);
+            $responseData =json_decode($response->body(), true);
+
+            // Log the response and update the transaction status based on the response
+            if ($response->successful()) {
+                Log::info('Successful Response from Principal Ethix API', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                    
+                ]);
+                
+                // Update the transaction status to success
+                $transaction->update(['status' => 'success' , 'posTransactionReference'=>$responseData['uniqueReference'] ]);
+                $phoneNumber = $sender_phone_number;
+                $senderName =$senderFirstName . " " . $senderLastName;
+                $referenceNumber = $payment->transaction_reference;
+                $amount = $request->input('principal_amount');
+                
+
+                $this->sendSMS($phoneNumber, $senderName, $currency, $amount, $referenceNumber);
+            } else {
+                Log::error('Failed Response from Principal Ethix API', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+                // Leave the status as pending or set it to failed if desired
+                $transaction->update(['status' => 'failed']);
+            }
+        } catch (\Exception $e) {
+            // Log the exception
+            Log::error('Exception during Ethix API call', ['message' => $e->getMessage()]);
+            // Update the transaction status to failed
+            $transaction->update(['status' => 'failed']);
+        }
+
+                    // Check if the request was successful
+                    if ($response->successful()) {
+                        $responseData = $response->json();
+                        // Do something with $responseData, like returning it or processing it further
+                        
+                        $apiEndpoint = 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction';
+                        $feesAccountNumber = "01-04-400-40608001";
+                        $body1 = [
+                            "TellerEthixUsername" => strval($user),
+                            "schoolAccountNumber" => strval($feesAccountNumber),
+                            "posTransactionReference" => 'CASH-REMIT' . Str::random(9),
+                            "description" =>  $senderFirstName." ". $senderLastName . " " ." Send " . $principalAmount. " To " . $recipientFirstName."  ". $recipientLastName ." Country: ". $receiver->fxrate->country,
+                            "amount" => $request->input('total_principal_amount'),
+                            "currency" => strval($currency),
+                        ];
+                        Log::info(' Request to Fees  API', [
+                            'url' => 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction',
+                            'headers' => $headers,
+                            'body' => $body1
+                        ]);
+                         // Create the transaction with initial status
+                         $transaction = EthixTransaction::create(array_merge($body1, ['status' => 'pending']));
+
+                        // Make the HTTP POST request
+                        $response = Http::withHeaders($headers)->post($apiEndpoint, $body1);
+                        $responseData = $response->json();
+    
+                       
+                        if ($response->status() < 200 || $response->status() >= 300) {
+                            Log::error('Failed Response  from Fees Ethix API :', [
+                                'status' => $response->status(),
+                                'body' => $response->body()
+                            ]);
+                        } else {
+                            Log::info('Successful Response  from Fees Ethix API:', [
+                                'status' => $response->status(),
+                                'body' => $response->body()
+                            ]);
+                            $transaction->update(['status' => 'success' , 'posTransactionReference'=>$responseData['uniqueReference'] ]);
+                        }
+    
+                        // Check if the request was successful
+                        if ($response->successful()) {
+                            $responseData = $response->json();
+                            // Do something with $responseData, like returning it or processing it further
+                            // return redirect('/crossboader-payment')->with('message','Payment has been Submited Successfully');
+
+                            $payment = Sendmoney::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
+
+                            
+            return redirect('crossboader-payment/' . $payment->id);
+
+                        } else {
+                            // Handle error
+                            return response()->json([
+                                'error' => 'Failed to connect to the Ethix API',
+                                'message' => $response->body(),
+                            ], $response->status());
+                        }
+                    } else {
+                        // Handle error
+                        return response()->json([
+                            'error' => 'Failed to connect to the Ethix API',
+                            'message' => $response->body(),
+                        ], $response->status());
+                    }
+
+                   
+                    
                  
-                return redirect('/crossboader-payment')->with('message','Payment has been Submited Successfully');
+                  return redirect('/crossboader-payment')->with('message','Payment has been Submited Successfully');
                 //  return $responseData;  
          }
        
     }
+    
+    private function sendSMS($phoneNumber, $senderName, $currency, $amount, $referenceNumber)
+{
+    // Variables initialization
+    $url = 'https://secure.zss.co.zw/vportal/cnm/vsms/plain';
+    $user = 'posbcnm';
+    $password = '$posb123';
+
+    // Construct the message
+    // Construct the message
+    $message = "Int'l Remittance: {$amount}  {$currency}  received from {$senderName}." . 
+               " Ref: {$referenceNumber}. Date: " . 
+               Carbon::today()->toDateString() . ".";
+
+    // Log the constructed message
+    Log::info('Constructed SMS message', ['message' => $message]);
+
+    // Make GET request using Laravel HTTP client
+    try {
+        $response = Http::get($url, [
+            'user' => $user,
+            'password' => $password,
+            'sender' => "POSB Remit",
+            'GSM' => $phoneNumber,
+            'SMSText' => $message,
+        ]);
+
+        // Log the request details
+        Log::info('SMS request sent', [
+            'url' => $url,
+            'params' => [
+                'user' => $user,
+                'password' => $password,
+                'sender' =>"POSB Remit",
+                'GSM' => $phoneNumber,
+                'SMSText' => $message,
+            ],
+            'response_status' => $response->status(),
+            'response_body' => $response->body()
+        ]);
+
+        if ($response->successful()) {
+            // Handle successful response
+            Log::info('SMS sent successfully');
+            return response()->json(['message' => 'SMS sent successfully'], 200);
+        } else {
+            // Handle failed response
+            Log::error('Failed to send SMS', ['error' => $response->body()]);
+            return response()->json(['message' => 'Failed to send SMS', 'error' => $response->body()], $response->status());
+        }
+    } catch (\Exception $e) {
+        // Handle exception during HTTP request
+        Log::error('An error occurred while sending SMS', ['exception' => $e->getMessage()]);
+        return response()->json(['message' => 'An error occurred while sending SMS', 'error' => $e->getMessage()], 500);
+    }
+}
 
     
    
-        
+    function getRandomGender() {
+        $genders = ['Male', 'Female'];
+        $randomIndex = array_rand($genders);
+        return $genders[$randomIndex];
+    }
     
+    
+   
 
 
 
@@ -1498,13 +2138,16 @@ if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
 
     function generateTransactionReference() {
         // Define your format pattern
-        $pattern = "POSB_" . date("Y-M-D") . "_[random_string]";
+        $pattern = "POSB_REMIT_" . date("Y-M-D") . "_[random_string]";
         
         // Generate a random string
         $randomString = Str::random(12); // Use Str::random to generate a random string
         
         // Replace [random_string] with the generated random string
         $reference = str_replace("[random_string]", $randomString, $pattern);
+        
+        // Convert the entire reference to uppercase
+        $reference = strtoupper($reference);
         
         return $reference;
     }
@@ -1581,4 +2224,5 @@ if ($responseData === null && json_last_error() !== JSON_ERROR_NONE) {
 
       return  $data ;
     }
+    
 }

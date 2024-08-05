@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Branch;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sendmoney extends Model
 {
@@ -27,6 +28,25 @@ class Sendmoney extends Model
         'created_by',
         'modified_by',
         'currency',
+        'sender_first_name',
+        'sender_last_name',
+        'sender_date_of_birth',
+        'sender_house_number',
+        'sender_address_area',
+        'sender_city',
+        'sender_phone_number',
+        'sender_id',
+        'recipient_first_name',
+        'recipient_last_name',
+        'recipient_house_number',
+        'recipient_address_area',
+        'recipient_city',
+        'recipient_phone',
+        'receive_currency',
+        'amount',
+        'recipient_id',
+        'recipient_email',
+        'recipient_gender',
     ];
     
 
@@ -36,9 +56,9 @@ class Sendmoney extends Model
         }
 
         public function branch()
-        {
-            return $this->belongsTo(Branch::class);
-        }
+    {
+        return $this->belongsTo(Branch::class);
+    }
 
         public function user()
     {

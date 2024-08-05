@@ -52,6 +52,7 @@ class BeneficiaryController extends Controller
             "country_id" => 'required',
             'customer_id' => 'required|exists:customers,id',
             'currency'=> 'required',
+            'beneficiarygender'=> 'required',
 
         ]);
 
@@ -92,6 +93,8 @@ class BeneficiaryController extends Controller
             'rec_bank_code'=> $request->rec_bank_code,
             'payment_method'=> $request->payment_method,
             'currency' => $request->currency,
+            'gender' => $request->beneficiarygender,
+            
             //add rec_email and rec_iban on create
             
         ]);

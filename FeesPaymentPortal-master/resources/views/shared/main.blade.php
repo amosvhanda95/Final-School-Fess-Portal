@@ -157,20 +157,27 @@
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="info">
                         <a href="#" class="d-block">
-                            {{ request()->user()->first_name }} {{ request()->user()->last_name }}
-                            
+                            {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
                         </a>
-                    </div>
-                    <br/>
-                    <div class="info">
+                        @if (Auth::user()->type == 5)
                         <a href="#" class="d-block">
-                            
-                            @if (request()->user()->type == 5)
-                            {{ request()->user()->account_number }}
-                            @endif
+                            @php
+                                $account_number = Auth::user()->account_number;
+                                $parts = explode(',', $account_number);
+                                $zig_part = isset($parts[0]) ? $parts[0] : '';
+                                $usd_part = isset($parts[1]) ? $parts[1] : '';
+                            @endphp
+                            <div class="d-block">
+                                <span>ZiG: {{ $zig_part }}</span>
+                            </div>
+                            <div>
+                                <span >USD: {{ $usd_part }}</span>
+                            </div>
                         </a>
+                        @endif
                     </div>
                 </div>
+                
                 <div class="form-inline">
                     <div class="input-group" data-widget="sidebar-search">
                         <input class="form-control form-control-sidebar" type="search" placeholder="Search"
@@ -272,6 +279,12 @@
                                         <p>ZOU Fees Payment</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="/payment/golden-knot" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Golden Knot Payment</p>
+                                    </a>
+                                </li>
 
                                 <li class="nav-item">
                                     <a href="/payments" class="nav-link">
@@ -280,6 +293,23 @@
                                     </a>
                                 </li>
                             </ul>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon far fa-credit-card"></i>
+                                <p> Councils Payments <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="/payment/kadoma" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Kadoma Council</p>
+                                </a>
+                            </li>
+                        </ul>
                         </li>
                         @if (auth()->check() && auth()->user()->type === 1)
                             <li class="nav-item">

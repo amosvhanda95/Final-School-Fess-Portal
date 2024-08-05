@@ -38,7 +38,7 @@ return new class extends Migration
             'first_name'=>'Amos',
             'ethics_user'=>'NDLWAL',
             'last_name'=>'Vhanda',
-            'email'=>'avhnda@posb.co.zw',
+            'email'=>'avhanda@posb.co.zw',
             'branch_id'=>'1',
             'type'=>'1',
             'password'=>Hash::make('admin'),

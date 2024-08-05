@@ -37,6 +37,7 @@ return new class extends Migration
             $table->string('id_expiration_date')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('currency')->nullable();
+            $table->string('gender')->nullable();
             $table->string('rec_idc')->nullable();
             $table->timestamps();
             $table->unsignedBigInteger('customer_id');

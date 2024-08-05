@@ -40,8 +40,7 @@
                                     <th>#</th>
                                     <th>Branch Name</th>
                                     <th>Branch Address</th>
-                                    <th>Branch Email</th>
-                                    <th>Branch Phonenumber</th>
+                                   
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -53,22 +52,22 @@
                                             </td>
                                             <td>{{ $value->branch_name }}</td>
                                             <td>{{ $value->branch_address }}</td>
-                                            <td>{{ $value->email }}</td>
-                                            <td>{{ $value->mobile_number }}</td>
+                                         
                                             <td class="project-actions text-center">
-                                                <a class="btn btn-primary btn-sm" href="/branch/{{$value->id}}}">
-                                                    <i class="fas fas-folder"></i>
+                                                <a class="btn btn-primary btn-sm mr-1" href="/branch/{{$value->id}}}">
+                                                    <i class="fas fa-folder"></i>
                                                     View
                                                 </a>
-                                                <a class="btn btn-info btn-sm" href="/branch/{{$value->id}}}/edit">
-                                                    <i class="fas fas-pencil-alt"></i>
+                                                <a class="btn btn-info btn-sm mr-1" href="/branch/{{$value->id}}}/edit">
+                                                    <i class="fas fa-pencil-alt"></i>
                                                     Edit
                                                 </a>
                                                 <a class="btn btn-danger btn-sm" href="#">
-                                                    <i class="fas fas-trash"></i>
+                                                    <i class="fas fa-trash"></i>
                                                     Delete
                                                 </a>
                                             </td>
+                                            
                                         </tr>
                                     @endforeach
                                 @else

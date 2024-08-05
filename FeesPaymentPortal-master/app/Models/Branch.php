@@ -26,4 +26,10 @@ class Branch extends Model
         return $this->hasMany(Branch::class,'branch_id', 'id');
 
     }
+
+    public function sendmoneys()
+    {
+        return $this->hasMany(Branch::class,'branch_id', 'id');
+
+    }
 }

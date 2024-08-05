@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enum\UserType;
+use App\Models\Account;
 use App\Models\Sendmoney;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -64,4 +65,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(Sendmoney::class);
     }
+  
 }

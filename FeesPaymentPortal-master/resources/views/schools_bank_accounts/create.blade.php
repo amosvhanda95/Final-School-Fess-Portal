@@ -54,7 +54,7 @@
                                     <label for="currenct" required>Currency</label>
                                     <select name="currency" class="form-control" required>
                                         <option>Choose Currency</option>
-                                        <option value="ZWL">ZWL</option>
+                                        <option value="ZiG">ZiG</option>
                                         <option value="USD">USD</option>
                                     </select>
                                 </div>

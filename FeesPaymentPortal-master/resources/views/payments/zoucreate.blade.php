@@ -36,9 +36,15 @@
                         <form method="post" action="/payment/id_account_search">
                             @csrf
                             <div class="card-body">
+                                
+
+
                                 <div class="form-group">
-                                    <label class="control-label required">{{ __('Bank Account Number') }}</label>
-                                    <input type="number"  name="account_number" class="form-control" id="account_number" placeholder="Enter bank account number">
+                                    <label class="control-label required">{{ __('Bank Account') }}</label>
+                                    <select name="account_number" class="form-control" id="account_number">
+                                        <option value="500007524043">USD - 500007524043</option>
+                                        <option value="500007524035">ZiG- 500007524035</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required">{{ __('Reg Number') }}</label>

@@ -36,6 +36,7 @@ class Beneficiary extends Model
         'rec_bank_code',
         'payment_method',
         'currency',
+        'gender',
 
     ];
     public function customer() {

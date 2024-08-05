@@ -5,9 +5,10 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
-use App\Http\Resources\PaymentResource;
-use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ZssController;
+use App\Http\Resources\PaymentResource;
+use App\Http\Controllers\ForexController;
+use App\Http\Controllers\PaymentsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +39,6 @@ Route::get('/payments/{id}', function (string $id) {
 });
 
 Route::middleware('auth.basic')->post('/zssmake-payment', [ZssController::class,'update']);
+
+Route::post('/forex', [ForexController::class, 'updateForexRatesFromURL']);
 

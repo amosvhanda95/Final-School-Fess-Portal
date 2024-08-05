@@ -24,19 +24,19 @@ return new class extends Migration
             $table->double('amount');
             $table->string('amount_in_words');
     
-            $table->string('customer_phone_number');
+            $table->string('payment_method')->nullable();
             $table->string('reg_number')->nullable();
             $table->string('semester')->nullable();
             $table->integer('term')->nullable();
             $table->string('class')->nullable();
-            $table->integer('year');
-            $table->string('purpose');
+            $table->integer('year')->nullable();
+            $table->string('purpose')->nullable();
             $table->string('reference_number');
             $table->date('paid_at')->nullable();
             $table->string('depositor_name')->nullable();
             $table->string('student_name');
             $table->string('currency_value');
-            $table->string('rrn');
+            $table->string('rrn')->nullable();
             $table->string('payment_status');
             $table->integer("status");
             $table->bigInteger('created_by')->unsigned()->index();

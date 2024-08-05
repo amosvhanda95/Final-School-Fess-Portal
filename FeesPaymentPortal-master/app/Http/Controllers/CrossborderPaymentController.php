@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sendmoney;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Mastercard\Developer\OAuth\OAuth;
 use Mastercard\Developer\OAuth\Utils\AuthenticationUtils;
 
@@ -18,9 +19,16 @@ class CrossborderPaymentController extends Controller
 
     public function show($id)
     {
-        $sendmoney = Sendmoney::findOrFail($id);
-        return view('crossboarder.payment.show', compact('sendmoney'));
+        $sendmoney = Sendmoney::with(['user.branch'])->find($id);
+        // Retrieve the logged-in user
+    $loggedInUser = Auth::user();
+
+    // Check if the logged-in user has a branch associated
+    $branch = $loggedInUser->branch ?? null;
+   
+        return view('crossboarder.payment.show', compact('sendmoney', 'branch'));
     }
+    
     
 
     public function ratesRequest()

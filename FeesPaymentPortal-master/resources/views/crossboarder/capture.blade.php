@@ -166,12 +166,14 @@
                                                             <div class="col-md-3 mb-3 px-2">
                                                                 <div class="form-group">
                                                                     <label class="control-label required">{{ __('Amount To Send') }}</label>
-                                                                    <input type="text" name="amount" class="form-control" placeholder="23.00" value="{{ old('amount') }}" required>
+                                                                    <input type="number" name="amount" class="form-control" placeholder="23.00" value="{{ old('amount') }}" required max="5000">
+                                                                    <!-- 'max' attribute is set to 4999.99 to ensure amounts are less than 5000 -->
                                                                     @error('amount')
                                                                         <div class="alert alert-danger">{{ $message }}</div>
                                                                     @enderror
                                                                 </div>
                                                             </div>
+                                                            
                                                         
                                                             <div class="col-md-3 mb-3 px-2">
                                                                 <div class="form-group">

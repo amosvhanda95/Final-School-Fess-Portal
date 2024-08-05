@@ -32,33 +32,31 @@
                         </div>
                     @endif
                     <div class="card card-cyan">
-                        <div class="card-header" style="height: 200px">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>School Name</th>
-                                        <th>School Account #</th>
-                                        <th>Currency</th>
-                                        <th>School Email</th>
-                                        <th>School Phonenumber</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{{ $bankAccount->school->school_name }}</td>
-                                        <td>{{ $bankAccount->account_number }}</td>
-                                        <td><b>{{ $bankAccount->currency }}</b></td>
-
-                                        <td>
-                                            {{ $bankAccount->school->email }}
-                                        </td>
-                                        <td>
-                                            {{ $bankAccount->school->mobile_number }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="card-header">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>School Name</th>
+                                            <th>School Account #</th>
+                                            <th>Currency</th>
+                                            <th>School Email</th>
+                                            <th>School Phonenumber</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ $bankAccount->school->school_name }}</td>
+                                            <td>{{ $bankAccount->account_number }}</td>
+                                            <td><b>{{ $bankAccount->currency }}</b></td>
+                                            <td>{{ $bankAccount->school->email }}</td>
+                                            <td>{{ $bankAccount->school->mobile_number }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        
                         
                         <form method="post" action="/payment/make_payment" id="quickForm">
                             @csrf
@@ -80,10 +78,28 @@
                                                     </div>
                                                     @endif
                                                     <div class="form-group">
+                                                        <label for="payment_method">Payment Method</label>
+                                                        <select name="payment_method" id="payment_method" class="form-control" onchange="toggleRRNField()">
+                                                            <option value="swipe">Swipe</option>
+                                                            <option value="cash">Cash</option>
+                                                        </select>
+                                                    </div>
+                                                    @if (auth()->check() && auth()->user()->type === 5)
+                                                    <div class="form-group">
+                                                        <label for="currency">Currency</label>
+                                                        <select name="currency" id="currency" class="form-control" onchange="toggleRRNField()">
+                                                            <option value="ZiG">ZiG</option>
+                                                            <option value="USD">USD</option>
+                                                            <!-- Add more currency options as needed -->
+                                                        </select>
+                                                    </div>
+                                                    @endif
+                                                    
+                                                    
+                                                    <div class="form-group"id="rrn_field">
                                                         <label for="amount">Enter RRN </label>
-                                                        <input type="number" placeholder="7879677"
-                                                            name="rrn" class="form-control" 
-                                                            value="{{ old('rrn') }}" required>
+                                                        <input type="number" id="rrn_field1" placeholder="7879677"
+                                                            name="rrn" class="form-control">
                                                     </div>
                                                     
                                                     <div class="form-group">
@@ -119,12 +135,8 @@
                                                             <div class="alert alert-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label for="depositor_name">Depositor Name</label>
-                                                        <input type="text" placeholder="Mr Chirwa"
-                                                            name="depositor_name" class="form-control" value="{{ old('depositor_name') }}"  required>
-                                                    </div>
-                                                    <div class="form-group">
+                                                    
+                                                    {{-- <div class="form-group">
                                                         <label for="customer_phone_number">Customer Phone Number</label>
                                                         <input type="text" placeholder="263775021912"
                                                             name="customer_phone_number" class="form-control" value="{{ old('customer_phone_number') }}" required  >
@@ -155,7 +167,7 @@
                                                         <label for="amount">Purpose</label>
                                                         <input type="text" placeholder="Transaction Purpose"
                                                             name="purpose" class="form-control" value="{{ old('purpose') }}"required>
-                                                    </div>
+                                                    </div> --}}
                                                     <input type="hidden" name="school_id"
                                                         value="{{ $bankAccount->school->id }}">
                                                     <input type="hidden" name="bank_account_id"
@@ -184,11 +196,30 @@
                                                     </div>
                                                     @endif
                                                     <div class="form-group">
-                                                        <label for="amount">Enter RRN </label>
-                                                        <input type="number" placeholder="7879677"
-                                                            name="rrn" class="form-control"
-                                                            value="{{ old('rrn') }}" required>
+                                                        <label for="payment_method">Payment Method</label>
+                                                        <select name="payment_method" id="payment_method" class="form-control" onchange="toggleRRNField()">
+                                                            <option value="swipe">Swipe</option>
+                                                            <option value="cash">Cash</option>
+                                                        </select>
                                                     </div>
+                                                   
+                                                    <div class="form-group">
+                                                        <label for="currency">Currency</label>
+                                                        <select name="currency" id="currency" class="form-control" onchange="toggleRRNField()">
+                                                            <option value="ZiG">ZiG</option>
+                                                            <option value="USD">USD</option>
+                                                            <!-- Add more currency options as needed -->
+                                                        </select>
+                                                    </div>
+                                                   
+                                                    
+                                                    
+                                                    <div class="form-group"id="rrn_field">
+                                                        <label for="amount">Enter RRN </label>
+                                                        <input type="number" id="rrn_field1" placeholder="7879677"
+                                                            name="rrn" class="form-control">
+                                                    </div>
+                                                    
                                                     <div class="form-group">
                                                         <label for="student_name">Student Full Name</label>
                                                         <input type="text" placeholder="Enter Student Name"
@@ -270,5 +301,20 @@
                 </div>
             </div>
         </div>
-    </section>
+        <script>
+            function toggleRRNField() {
+                var paymentMethod = document.getElementById('payment_method').value;
+                var rrnField = document.getElementById('rrn_field');
+    
+                if (paymentMethod === 'swipe') {
+                    rrnField.style.display = 'block'; // Show RRN field
+                } else {
+                    rrnField.style.display = 'none'; // Hide RRN field
+                }
+            }
+        
+            // Initial call to set the initial state based on the default value of the payment method
+            toggleRRNField();
+        </script>
+    
 @endsection

@@ -35,13 +35,20 @@
                                 <div class="card-body">
                                     <div class="form-group">
                                         <label class="control-label required">{{ __('Service Type') }}</label>
-                                        <input type="text" name="serviceType" class="form-control" id="serviceType"
-                                               placeholder="Enter service type" value="BANKREG" required>
+                                        <select name="serviceType" class="form-control" id="serviceType" required>
+                                            <option value="BANKREG" selected>BANKREG</option>
+                                            <option value="BANKDEREG">BANKDEREG</option>
+                                        </select>
                                     </div>
+                                    
                                     <div class="form-group">
                                         <label class="control-label required">{{ __('External Reference') }}</label>
+                                        <?php
+                                            // Generate a reference similar to "169865633"
+                                            $externalReference = rand(100000000, 999999999);
+                                        ?>
                                         <input type="text" name="externalReference" class="form-control" id="externalReference"
-                                               placeholder="Enter external reference" value="169865633" required>
+                                            placeholder="Enter external reference" value="{{ $externalReference }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label required">{{ __('Bank ID') }}</label>

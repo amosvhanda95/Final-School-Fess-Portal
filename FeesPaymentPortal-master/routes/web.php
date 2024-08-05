@@ -19,6 +19,7 @@ use App\Http\Controllers\PassportClientController;
 use App\Http\Controllers\LoanApplicationController;
 use App\Http\Controllers\BankRegistrationController;
 use App\Http\Controllers\CrossborderPaymentController;
+use App\Http\Controllers\LexisNexisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,8 +80,26 @@ Route::group(['middleware'=>'auth'], function () {
 
         Route::get('/payment/zou', ['\App\Http\Controllers\PaymentsController', 'zolshow']);
 
+        
+
         Route::post('payment/account_search', ['\App\Http\Controllers\PaymentsController', 'accountSearch']);
         Route::post('payment/id_account_search', ['\App\Http\Controllers\PaymentsController', 'idaccountSearch']);
+// Golden Knot 
+        Route::get('/payment/golden-knot', ['\App\Http\Controllers\GoldenController', 'goldenshow']);
+        Route::post('payment/golden_id_account_search', ['\App\Http\Controllers\GoldenController', 'goldenidSearch']);
+        Route::post('payment/golden_knot-make_payment', ['\App\Http\Controllers\GoldenController', 'goldenmakePayment']);
+        Route::get('golden_payment/confirm/{id}', ['\App\Http\Controllers\GoldenController', 'confirmPayment'] );
+        Route::get('golden_payment/confirmed/{id}', ['\App\Http\Controllers\GoldenController', 'confirmedPayment'] );
+        Route::post('golden_payment/submit_payment/{id}', ['\App\Http\Controllers\GoldenController', 'submitPayment'])->name('payment.submit_payment');
+
+// Kadoma City Council
+        Route::get('/payment/kadoma', ['\App\Http\Controllers\KadomaCouncilController', 'kadomashow']);
+        Route::post('payment/kadoma_id_account_search', ['\App\Http\Controllers\KadomaCouncilController', 'kadomaidSearch']);
+        Route::post('payment/kadoma-make_payment', ['\App\Http\Controllers\KadomaCouncilController', 'kadomamakePayment']);
+        Route::get('kadoma_payment/confirm/{id}', ['\App\Http\Controllers\KadomaCouncilController', 'confirmPayment'] );
+        Route::get('kadoma_payment/confirmed/{id}', ['\App\Http\Controllers\KadomaCouncilController', 'confirmedPayment'] );
+        Route::post('kadoma_payment/submit_payment/{id}', ['\App\Http\Controllers\KadomaCouncilController', 'submitPayment'])->name('payment.submit_payment');
+       
         Route::get('payment/capture_details/{id}', ['\App\Http\Controllers\PaymentsController', 'captureDetails']);
         Route::get('payment/capture_details/{id}/{id1}', ['\App\Http\Controllers\PaymentsController', 'zoucaptureDetails']);
         Route::get('payment/edit_capture_details/{id}', ['\App\Http\Controllers\PaymentsController', 'ediDetails']);
@@ -101,6 +120,7 @@ Route::group(['middleware'=>'auth'], function () {
         Route::get('/reports/{payment}', [PaymentsController::class,'generateReport']);
 
         Route::get('/get-students', [PaymentsController::class, 'getStudents']);
+        Route::get('/update-payments', [PaymentsController::class, 'processTransactions']);
         Route::get('/get-updatestudents', [PaymentsController::class, 'refreshStudents']);
         Route::resource('customer', CustomerController::class);
         Route::resource('/beneficiary', BeneficiaryController::class);
@@ -111,7 +131,8 @@ Route::group(['middleware'=>'auth'], function () {
         Route::post('/crossboarder/capture', [APIController::class, 'searchByIdNumber']);
         Route::get('/crossboarder/capture_details/{id}', [APIController::class, 'captureDetails']);
         Route::post('/crossboarder/proceed/', [APIController::class, 'proceedRequest']);
-        Route::post('/payment/submit_payment', [APIController::class, 'paymentRequest']);
+        Route::post('/payment/confirm_submit_payment', [APIController::class, 'paymentRequest']);
+        Route::post('/payment/submit_payment', [LexisNexisController::class, 'initiatePayment']);
         Route::get('/payment/success', 'PaymentController@success')->name('payment.success');
 
         Route::resource('loan-application', LoanApplicationController::class);
@@ -123,7 +144,14 @@ Route::group(['middleware'=>'auth'], function () {
                 Route::get('/link-to-eco-cash', [EcoCashController::class, 'index'])->name('ecocash.index');
                 Route::get('/link-to-eco-cashs', [EcoCashController::class, 'create'])->name('ecocash.create');
                 Route::post('/register-to-eco-cash', [BankRegistrationController::class, 'submitForm']);
-                
+
+                Route::get('/issue-token', [LexisNexisController::class, 'issueToken']);
+
+                Route::get('/teller-login', function () {
+                        return view('teller_form');
+                    })->name('teller-login');
+                    
+                    Route::post('/submit-teller-credentials', [LexisNexisController::class, 'submitTellerCredentials'])->name('submit-teller-credentials');
 
 });
 
@@ -139,3 +167,8 @@ Route::get('/encrypt', [APIController::class, 'encryp']);
 // Route::get('/forgot-password', function () {
 //         return view('auth.forgot-password');
 //     })->middleware('guest')->name('password.request');
+
+
+// Route::get('/home',  function(){
+//         return view('welcome');
+//     });

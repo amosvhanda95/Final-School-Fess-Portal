@@ -9,6 +9,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use App\Models\User;
 use App\Models\School;
+use GuzzleHttp\Client;
 use App\Models\Payment;
 use App\Models\Student;
 use App\Enum\PaymentStatus;
@@ -16,11 +17,14 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\SchoolBankAccount;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Client\RequestException;
+use App\Jobs\Slowjob;
 
 class PaymentsController extends Controller
 {
@@ -49,6 +53,7 @@ class PaymentsController extends Controller
     {
         return view('payments.zoucreate');
     }
+    
     public function accountSearch(Request $request)
     {
         $this->validateWith([
@@ -85,6 +90,29 @@ class PaymentsController extends Controller
             return redirect()->back()->withErrors(['Bank Account or Reg Number number is Invalid, please check on the deposit slip and try again, If the problem persists contact support']);
         }
     }
+
+   
+
+
+
+
+
+    
+       
+
+        
+ 
+
+        
+    
+
+       
+        // if (!is_null($bankAccount) & !is_null($RegAccount)) {
+        //     return redirect('payment/capture_details/' . $bankAccount->id . '/' . $RegAccount->id)->with('message', 'Bank Account found, now you can proceed');
+        // } else {
+        //     return redirect()->back()->withErrors(['Bank Account or Reg Number number is Invalid, please check on the deposit slip and try again, If the problem persists contact support']);
+        // }
+    
     public function captureDetails($bankDetailsId)
     {
         if (is_null($bankDetailsId)) {
@@ -117,419 +145,309 @@ class PaymentsController extends Controller
     }
 
     public function makePayment(Request $request)
+{
+    
+    
+    $rrn = $request->input('rrn') ?? ('CASH' . Str::random(9));
 
+    $request->validate([
+        'payment_method' => 'required|string|in:cash,swipe', // Adjust the validation rule as needed
+        'amount' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
+        'amount_in_words' => 'required',
+        // Add other validation rules for other fields if necessary
+    ]);
 
-    {
-
-        if (auth()->user()->type == 5) {
-
-
-
-            $headers = [
-                'Content-Type' => 'application/json',
-                'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
-                'x-trace-id' => 'POSB-' . uniqid(),
-            ];
-            $schoolAccountNumber = SchoolBankAccount::find($request->input('bank_account_id'))->account_number;
-            $currency = SchoolBankAccount::find($request->input('bank_account_id'))->currency;
-            $user = request()->user()->account_number;
-
-
-
-            $body = [
-
-                "agentAccountNumber" => strval($user),
-                "schoolAccountNumber" => strval($schoolAccountNumber),
-                "posTransactionReference" => $request->input('rrn'),
-                "description" =>  $request->input('student_name')."|".$request->input('class')."|".$request->input('purpose'),
-                "amount" => $request->input('amount'),
-                "currency" => strval($currency),
-
-            ];
-
-
-
-
-
-
-            $response = Http::withHeaders($headers)
-                ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction-between-accounts', $body);
-
-            $responseData = json_decode($response->body(), true);
-
-
-
-            if ($responseData && isset($responseData['responseCode'])) {
-
-                $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
-                $paymentSta = $responseData['uniqueReference'];
-
-                Payment::create([
-                    'paid_at' => Carbon::today()->toDateString(),
-                    'school_id' => $request->input('school_id'),
-                    'bank_account_id' => $request->input('bank_account_id'),
-                    'branch_id' => $request->user()->branch->id,
-                    'amount' => $request->input('amount'),
-                    'student_name' => $request->input('student_name'),
-                    'amount_in_words' => $request->input('amount_in_words'),
-                    'currency_value' => SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-                    'reference_number' => $paymentSta,
-                    'rrn' => $request->input('rrn'),
-                    'payment_status' => $paymentStatus,
-                    'customer_phone_number' => $request->input('customer_phone_number'),
-                    'reg_number' => $request->input('reg_number'),
-                    'semester' => $request->input('semester'),
-                    'term' => $request->input('term'),
-                    'depositor_name' => $request->input('depositor_name'),
-                    'class' => $request->input('class'),
-                    'year' => $request->input('year'),
-                    'purpose' => $request->input('purpose'),
-                    'status' => PaymentStatus::Captured,
-                    'created_by' => request()->user()->id,
-                    'modified_by' => request()->user()->id,
-
-                ]);
-
-
-
-                $payment = Payment::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
-                return redirect('payment/confirm/' . $payment->id);
-            } else {
-
-                return $responseData;
-            }
+    $isAgent = auth()->user()->type == 5;
+$paymentMethod = strtolower($request->input('payment_method'));
+    if ($isAgent) {
+        
+        $selectedAccountNumber = $request->input('currency');
+        $explodedAccountNumbers = explode(',', request()->user()->account_number);
+    
+        // Choose the appropriate part of the exploded account number based on $selectedAccountNumber
+        if ($selectedAccountNumber === 'ZiG') {
+            // Take the first exploded number
+            $selectedAccountNumber = $explodedAccountNumbers[0];
         } else {
-
-            $this->validateWith([
-
-                'amount' => 'numeric:required |regex:/^\d+(\.\d{1,2})?$/',
-                'amount_in_words' => 'required',
-                'year' => 'required',
-                'customer_phone_number' => 'required',
-
-            ]);
-
-            $validator = Validator::make($request->all(), [
-                'rrn' => 'required|unique:payments',
-                // Add other validation rules as needed
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-
-            $headers = [
-                'Content-Type' => 'application/json',
-                'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
-                'x-trace-id' => 'POSB-' . uniqid(),
-            ];
-            $schoolAccountNumber = SchoolBankAccount::find($request->input('bank_account_id'))->account_number;
-            $currency = SchoolBankAccount::find($request->input('bank_account_id'))->currency;
-            $user = request()->user()->ethics_user;
-
-            $body = [
-
-                "TellerEthixUsername" => strval($user),
-                "schoolAccountNumber" => strval($schoolAccountNumber),
-                "posTransactionReference" => $request->input('rrn'),
-                "description" =>  $request->input('student_name')."|".$request->input('class')."|".$request->input('purpose'),
-                "amount" => $request->input('amount'),
-                "currency" => strval($currency),
-
-
-            ];
-
-
-
-
-
-
-            $response = Http::withHeaders($headers)
-                ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
-
-            $responseData = json_decode($response->body(), true);
-
-
-
-            if ($responseData && isset($responseData['responseCode'])) {
-
-                $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
-                $paymentSta = $responseData['uniqueReference'];
-
-                Payment::create([
-                    'paid_at' => Carbon::today()->toDateString(),
-                    'school_id' => $request->input('school_id'),
-                    'bank_account_id' => $request->input('bank_account_id'),
-                    'branch_id' => $request->user()->branch->id,
-                    'amount' => $request->input('amount'),
-                    'student_name' => $request->input('student_name'),
-                    'amount_in_words' => $request->input('amount_in_words'),
-                    'currency_value' => SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-                    'reference_number' => $paymentSta,
-                    'rrn' => $request->input('rrn'),
-                    'payment_status' => $paymentStatus,
-                    'customer_phone_number' => $request->input('customer_phone_number'),
-                    'reg_number' => $request->input('reg_number'),
-                    'semester' => $request->input('semester'),
-                    'term' => $request->input('term'),
-                    'depositor_name' => $request->input('depositor_name'),
-                    'class' => $request->input('class'),
-                    'year' => $request->input('year'),
-                    'purpose' => $request->input('purpose'),
-                    'status' => PaymentStatus::Captured,
-                    'created_by' => request()->user()->id,
-                    'modified_by' => request()->user()->id,
-
-                ]);
-
-
-
-                $payment = Payment::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
-                return redirect('payment/confirm/' . $payment->id);
-            } else {
-                // Handle the case where the response does not contain a responseCode
-                return $responseData;
-            }
+            // Take the second exploded number
+            $selectedAccountNumber = $explodedAccountNumbers[1];
         }
+    
+        
     }
+
+   
+
+    $user = $isAgent ? $selectedAccountNumber : request()->user()->ethics_user;
+
+   
+    $headers = [
+        'Content-Type' => 'application/json',
+        'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
+        'x-trace-id' => 'POSB-' . uniqid(),
+    ];
+
+    $schoolAccountNumber = SchoolBankAccount::find($request->input('bank_account_id'))->account_number;
+    $currency = SchoolBankAccount::find($request->input('bank_account_id'))->currency;
+
+    $body = [
+        $isAgent ? "agentAccountNumber" : "TellerEthixUsername" => strval($user),
+        "schoolAccountNumber" => strval($schoolAccountNumber),
+        "posTransactionReference" => $rrn,
+        "description" => $request->input('student_name') . "|" . $request->input('class') . "|" . $request->input('purpose'),
+        "amount" => $request->input('amount'),
+        "currency" => strval($currency),
+    ];
+
+    $apiEndpoint = $isAgent ? 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction-between-accounts' : 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction';
+    
+    $response = Http::withHeaders($headers)->post($apiEndpoint, $body);
+    $responseData = json_decode($response->body(), true);
+
+    if ($responseData && isset($responseData['responseCode'])) {
+        $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
+        $paymentSta = $responseData['uniqueReference'];
+
+        Payment::create([
+            'paid_at' => Carbon::today()->toDateString(),
+            'school_id' => $request->input('school_id'),
+            'bank_account_id' => $request->input('bank_account_id'),
+            'branch_id' => request()->user()->branch->id,
+            'amount' => $request->input('amount'),
+            'student_name' => $request->input('student_name'),
+            'amount_in_words' => $request->input('amount_in_words'),
+            'currency_value' => $currency,
+            'reference_number' => $paymentSta,
+            'rrn' => $rrn,
+            'payment_status' => $paymentStatus,
+            'payment_method' => $paymentMethod,
+            'reg_number' => $request->input('reg_number'),
+            'semester' => $request->input('semester'),
+            'term' => $request->input('term'),
+            'depositor_name' => $request->input('depositor_name'),
+            'class' => $request->input('class'),
+            'year' => date('Y'),
+            'purpose' => $request->input('purpose'),
+            'status' => PaymentStatus::Captured,
+            'created_by' => request()->user()->id,
+            'modified_by' => request()->user()->id,
+        ]);
+        
+        $url = 'https://secure.zss.co.zw/vportal/cnm/vsms/plain';
+        $user = 'posbcnm';
+        $password = '$posb123';
+        $sender = 'POSB Fees';
+        $phoneNumber = $request->input('customer_phone_number');
+        $regNumber = $request->input('reg_number');
+        $message = "Payment of {$request->input('amount')} {$currency} received from {$request->input('student_name')}" . ($regNumber ? " (Reg. No: {$regNumber})" : '') . ". Reference number: {$paymentSta}. Paid on: " . Carbon::today()->toDateString();
+        
+            
+
+        // Make GET request using Laravel HTTP client
+        $response = Http::get($url, [
+            'user' => $user,
+            'password' => $password,
+            'sender' => $sender,
+            'GSM' => $phoneNumber,
+            'SMSText' => $message,
+        ]);
+
+    
+
+        $payment = Payment::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
+        return redirect('payment/confirm/' . $payment->id);
+    } else {
+        // Handle API response errors
+        return $responseData;
+    }
+}
+
 
     public function zoumakePayment(Request $request)
 
 
-    {
-        if (auth()->user()->type == 5) {
+    {$rrn = $request->input('rrn') ?? ('CASH' . Str::random(9));
+        $paymentMethod = strtolower($request->input('payment_method'));
+        $request->validate([
+            'payment_method' => 'required|string|in:cash,swipe', // Adjust the validation rule as needed
+            'amount' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
+            'amount_in_words' => 'required',
+            // Add other validation rules for other fields if necessary
+        ]);
+    
+        $isAgent = auth()->user()->type == 5;
+
+        if ($isAgent) {
+            $paymentMethod = strtolower($request->input('payment_method'));
+            $selectedAccountNumber = $request->input('currency');
+            $explodedAccountNumbers = explode(',', request()->user()->account_number);
+        
+            // Choose the appropriate part of the exploded account number based on $selectedAccountNumber
+            if ($selectedAccountNumber === 'ZiG') {
+                // Take the first exploded number
+                $selectedAccountNumber = $explodedAccountNumbers[0];
+            } else {
+                // Take the second exploded number
+                $selectedAccountNumber = $explodedAccountNumbers[1];
+            }
+        
+            // Continue with further processing...
+        }
+  
+        
+    
+        $user = $isAgent ? $selectedAccountNumber : request()->user()->ethics_user;
+   
+        
+   
+      
+        $headers = [
+            'Content-Type' => 'application/json',
+            'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
+            'x-trace-id' => 'POSB-' . uniqid(),
+        ];
+      
+       
+    
+        $schoolAccountNumber = SchoolBankAccount::find($request->input('bank_account_id'))->account_number;
+        $currency = SchoolBankAccount::find($request->input('bank_account_id'))->currency;
+    
+        $body = [
+            $isAgent ? "agentAccountNumber" : "TellerEthixUsername" => strval($user),
+            "schoolAccountNumber" => strval($schoolAccountNumber),
+            "posTransactionReference" => $rrn,
+            "description" => $request->input('student_name') . "|" . $request->input('class') . "|" . $request->input('purpose'),
+            "amount" => $request->input('amount'),
+            "currency" => strval($currency),
+        ];
+
+        
+
+    
+        $apiEndpoint = $isAgent ? 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction-between-accounts' : 'http://10.50.30.88:10001/api/v1/payment-transfer/instruction';
+        
+    
+        $response = Http::withHeaders($headers)->post($apiEndpoint, $body);
+   
+        $responseData = json_decode($response->body(), true);
+    
+        if ($responseData && isset($responseData['responseCode'])) {
+            $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
+            $paymentSta = $responseData['uniqueReference'];
+    
+            Payment::create([
+                'paid_at' => Carbon::today()->toDateString(),
+                'school_id' => $request->input('school_id'),
+                'bank_account_id' => $request->input('bank_account_id'),
+                'branch_id' => request()->user()->branch->id,
+                'amount' => $request->input('amount'),
+                'student_name' => $request->input('student_name'),
+                'amount_in_words' => $request->input('amount_in_words'),
+                'currency_value' => $currency,
+                'reference_number' => $paymentSta,
+                'rrn' => $rrn,
+                'payment_status' => $paymentStatus,
+                'payment_method' => $paymentMethod,
+                'reg_number' => $request->input('reg_number'),
+                'semester' => $request->input('semester'),
+                'term' => $request->input('term'),
+                'depositor_name' => $request->input('depositor_name'),
+                'class' => $request->input('class'),
+                'year' => date('Y'),
+                'purpose' => $request->input('purpose'),
+                'status' => PaymentStatus::Captured,
+                'created_by' => request()->user()->id,
+                'modified_by' => request()->user()->id,
+            ]);
+            $currentDate = date('Y-m-d ');
+            $url = 'https://secure.zss.co.zw/vportal/cnm/vsms/plain';
+            $user = 'posbcnm';
+            $password = '$posb123';
+            $sender = 'POSB Fees';
+            $phoneNumber = $request->input('customer_phone_number');
+            $regNumber = $request->input('reg_number');
+$message = "Payment of {$request->input('amount')} {$currency} received from {$request->input('student_name')}" . ($regNumber ? " (Reg. No: {$regNumber})" : '') . ". Reference number: {$paymentSta}. Paid on: " . Carbon::today()->toDateString();
+
+    
+            // Make GET request using Laravel HTTP client
+            $response = Http::get($url, [
+                'user' => $user,
+                'password' => $password,
+                'sender' => $sender,
+                'GSM' => $phoneNumber,
+                'SMSText' => $message,
+            ]);
+            try {
+                // $response = Http::withHeaders([
+                //     'AccessKey' => 'TESTING',
+                //     'Content-Type' => 'application/json',
+                // ])->post('http://api.zou.ac.zw/bank-service/post-transaction', [
+                //     "amount" => $request->input('amount'),
+                //     "bank_account_number" => strval($schoolAccountNumber),
+                //     "student_code" => $request->input('reg_number'),
+                //     "transaction_number" => $request->input('rrn'),
+                //     "branchdeposited" => "POSB",
+                //     "txntypecode" => "POS",
+                //     "txndate" => strval($currentDate),
+                //     "bankreference" => strval($paymentSta),
+                //     "currency" => strval(SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency),
+                //     "mti" => "",
+                // ]);
+            
+                // Log the request
+                // Log::info('HTTP Request:', [
+                //     'url' => 'http://api.zou.ac.zw/bank-service/post-transaction',
+                //     'method' => 'POST',
+                //     'headers' => [
+                //         'AccessKey' => 'TESTING',
+                //         'Content-Type' => 'application/json',
+                //     ],
+                //     'payload' => [
+                //         "amount" => $request->input('amount'),
+                //         "bank_account_number" => strval($schoolAccountNumber),
+                //         "student_code" => $request->input('reg_number'),
+                //         "transaction_number" => $request->input('rrn'),
+                //         "branchdeposited" => "POSB",
+                //         "txntypecode" => "POS",
+                //         "txndate" => strval($currentDate),
+                //         "bankreference" => strval($paymentSta),
+                //         "currency" => strval(SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency),
+                //         "mti" => "",
+                //     ],
+                // ]);
+            
+                // if ($response->successful()) {
+                //     // Handle successful response
+                //     Log::info('HTTP Response:', [
+                //         'status' => $response->status(),
+                //         'body' => $response->body(),
+                //     ]);
+                // } else {
+                //     // Handle unsuccessful response
+                //     Log::error('HTTP Response:', [
+                //         'status' => $response->status(),
+                //         'body' => $response->body(),
+                //     ]);
+                //     // You may want to throw an exception here depending on your application's logic
+                // }
+            } catch (RequestException $e) {
+                // Handle exception
+                Log::error('HTTP Request exception:', [
+                    'message' => $e->getMessage(),
+                ]);
+            }
 
            
-
-            $this->validateWith([
-
-                'amount' => 'numeric:required |regex:/^\d+(\.\d{1,2})?$/',
-                'amount_in_words' => 'required',
-                'year' => 'required',
-                'customer_phone_number' => 'required',
-
-            ]);
-            $validator = Validator::make($request->all(), [
-                'rrn' => 'required|unique:payments',
-                // Add other validation rules as needed
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-
-            $headers = [
-                'Content-Type' => 'application/json',
-                'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
-                'x-trace-id' => 'POSB-' . uniqid(),
-            ];
-            $schoolAccountNumber = SchoolBankAccount::find($request->input('bank_account_id'))->account_number;
-            $currency = SchoolBankAccount::find($request->input('bank_account_id'))->currency;
-            $user = request()->user()->account_number;
-
-            $body = [
-
-                "agentAccountNumber" => strval($user),
-                "schoolAccountNumber" => strval($schoolAccountNumber),
-                "posTransactionReference" => $request->input('rrn'),
-                "description" =>  $request->input('student_name')."|".$request->input('class')."|".$request->input('purpose'),
-                "amount" => $request->input('amount'),
-                "currency" => strval($currency),
-
-
-            ];
-
-
-
-            $response = Http::withHeaders($headers)
-                ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction-between-accounts', $body);
-
-            $responseData = json_decode($response->body(), true);
-
-
-
-            if ($responseData && isset($responseData['responseCode'])) {
-
-                $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
-                $paymentSta = $responseData['uniqueReference'];
-
-                Payment::create([
-                    'paid_at' => Carbon::today()->toDateString(),
-                    'school_id' => $request->input('school_id'),
-                    'bank_account_id' => $request->input('bank_account_id'),
-                    'branch_id' => $request->user()->branch->id,
-                    'amount' => $request->input('amount'),
-                    'student_name' => $request->input('student_name'),
-                    'amount_in_words' => $request->input('amount_in_words'),
-                    'currency_value' => SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-                    'reference_number' => $paymentSta,
-                    'rrn' => $request->input('rrn'),
-                    'payment_status' => $paymentStatus,
-                    'customer_phone_number' => $request->input('customer_phone_number'),
-                    'reg_number' => $request->input('reg_number'),
-                    'semester' => $request->input('semester'),
-                    'term' => $request->input('term'),
-                    'depositor_name' => $request->input('depositor_name'),
-                    'class' => $request->input('class'),
-                    'year' => $request->input('year'),
-                    'purpose' => $request->input('purpose'),
-                    'status' => PaymentStatus::Captured,
-                    'created_by' => request()->user()->id,
-                    'modified_by' => request()->user()->id,
-
-                ]);
-
-                $currentDate = date('Y-m-d H:i:s');
-
-
-                Http::withHeaders([
-                    'AccessKey' => 'TESTING',
-                    'Content-Type' => 'application/json',
-                ])->post('http://api.zou.ac.zw/bank-service/post-transaction', [
-                    "amount" => $request->input('amount'),
-                    "bank_account_number" => strval($schoolAccountNumber),
-                    "student_code" => $request->input('reg_number'),
-                    "transaction_number" => $request->input('rrn'),
-                    "branchdeposited" => "POSB",
-                    "txntypecode" => "POS",
-                    "txndate" => strval($currentDate),
-                    "bankreference" => strval($paymentSta),
-                    "currency" => strval(SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency),
-                    "mti" => "",
-                ]);
-
-
-
-                $payment = Payment::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
-                return redirect('payment/confirm/' . $payment->id);
-                // return $responseData = $response1->body();
-            } else {
-                // Handle the case where the response does not contain a responseCode
-
-                return $responseData;
-            }
+     $payment = Payment::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
+            return redirect('payment/confirm/' . $payment->id);
+            
         } else {
-
-            $this->validateWith([
-
-                'amount' => 'numeric:required |regex:/^\d+(\.\d{1,2})?$/',
-                'amount_in_words' => 'required',
-                'year' => 'required',
-                'customer_phone_number' => 'required',
-
-            ]);
-            $validator = Validator::make($request->all(), [
-                'rrn' => 'required|unique:payments',
-                // Add other validation rules as needed
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()
-                    ->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-
-            $headers = [
-                'Content-Type' => 'application/json',
-                'x-api-key' => '93c5ad2a-94d1-43b9-a8ef-177329cf528a',
-                'x-trace-id' => 'POSB-' . uniqid(),
-            ];
-            $schoolAccountNumber = SchoolBankAccount::find($request->input('bank_account_id'))->account_number;
-            $currency = SchoolBankAccount::find($request->input('bank_account_id'))->currency;
-            $user = request()->user()->ethics_user;
-
-            $body = [
-
-                "TellerEthixUsername" => strval($user),
-                "schoolAccountNumber" => strval($schoolAccountNumber),
-                "posTransactionReference" => $request->input('rrn'),
-                "description" =>  $request->input('student_name')."|".$request->input('class')."|".$request->input('purpose'),
-                "amount" => $request->input('amount'),
-                "currency" => strval($currency),
-
-
-            ];
-
-
-
-            $response = Http::withHeaders($headers)
-                ->post('http://10.50.30.88:10001/api/v1/payment-transfer/instruction', $body);
-
-            $responseData = json_decode($response->body(), true);
-
-
-
-            if ($responseData && isset($responseData['responseCode'])) {
-
-                $paymentStatus = $responseData['responseCode'] === 0 ? 'Success' : 'Fail';
-                $paymentSta = $responseData['uniqueReference'];
-
-                Payment::create([
-                    'paid_at' => Carbon::today()->toDateString(),
-                    'school_id' => $request->input('school_id'),
-                    'bank_account_id' => $request->input('bank_account_id'),
-                    'branch_id' => $request->user()->branch->id,
-                    'amount' => $request->input('amount'),
-                    'student_name' => $request->input('student_name'),
-                    'amount_in_words' => $request->input('amount_in_words'),
-                    'currency_value' => SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency,
-                    'reference_number' => $paymentSta,
-                    'rrn' => $request->input('rrn'),
-                    'payment_status' => $paymentStatus,
-                    'customer_phone_number' => $request->input('customer_phone_number'),
-                    'reg_number' => $request->input('reg_number'),
-                    'semester' => $request->input('semester'),
-                    'term' => $request->input('term'),
-                    'depositor_name' => $request->input('depositor_name'),
-                    'class' => $request->input('class'),
-                    'year' => $request->input('year'),
-                    'purpose' => $request->input('purpose'),
-                    'status' => PaymentStatus::Captured,
-                    'created_by' => request()->user()->id,
-                    'modified_by' => request()->user()->id,
-
-                ]);
-
-                $currentDate = date('Y-m-d H:i:s');
-
-
-                Http::withHeaders([
-                    'AccessKey' => 'TESTING',
-                    'Content-Type' => 'application/json',
-                ])->post('http://api.zou.ac.zw/bank-service/post-transaction', [
-                    "amount" => $request->input('amount'),
-                    "bank_account_number" => strval($schoolAccountNumber),
-                    "student_code" => $request->input('reg_number'),
-                    "transaction_number" => $request->input('rrn'),
-                    "branchdeposited" => "POSB",
-                    "txntypecode" => "POS",
-                    "txndate" => strval($currentDate),
-                    "bankreference" => strval($paymentSta),
-                    "currency" => strval(SchoolBankAccount::findOrFail($request->input('bank_account_id'))->currency),
-                    "mti" => "",
-                ]);
-
-
-
-                $payment = Payment::where('created_by', request()->user()->id)->orderBy('id', 'DESC')->first();
-                return redirect('payment/confirm/' . $payment->id);
-                // return $responseData = $response1->body();
-            } else {
-                // Handle the case where the response does not contain a responseCode
-
-                return $responseData;
-            }
+            // Handle API response errors
+            return $responseData;
         }
+       
+        
+      
     }
 
     public function confirmPayment($id)
@@ -650,7 +568,11 @@ class PaymentsController extends Controller
     }
 
     public function getStudents()
+    
     {
+        // $transactions = DB::table('payments')->where('status', 0)->get();
+        // dd($transactions);
+        Slowjob::dispatch();
         $response = Http::withHeaders([
             'AccessKey' => 'TESTING',
         ])->get('http://api.zou.ac.zw/bank-service/get-students');
@@ -713,6 +635,10 @@ class PaymentsController extends Controller
 
     public function refreshStudents()
     {
+
+
+       
+
         // Define the request headers
         $headers = [
             'AccessKey' => 'TESTING',
@@ -809,14 +735,18 @@ class PaymentsController extends Controller
         return null;
     }
 
+
+
     public function zssmakePayment(Request $request)
     {
         try {
 
 
+            Log::info('Payment request received', ['request_data' => $request->all()]);
+
             $accountNumber = $request->input('account_number');
             $bankAccount = SchoolBankAccount::where('account_number', $accountNumber)->first();
-
+    
 
 
             $payment = new Payment;
@@ -828,11 +758,11 @@ class PaymentsController extends Controller
             $payment->amount = $request->input('amount');
             $payment->student_name = $request->input('student_name');
             $payment->amount_in_words = $request->input('amount_in_words');
-            $payment->currency_value = 'ZWL';
+            $payment->currency_value = 'ZiG';
             $payment->reference_number = $request->input('reference');
             $payment->rrn = $request->input('rrn');
             $payment->payment_status = $request->input('status');
-            $payment->customer_phone_number = $request->input('customer_phone_number');
+            $payment->payment_method = $request->input('payment_method');
             $payment->reg_number = $request->input('reg_number');
             $payment->semester = $request->input('semester');
             $payment->term = $request->input('term');
@@ -847,20 +777,48 @@ class PaymentsController extends Controller
             $payment->save();
             return response()->json(['message' => 'Payment successful', 'payment' => $payment], 200);
         } catch (Exception $e) {
+            Log::error('Payment failed', ['error' => $e]);
             return response()->json(['message' => 'Payment failed successful', 'payment' => $e], 201);
         }
     }
-    public function fetchAndEchoData()
-    {
-        $data = DB::connection('sqlsrv')->select('SELECT * FROM mta_portal_test');
 
-        if (!empty($data)) {
-            foreach ($data as $row) {
-                // Assuming your_table has 'column_name' as one of the columns
-                echo $row->column_name . "<br>";
-            }
-        } else {
-            echo "No data found.";
+
+function processTransactions()
+{
+    // Retrieve transactions from the database
+    $transactions = DB::table('payments')
+    ->where('status', 0)
+    ->where('school_id', 2)
+    ->get();
+
+ dd(  $transactions );
+    // Iterate through each transaction
+    foreach ($transactions as $transaction) {
+        $currentDate = date('Y-m-d H:i:s');
+        $response = Http::withHeaders([
+            'AccessKey' => 'ZOULIVEAFC01X5',
+            'Content-Type' => 'application/json',
+        ])->post('http://10.0.0.66:8082/bank-service/post-transaction', [
+            "amount" => $transaction->amount,
+            "bank_account_number" => strval("00000000001"),
+            "student_code" => $transaction->reg_number,
+            "transaction_number" => $transaction->rrn,
+            "branchdeposited" => strval( "POSB"),
+            "txntypecode" => "ZOUPOSB001",
+            "txndate" => strval($currentDate),
+            "bankreference" => strval($transaction->reference_number),
+            "currency" => strval(SchoolBankAccount::findOrFail($transaction->bank_account_id)->currency),
+            "mti" => "",
+        ]);
+
+        // Check if the request was successful
+        if ($response->successful()) {
+            // Update the transaction status to processed
+            DB::table('transactions')->where('id', $transaction->id)->update(['status' => 1]);
         }
+        sleep(5);
     }
+}
+
+  
 }

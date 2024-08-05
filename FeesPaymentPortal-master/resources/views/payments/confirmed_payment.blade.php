@@ -117,12 +117,12 @@ p {
                                     Student Details<hr>
                                     <address>
                                         
-                                        <strong>Student Name :</strong> {{ $payment->student_name }} <br>
-                                        <strong>Student Reg Number  :</strong> {{ $payment->reg_number }}<br>
+                                        <strong>Full Name :</strong> {{ $payment->student_name }} <br>
+                                        <strong> Reg Number  :</strong> {{ $payment->reg_number }}<br>
                                      
-                                        <strong>Class  :</strong> {{ $payment->class }} <br>
+                                        {{-- <strong>Class  :</strong> {{ $payment->class }} <br>
                                         <strong>Term  : </strong>{{ $payment->term }} <br>
-                                        <strong>Semester  : </strong>{{ $payment->semester }} <br>
+                                        <strong>Semester  : </strong>{{ $payment->semester }} <br> --}}
                                         <strong>Purpose  : </strong>{{ $payment->purpose }} <br>
                                         
                                     </address>
@@ -136,14 +136,14 @@ p {
                                     <b>Branch Phone Number : </b> {{ $payment->branch->mobile_number }}<br>
                                 </div>
                                 <div class="col-sm-4 invoice-col">
-                                    Deposit Details<hr>
+                                    {{-- Deposit Details<hr>
                                     <address>
                                                                     
                                         <strong>Depositor Name : </strong>{{ $payment->depositor_name }}<br>
                                         <strong> Mobile Number: </strong>{{ $payment->customer_phone_number }}<br>
                                         
                                         
-                                    </address>
+                                    </address> --}}
                                 </div>
                                 <br>
                                 

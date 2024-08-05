@@ -40,136 +40,53 @@
                                             <label for="countrySelect">Select Country:</label>
                                             <select id="countrySelect" class="form-control"
                                                 onchange="updatePaymentMethods()" name="country_id" required>
-                                                <option  value="">Please select a country</option>
-                                                <option value="ZAF" {{ old('country_id') == 'ZAF' ? 'selected' : '' }}>
-                                                    South Africa
-                                                </option>
-                                                <option value="USA" {{ old('country_id') == 'USA' ? 'selected' : '' }}>
-                                                    United States
-                                                </option>
-                                                <option value="THA" {{ old('country_id') == 'THA' ? 'selected' : '' }}>
-                                                    Thailand
-                                                </option>
-                                                <option value="GBR" {{ old('country_id') == 'GBR' ? 'selected' : '' }}>
-                                                    United Kingdom
-                                                </option>
-                                                <option value="CAN" {{ old('country_id') == 'CAN' ? 'selected' : '' }}>
-                                                    Canada
-                                                </option>
-                                                <option value="ARE" {{ old('country_id') == 'ARE' ? 'selected' : '' }}>
-                                                    United Arab Emirates
-                                                </option>
-                                                <option value="AUS" {{ old('country_id') == 'AUS' ? 'selected' : '' }}>
-                                                    Australia
-                                                </option>
-                                                <option value="POL" {{ old('country_id') == 'POL' ? 'selected' : '' }}>
-                                                    Poland
-                                                </option>
-                                                <option value="JPN" {{ old('country_id') == 'JPN' ? 'selected' : '' }}>
-                                                    Japan
-                                                </option>
-                                                <option value="CHE" {{ old('country_id') == 'CHE' ? 'selected' : '' }}>
-                                                    Switzerland
-                                                </option>
-                                                <option value="HKG" {{ old('country_id') == 'HKG' ? 'selected' : '' }}>
-                                                    Hong Kong
-                                                </option>
-                                                <option value="SGP" {{ old('country_id') == 'SGP' ? 'selected' : '' }}>
-                                                    Singapore
-                                                </option>
-                                                <option value="IND" {{ old('country_id') == 'IND' ? 'selected' : '' }}>
-                                                    India
-                                                </option>
-                                                <option value="MYS" {{ old('country_id') == 'MYS' ? 'selected' : '' }}>
-                                                    Malaysia
-                                                </option>
-                                                <option value="CHN" {{ old('country_id') == 'CHN' ? 'selected' : '' }}>
-                                                    China
-                                                </option>
-                                                <option value="MWI" {{ old('country_id') == 'MWI' ? 'selected' : '' }}>
-                                                    Malawi
-                                                </option>
-                                                <option value="MOZ" {{ old('country_id') == 'MOZ' ? 'selected' : '' }}>
-                                                    Mozambique
-                                                </option>
-                                                <option value="PAK" {{ old('country_id') == 'PAK' ? 'selected' : '' }}>
-                                                    Pakistan
-                                                </option>
-                                                <option value="ZMB" {{ old('country_id') == 'ZMB' ? 'selected' : '' }}>
-                                                    Zambia
-                                                </option>
-                                                <option value="ADO" {{ old('country_id') == 'ADO' ? 'selected' : '' }}>
-                                                    Andorra
-                                                </option>
-                                                <option value="AUT" {{ old('country_id') == 'AUT' ? 'selected' : '' }}>
-                                                    Austria
-                                                </option>
-                                                <option value="BEL" {{ old('country_id') == 'BEL' ? 'selected' : '' }}>
-                                                    Belgium
-                                                </option>
-                                                <option value="HRV" {{ old('country_id') == 'HRV' ? 'selected' : '' }}>
-                                                    Croatia
-                                                </option>
-                                                <option value="CYP" {{ old('country_id') == 'CYP' ? 'selected' : '' }}>
-                                                    Cyprus
-                                                </option>
-                                                <option value="EST" {{ old('country_id') == 'EST' ? 'selected' : '' }}>
-                                                    Estonia
-                                                </option>
-                                                <option value="FIN" {{ old('country_id') == 'FIN' ? 'selected' : '' }}>
-                                                    Finland
-                                                </option>
-                                                <option value="FRA" {{ old('country_id') == 'FRA' ? 'selected' : '' }}>
-                                                    France
-                                                </option>
-                                                <option value="DEU" {{ old('country_id') == 'DEU' ? 'selected' : '' }}>
-                                                    Germany
-                                                </option>
-                                                <option value="GRC" {{ old('country_id') == 'GRC' ? 'selected' : '' }}>
-                                                    Greece
-                                                </option>
-                                                <option value="IRL" {{ old('country_id') == 'IRL' ? 'selected' : '' }}>
-                                                    Ireland
-                                                </option>
-                                                <option value="ITA" {{ old('country_id') == 'ITA' ? 'selected' : '' }}>
-                                                    Italy
-                                                </option>
-                                                <option value="LVA" {{ old('country_id') == 'LVA' ? 'selected' : '' }}>
-                                                    Latvia
-                                                </option>
-                                                <option value="LTU" {{ old('country_id') == 'LTU' ? 'selected' : '' }}>
-                                                    Lithuania
-                                                </option>
-                                                <option value="LUX" {{ old('country_id') == 'LUX' ? 'selected' : '' }}>
-                                                    Luxembourg
-                                                </option>
-                                                <option value="MLT" {{ old('country_id') == 'MLT' ? 'selected' : '' }}>
-                                                    Malta
-                                                </option>
-                                                <option value="MCO" {{ old('country_id') == 'MCO' ? 'selected' : '' }}>
-                                                    Monaco
-                                                </option>
-                                                <option value="NLD" {{ old('country_id') == 'NLD' ? 'selected' : '' }}>
-                                                    Netherlands
-                                                </option>
-                                                <option value="PRT" {{ old('country_id') == 'PRT' ? 'selected' : '' }}>
-                                                    Portugal
-                                                </option>
-                                                <option value="SMR" {{ old('country_id') == 'SMR' ? 'selected' : '' }}>
-                                                    San Marino
-                                                </option>
-                                                <option value="SVK" {{ old('country_id') == 'SVK' ? 'selected' : '' }}>
-                                                    Slovakia
-                                                </option>
-                                                <option value="SVN" {{ old('country_id') == 'SVN' ? 'selected' : '' }}>
-                                                    Slovenia
-                                                </option>
-                                                <option value="ESP" {{ old('country_id') == 'ESP' ? 'selected' : '' }}>
-                                                    Spain
-                                                </option>
-                                                <option value="VAT" {{ old('country_id') == 'VAT' ? 'selected' : '' }}>
-                                                    Vatican City
-                                                </option>
+                                                <option  value="">Please select a country<option value="IND" {{ old('country_id') == 'IND' ? 'selected' : '' }}>India</option>
+                                                <option value="POL" {{ old('country_id') == 'POL' ? 'selected' : '' }}>Poland</option>
+                                                <option value="GBR" {{ old('country_id') == 'GBR' ? 'selected' : '' }}>United Kingdom</option>
+                                                <option value="ZMB" {{ old('country_id') == 'ZMB' ? 'selected' : '' }}>Zambia</option>
+                                                <option value="USA" {{ old('country_id') == 'USA' ? 'selected' : '' }}>United States</option>
+                                                
+                                                <option value="ZAF" {{ old('country_id') == 'ZAF' ? 'selected' : '' }}>South Africa</option>
+                                                <option value="CYP" {{ old('country_id') == 'CYP' ? 'selected' : '' }}>Northern Cyprus</option>
+                                                <option value="ARE" {{ old('country_id') == 'ARE' ? 'selected' : '' }}>United Arab Emirates</option>
+                                                <option value="CHN" {{ old('country_id') == 'CHN' ? 'selected' : '' }}>China</option>
+                                                
+                                                <!-- Other countries in the original order -->
+                                                <option value="THA" {{ old('country_id') == 'THA' ? 'selected' : '' }}>Thailand</option>
+                                                <option value="CAN" {{ old('country_id') == 'CAN' ? 'selected' : '' }}>Canada</option>
+                                                <option value="AUS" {{ old('country_id') == 'AUS' ? 'selected' : '' }}>Australia</option>
+                                                <option value="JPN" {{ old('country_id') == 'JPN' ? 'selected' : '' }}>Japan</option>
+                                                <option value="CHE" {{ old('country_id') == 'CHE' ? 'selected' : '' }}>Switzerland</option>
+                                                <option value="HKG" {{ old('country_id') == 'HKG' ? 'selected' : '' }}>Hong Kong</option>
+                                                <option value="SGP" {{ old('country_id') == 'SGP' ? 'selected' : '' }}>Singapore</option>
+                                                <option value="MYS" {{ old('country_id') == 'MYS' ? 'selected' : '' }}>Malaysia</option>
+                                                <option value="MWI" {{ old('country_id') == 'MWI' ? 'selected' : '' }}>Malawi</option>
+                                                <option value="MOZ" {{ old('country_id') == 'MOZ' ? 'selected' : '' }}>Mozambique</option>
+                                                <option value="PAK" {{ old('country_id') == 'PAK' ? 'selected' : '' }}>Pakistan</option>
+                                                <option value="ADO" {{ old('country_id') == 'ADO' ? 'selected' : '' }}>Andorra</option>
+                                                <option value="AUT" {{ old('country_id') == 'AUT' ? 'selected' : '' }}>Austria</option>
+                                                <option value="BEL" {{ old('country_id') == 'BEL' ? 'selected' : '' }}>Belgium</option>
+                                                <option value="HRV" {{ old('country_id') == 'HRV' ? 'selected' : '' }}>Croatia</option>
+                                                <option value="EST" {{ old('country_id') == 'EST' ? 'selected' : '' }}>Estonia</option>
+                                                <option value="FIN" {{ old('country_id') == 'FIN' ? 'selected' : '' }}>Finland</option>
+                                                <option value="FRA" {{ old('country_id') == 'FRA' ? 'selected' : '' }}>France</option>
+                                                <option value="DEU" {{ old('country_id') == 'DEU' ? 'selected' : '' }}>Germany</option>
+                                                <option value="GRC" {{ old('country_id') == 'GRC' ? 'selected' : '' }}>Greece</option>
+                                                <option value="IRL" {{ old('country_id') == 'IRL' ? 'selected' : '' }}>Ireland</option>
+                                                <option value="ITA" {{ old('country_id') == 'ITA' ? 'selected' : '' }}>Italy</option>
+                                                <option value="LVA" {{ old('country_id') == 'LVA' ? 'selected' : '' }}>Latvia</option>
+                                                <option value="LTU" {{ old('country_id') == 'LTU' ? 'selected' : '' }}>Lithuania</option>
+                                                <option value="LUX" {{ old('country_id') == 'LUX' ? 'selected' : '' }}>Luxembourg</option>
+                                                <option value="MLT" {{ old('country_id') == 'MLT' ? 'selected' : '' }}>Malta</option>
+                                                <option value="MCO" {{ old('country_id') == 'MCO' ? 'selected' : '' }}>Monaco</option>
+                                                <option value="NLD" {{ old('country_id') == 'NLD' ? 'selected' : '' }}>Netherlands</option>
+                                                <option value="PRT" {{ old('country_id') == 'PRT' ? 'selected' : '' }}>Portugal</option>
+                                                <option value="SMR" {{ old('country_id') == 'SMR' ? 'selected' : '' }}>San Marino</option>
+                                                <option value="SVK" {{ old('country_id') == 'SVK' ? 'selected' : '' }}>Slovakia</option>
+                                                <option value="SVN" {{ old('country_id') == 'SVN' ? 'selected' : '' }}>Slovenia</option>
+                                                <option value="ESP" {{ old('country_id') == 'ESP' ? 'selected' : '' }}>Spain</option>
+                                                <option value="VAT" {{ old('country_id') == 'VAT' ? 'selected' : '' }}>Vatican City</option>
+                                                
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -334,6 +251,20 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        <div class="form-group">
+                                            <label for="beneficiaryGender">Gender:</label>
+                                            <select id="beneficiaryGender"
+                                                    class="form-control @error('beneficiaryGender') is-invalid @enderror"
+                                                    name="beneficiarygender">
+                                                <option value="" disabled>Select Gender</option>
+                                                <option value="male" {{ old('beneficiaryGender') == 'male' ? 'selected' : '' }}>Male</option>
+                                                <option value="female" {{ old('beneficiaryGender') == 'female' ? 'selected' : '' }}>Female</option>
+                                            </select>
+                                            @error('beneficiaryGender')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        
 
                                         <div class="form-group">
                                             <label for="houseNumber">House Number:</label>
@@ -951,7 +882,12 @@ var paymentOptions = {
                                     }
                 }
                 
-                function addCardFields(selectedCountry) {
+                
+
+
+                    function addCardFields() {
+                    var countrySelect = document.getElementById("countrySelect");
+                    var selectedCountry = countrySelect.value;
     if (selectedCountry === "CHN") {
         var paymentFormFields = document.getElementById("paymentFormFields");
 
@@ -978,7 +914,7 @@ var paymentOptions = {
 
         // Add rec_idc fields
         var recIdcLabel = document.createElement("label");
-        recIdcLabel.textContent = "Rec IDC";
+        recIdcLabel.textContent = "Receiver Gvt ID ";
         recIdcLabel.htmlFor = "recIdcInput";
         recIdcLabel.classList.add("col-form-label");
 
@@ -4210,94 +4146,95 @@ function hideErrorMessage(container) {
 
 
 
-                             }
-                                             else if (selectedCountry === "POL"){
+                             }else if (selectedCountry === "POL") {
                                         var paymentFormFields = document.getElementById("paymentFormFields");
-                                     
-                                            // Create container for ibanInput
-                                            var ibanContainer = document.createElement("div");
-                                            ibanContainer.classList.add("form-group"); // Bootstrap class for form group
 
-                                            // Create label element
-                                            var ibanLabel = document.createElement("label");
-                                            ibanLabel.for = "iban";
-                                            ibanLabel.textContent = "IBAN";
-                                            ibanLabel.classList.add("col-form-label"); // Bootstrap class for label styling
-                                            ibanContainer.appendChild(ibanLabel);
+                                        // Create container for ibanInput
+                                        var ibanContainer = document.createElement("div");
+                                        ibanContainer.classList.add("form-group"); // Bootstrap class for form group
 
-                                            // Create input element
-                                            var ibanInput = document.createElement("input");
-                                            ibanInput.type = "text";
-                                            ibanInput.placeholder = "PL 0000 0000 0000 0000 0000";
-                                            ibanInput.id = "iban";
-                                            ibanInput.name = "rec_iban";
-                                            ibanInput.classList.add("form-control");
-                                            ibanInput.required = true; // Make the field required
+                                        // Create label element
+                                        var ibanLabel = document.createElement("label");
+                                        ibanLabel.for = "iban";
+                                        ibanLabel.textContent = "IBAN";
+                                        ibanLabel.classList.add("col-form-label"); // Bootstrap class for label styling
+                                        ibanContainer.appendChild(ibanLabel);
 
-                                            // Add event listener for input validation
-                                            ibanInput.addEventListener("input", function () {
-                                                validateIbanInput();
-                                            });
+                                        // Create input element
+                                        var ibanInput = document.createElement("input");
+                                        ibanInput.type = "text";
+                                        ibanInput.placeholder = "PL 0000 0000 0000 0000 0000 0000";
+                                        ibanInput.id = "iban";
+                                        ibanInput.name = "rec_iban";
+                                        ibanInput.classList.add("form-control");
+                                        ibanInput.required = true; // Make the field required
 
-                                            ibanContainer.appendChild(ibanInput);
-                                            paymentFormFields.appendChild(ibanContainer);
+                                        // Add event listener for input validation
+                                        ibanInput.addEventListener("input", function () {
+                                            validateIbanInput();
+                                        });
 
-                                            // Function to validate ibanInput
-                                            function validateIbanInput() {
-                                                var ibanValue = ibanInput.value.replace(/\s/g, '');
-                                                var regex = /^PL\d{20}$/; // Adjust the regex as needed for IBAN validation
+                                        ibanContainer.appendChild(ibanInput);
+                                        paymentFormFields.appendChild(ibanContainer);
 
-                                                if (ibanValue === '') {
-                                                    // Add red border to indicate error
-                                                    ibanInput.classList.remove("is-valid");
-                                                    ibanInput.classList.add("is-invalid");
+                                        // Function to validate ibanInput
+                                        function validateIbanInput() {
+                                            var ibanValue = ibanInput.value.replace(/\s/g, '');
+                                            var regex = /^PL\d{26}$/; // Adjusted regex to match 26 digits after PL
 
-                                                    // Display error message
-                                                    showErrorMessage(ibanContainer, "IBAN is required.");
-                                                } else if (!regex.test(ibanValue)) {
-                                                    // Add red border to indicate error
-                                                    ibanInput.classList.remove("is-valid");
-                                                    ibanInput.classList.add("is-invalid");
+                                            if (ibanValue === '') {
+                                                // Add red border to indicate error
+                                                ibanInput.classList.remove("is-valid");
+                                                ibanInput.classList.add("is-invalid");
 
-                                                    // Display error message
-                                                    showErrorMessage(ibanContainer, "Please enter a valid POL IBAN, extected formt PL 0000 0000 0000 0000 0000 ");
-                                                } else {
-                                                    // Add green border to indicate correctness
-                                                    ibanInput.classList.remove("is-invalid");
-                                                    ibanInput.classList.add("is-valid");
+                                                // Display error message
+                                                showErrorMessage(ibanContainer, "IBAN is required.");
+                                            } else if (!regex.test(ibanValue)) {
+                                                // Add red border to indicate error
+                                                ibanInput.classList.remove("is-valid");
+                                                ibanInput.classList.add("is-invalid");
 
-                                                    // Remove any existing error message
-                                                    hideErrorMessage(ibanContainer);
-                                                }
-                                            }
+                                                // Display error message
+                                                showErrorMessage(ibanContainer, "Please enter a valid Polish IBAN, expected format PL 0000 0000 0000 0000 0000 0000.");
+                                            } else {
+                                                // Add green border to indicate correctness
+                                                ibanInput.classList.remove("is-invalid");
+                                                ibanInput.classList.add("is-valid");
 
-                                            // Function to show error message
-                                            function showErrorMessage(container, message) {
-                                                // Check if an error message already exists
-                                                var existingErrorMessage = container.querySelector(".invalid-feedback");
-
-                                                if (!existingErrorMessage) {
-                                                    // Create and append an error message element
-                                                    var errorMessage = document.createElement("div");
-                                                    errorMessage.textContent = message;
-                                                    errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
-                                                    container.appendChild(errorMessage);
-                                                }
-                                            }
-
-                                            // Function to hide error message
-                                            function hideErrorMessage(container) {
                                                 // Remove any existing error message
-                                                var existingErrorMessage = container.querySelector(".invalid-feedback");
-                                                if (existingErrorMessage) {
-                                                    existingErrorMessage.remove();
-                                                }
+                                                hideErrorMessage(ibanContainer);
                                             }
+                                        }
+
+                                        // Function to show error message
+                                        function showErrorMessage(container, message) {
+                                            // Check if an error message already exists
+                                            var existingErrorMessage = container.querySelector(".invalid-feedback");
+
+                                            if (!existingErrorMessage) {
+                                                // Create and append an error message element
+                                                var errorMessage = document.createElement("div");
+                                                errorMessage.textContent = message;
+                                                errorMessage.classList.add("invalid-feedback"); // Bootstrap class for error message styling
+                                                container.appendChild(errorMessage);
+                                            }
+                                        }
+
+                                        // Function to hide error message
+                                        function hideErrorMessage(container) {
+                                            // Remove any existing error message
+                                            var existingErrorMessage = container.querySelector(".invalid-feedback");
+                                            if (existingErrorMessage) {
+                                                existingErrorMessage.remove();
+                                            }
+                                        }
+                                }
 
 
 
 
-                             }
+
+                             
                                              else if (selectedCountry === "CHE"){
                                         var paymentFormFields = document.getElementById("paymentFormFields");
                                      

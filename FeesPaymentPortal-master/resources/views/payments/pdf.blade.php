@@ -40,9 +40,9 @@
                 <strong>Student Name :</strong> {{ $payment->student_name }} <br>
                 <strong>Student Reg Number  :</strong> {{ $payment->reg_number }}<br>
              
-                <strong>Class  :</strong> {{ $payment->class }} <br>
+                {{-- <strong>Class  :</strong> {{ $payment->class }} <br>
                 <strong>Term  : </strong>{{ $payment->term }} <br>
-                <strong>Semester  : </strong>{{ $payment->semester }} <br>
+                <strong>Semester  : </strong>{{ $payment->semester }} <br> --}}
                 <strong>Purpose  : </strong>{{ $payment->purpose }} <br>
                 
             </address>

@@ -23,13 +23,18 @@
                     {{ session('message') }}
                 </div>
             @endif
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
+    
+            @if (session()->has('error'))
+                <div class="alert alert-danger">
+                    
+                        {{ session('error') }}
+                    </div>
+               
+            @endif
+        </div>
                            
 
-                        </div>
+                     
                         <div class="card-body">
                             <table id="myuserDataTable" class="table table-bordered table-hover">
                                 <thead>

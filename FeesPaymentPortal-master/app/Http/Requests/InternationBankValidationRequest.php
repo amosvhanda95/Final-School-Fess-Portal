@@ -115,8 +115,9 @@ if ($countryCode === 'ZAF') {
     $validationRules['rec_bic'] = ['required', 'regex:/^[A-Z]{4}AU.{2}.*/'];
 } elseif ($countryCode === 'POL') {
     // Poland
-    $validationRules['rec_iban'] = 'required|regex:/^PL\d{20}$/';
-} elseif ($countryCode === 'JPN') {
+    $validationRules['rec_iban'] = 'required|regex:/^PL\d{26}$/';
+}
+ elseif ($countryCode === 'JPN') {
     // Japan
     $validationRules['rec_ban'] = 'required|regex:/^(\d{1,7})$/';
     $validationRules['rec_bic'] = 'required|regex:/^[A-Z]{4}JP.{2}.*/';
@@ -137,7 +138,7 @@ if ($countryCode === 'ZAF') {
 } elseif ($countryCode.$paymentmethod === 'INDCP') {
     // India (Cash Pick Up)
    
-    $validationRules['rec_ewallet'] = 'required';
+    // $validationRules['rec_ewallet'] = 'required';
 } elseif ($countryCode.$paymentmethod  === 'INDBD') {
     // India
     $validationRules['rec_bic'] = 'required|regex:/^[A-Z]{4}[0]{1}[A-Z0-9]{6}$/';

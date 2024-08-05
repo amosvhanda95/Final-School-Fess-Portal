@@ -68,7 +68,7 @@
                                 </div>
                                 <div class="form-group" id="account_number_field">
                                     <label class="control-label required">{{ __('Account Number') }}</label>
-                                    <input type="number" name="account_number" class="form-control" id="exampleInputEmail1"
+                                    <input type="text" name="account_number" class="form-control" id="exampleInputEmail1"
                                            value="{{ old('account_number') }}" placeholder="Enter account number">
                                 </div>
                                 <div class="form-group" id="ethics_user_field">

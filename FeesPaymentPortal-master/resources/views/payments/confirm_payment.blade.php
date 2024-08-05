@@ -69,7 +69,6 @@ p {
                                 <p>Harare Zimbabwe</p>
                                 <p>+263 242 252595/6</p> <br>
                                 <h1 style="color: orange;">PROOF OF PAYMENT</h1>
-
                                 
                             </div>
                         </div>
@@ -120,9 +119,9 @@ p {
                                         <strong>Student Name :</strong> {{ $payment->student_name }} <br>
                                         <strong>Student Reg Number  :</strong> {{ $payment->reg_number }}<br>
                                      
-                                        <strong>Class  :</strong> {{ $payment->class }} <br>
+                                        {{-- <strong>Class  :</strong> {{ $payment->class }} <br>
                                         <strong>Term  : </strong>{{ $payment->term }} <br>
-                                        <strong>Semester  : </strong>{{ $payment->semester }} <br>
+                                        <strong>Semester  : </strong>{{ $payment->semester }} <br> --}}
                                         <strong>Purpose  : </strong>{{ $payment->purpose }} <br>
                                         
                                     </address>
